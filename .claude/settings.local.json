@@ -17,7 +17,10 @@
       "Bash(git init:*)",
       "Bash(git add:*)",
       "Bash(git rm:*)",
-      "Read(//c/Users/mturn/OneDrive/Desktop/**)"
+      "Read(//c/Users/mturn/OneDrive/Desktop/**)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git remote set-url:*)"
     ],
     "deny": [],
     "ask": []
