@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ArrowLeft, User, Image, FileText, Settings, MapPin, Globe, CheckCircle, Mail, Eye, Send } from 'lucide-react';
+import { ArrowLeft, User, Image, FileText, Settings, MapPin, Globe, CheckCircle, Mail, Eye, Send, Shield, AlertTriangle } from 'lucide-react';
 import { useHostProfile } from '../hooks/useHostProfile';
 import { useServices } from '../../listings/hooks/useServices';
+import { moderateProfileContent } from '../../safety/services/content-moderation';
 import PhotoManager from './PhotoManager';
 import BioEditor from './BioEditor';
 import ServiceManager from './ServiceManager';
@@ -20,6 +21,8 @@ interface HostProfileManagementProps {
 const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, userId }) => {
   const [activeSection, setActiveSection] = useState<Section>('overview');
   const [showPreview, setShowPreview] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [condomsMandatory, setCondomsMandatory] = useState(true);
   const { profile, loading, error, updateProfile, saving } = useHostProfile(userId);
   const { services, loading: servicesLoading } = useServices();
 
@@ -63,12 +66,12 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
     { id: 'languages' as Section, label: 'Languages', icon: Globe, color: 'text-teal-600' },
   ];
 
-  // Calculate profile completion
+  // Calculate profile completion (minimum 3 photos required)
   const getProfileCompletion = () => {
     let completed = 0;
     const total = 7;
 
-    if (profile.profilePhotos && profile.profilePhotos.length >= 1) completed++;
+    if (profile.profilePhotos && profile.profilePhotos.length >= 3) completed++;
     if (profile.bio && profile.bio.length >= 100) completed++;
     if (profile.primaryLocation) completed++;
     if (profile.serviceAreas && profile.serviceAreas.length > 0) completed++;
@@ -82,20 +85,47 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
   const profileCompletion = getProfileCompletion();
 
   const handlePublishProfile = async () => {
-    if (profileCompletion === 100 && !profile.isPublished) {
-      try {
-        console.log('Publishing profile...');
-        await updateProfile({ isPublished: true });
-        console.log('Profile published successfully!');
-      } catch (err) {
-        console.error('Error publishing profile:', err);
-        // Show error message to user
-        alert('Failed to publish profile. Please try again.');
-      }
+    if (profileCompletion !== 100 || profile.isPublished) return;
+
+    setPublishError(null);
+
+    // Enforce condoms mandatory
+    if (!condomsMandatory) {
+      setPublishError('You must confirm that condom use is mandatory for all in-person services to publish your profile.');
+      return;
+    }
+
+    // Run content moderation on bio and services
+    const serviceNames = hostServices.map(s => s.title);
+    const moderationResult = moderateProfileContent(
+      profile.bio || '',
+      serviceNames,
+    );
+
+    if (moderationResult.auto_block) {
+      const violationList = moderationResult.violations.map(v => v.phrase).join(', ');
+      setPublishError(
+        `Your profile contains content that violates our safety guidelines: ${violationList}. ` +
+        'Please update your bio or service descriptions and try again.'
+      );
+      return;
+    }
+
+    if (!moderationResult.safe) {
+      setPublishError(
+        'Your profile contains content that may need review. Please check your bio and service descriptions for any language that could be flagged, then try again.'
+      );
+      return;
+    }
+
+    try {
+      await updateProfile({ isPublished: true });
+    } catch (err) {
+      setPublishError('Failed to publish profile. Please try again.');
     }
   };
 
-  const canPublish = profileCompletion === 100 && !profile.isPublished && !saving;
+  const canPublish = profileCompletion === 100 && !profile.isPublished && !saving && condomsMandatory;
 
   const renderSection = () => {
     switch (activeSection) {
@@ -134,7 +164,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900">{section.label}</h3>
                       <p className="text-sm text-gray-600">
-                        {section.id === 'photos' && `${profile.profilePhotos?.length || 0}/10 photos (minimum 1 required)`}
+                        {section.id === 'photos' && `${profile.profilePhotos?.length || 0}/10 photos (minimum 3 required)`}
                         {section.id === 'bio' && (profile.bio ? `${profile.bio.length} characters` : 'No bio added yet')}
                         {section.id === 'services' && `${hostServices.length} service${hostServices.length !== 1 ? 's' : ''} listed`}
                         {section.id === 'availability' && `Currently ${profile.status || 'available'}`}
@@ -161,23 +191,50 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
                   </div>
                 </div>
               ) : profileCompletion === 100 ? (
-                <div className="bg-trust-50 border border-trust-200 rounded-xl p-4">
-                  <div className="flex items-center justify-between">
+                <div className="space-y-3">
+                  <div className="bg-trust-50 border border-trust-200 rounded-xl p-4">
                     <div className="flex items-center">
                       <Send className="w-6 h-6 text-trust-600 mr-3" />
                       <div>
                         <h3 className="font-semibold text-trust-900">Ready to Publish!</h3>
-                        <p className="text-trust-700 text-sm">Your profile is complete and ready to go live.</p>
+                        <p className="text-trust-700 text-sm">Your profile is complete. Confirm safer-sex policy to go live.</p>
                       </div>
                     </div>
-                    <button
-                      onClick={handlePublishProfile}
-                      disabled={!canPublish}
-                      className="bg-gradient-to-r from-trust-600 to-warm-600 text-white px-4 py-2 rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 font-semibold"
-                    >
-                      {saving ? 'Publishing...' : 'Publish Profile'}
-                    </button>
                   </div>
+
+                  {/* Condoms Mandatory Checkbox */}
+                  <label className="flex items-start gap-3 p-4 bg-safe-50 border border-safe-200 rounded-xl cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={condomsMandatory}
+                      onChange={(e) => { setCondomsMandatory(e.target.checked); setPublishError(null); }}
+                      className="mt-0.5 w-5 h-5 text-safe-600 rounded focus:ring-safe-500"
+                    />
+                    <div>
+                      <span className="font-semibold text-safe-800 flex items-center gap-1">
+                        <Shield className="w-4 h-4" /> Condom use is mandatory
+                      </span>
+                      <p className="text-sm text-safe-700 mt-1">
+                        I confirm that condom use is mandatory for all in-person services. This is a requirement for publishing on Shub, consistent with safer-sex best practices under the Prostitution Reform Act 2003.
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* Publish Error */}
+                  {publishError && (
+                    <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
+                      <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-red-700">{publishError}</p>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={handlePublishProfile}
+                    disabled={!canPublish}
+                    className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-xl hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 font-semibold"
+                  >
+                    {saving ? 'Publishing...' : 'Publish Profile'}
+                  </button>
                 </div>
               ) : (
                 <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
