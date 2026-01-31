@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Star, MapPin, Clock, Shield, Heart, MessageSquare, Calendar } from 'lucide-react';
+import { ArrowLeft, Star, MapPin, Clock, Shield, Heart, MessageSquare, Calendar, CheckCircle } from 'lucide-react';
 import { Service } from '../../../types';
 import { useHostProfile } from '../../profiles/hooks/useHostProfile';
 import { useAuth } from '../../auth/hooks/useAuth';
@@ -18,6 +18,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
   const [showBookingRequest, setShowBookingRequest] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
 
   const { userProfile } = useAuth();
   const { profile: hostProfile, loading: hostLoading } = useHostProfile(service.hostId);
@@ -41,7 +42,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
 
     if (result.success) {
       setShowBookingRequest(false);
-      // Could show success message or redirect
+      setBookingSuccess(true);
     }
 
     return result;
@@ -154,10 +155,25 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
             </div>
           )}
 
+          {/* Booking Success Banner */}
+          {bookingSuccess && (
+            <div className="mb-4 p-4 bg-safe-50 border border-safe-200 rounded-xl">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-6 h-6 text-safe-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-safe-800">Booking request sent!</h3>
+                  <p className="text-sm text-safe-700 mt-1">
+                    {service.hostName} will review your request. You&apos;ll be notified when they respond.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex space-x-3">
             <button
               onClick={handleBookNow}
-              disabled={bookingLoading}
+              disabled={bookingLoading || bookingSuccess}
               className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-colors disabled:opacity-50 ${
                 isGuest
                   ? 'bg-gradient-to-r from-safe-600 to-emerald-600 text-white hover:from-safe-700 hover:to-emerald-700 cursor-pointer'

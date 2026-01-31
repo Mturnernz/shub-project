@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BookingList from '../../features/bookings/components/BookingList';
 import { useBookings } from '../../features/bookings/hooks/useBookings';
+import { useBookingRealtime } from '../../features/bookings/hooks/useBookingRealtime';
 import { useAuthStore } from '../../features/auth/stores/auth.store';
 
 const BookingsPage: React.FC = () => {
@@ -14,7 +15,15 @@ const BookingsPage: React.FC = () => {
     bookings,
     loading: bookingsLoading,
     updateStatus,
+    refreshBookings,
   } = useBookings(userProfile?.id || null, userProfile ? userRole : null);
+
+  // Real-time booking updates — refresh list when bookings change
+  useBookingRealtime(userProfile?.id || null, userProfile ? userRole : null, {
+    onBookingCreated: useCallback(() => refreshBookings(), [refreshBookings]),
+    onBookingUpdated: useCallback(() => refreshBookings(), [refreshBookings]),
+    onBookingDeleted: useCallback(() => refreshBookings(), [refreshBookings]),
+  });
 
   if (!userProfile) {
     return (
@@ -39,7 +48,7 @@ const BookingsPage: React.FC = () => {
         title="Your Bookings"
         emptyMessage={userType === 'client' ? 'No bookings yet' : 'No booking requests yet'}
         onUpdateStatus={async (bookingId, status) => updateStatus(bookingId, status)}
-        onViewDetails={(booking) => console.log('View booking details:', booking)}
+        onViewDetails={(booking) => navigate(`/bookings/${booking.id}`)}
         onOpenChat={(booking) => navigate(`/bookings/${booking.id}/chat`, { state: { booking } })}
       />
     </div>

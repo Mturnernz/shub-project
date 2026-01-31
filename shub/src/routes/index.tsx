@@ -14,6 +14,7 @@ const ServiceDetailPage = lazy(() => import('./pages/ServiceDetailPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ProfileManagementPage = lazy(() => import('./pages/ProfileManagementPage'));
 const BookingsPage = lazy(() => import('./pages/BookingsPage'));
+const BookingDetailPage = lazy(() => import('./pages/BookingDetailPage'));
 const MessagesPage = lazy(() => import('./pages/MessagesPage'));
 const MessageThreadPage = lazy(() => import('./pages/MessageThreadPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -111,6 +112,14 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<LoadingFallback />}>
                 <BookingsPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/bookings/:id',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <BookingDetailPage />
               </Suspense>
             ),
           },

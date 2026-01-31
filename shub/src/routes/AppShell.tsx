@@ -57,6 +57,7 @@ const AppShell: React.FC = () => {
     if (path === '/profile') return 'Profile';
     if (path.startsWith('/listings/')) return 'Service Details';
     if (path.startsWith('/bookings/') && path.endsWith('/chat')) return 'Chat';
+    if (path.match(/^\/bookings\/[^/]+$/) && path !== '/bookings') return 'Booking Details';
     if (path === '/dashboard/profile') return 'Manage Profile';
     return 'Shub';
   };
@@ -64,7 +65,8 @@ const AppShell: React.FC = () => {
   const getBackHandler = () => {
     const path = location.pathname;
     if (path.startsWith('/listings/')) return () => navigate('/browse');
-    if (path.startsWith('/bookings/') && path.endsWith('/chat')) return () => navigate('/bookings');
+    if (path.startsWith('/bookings/') && path.endsWith('/chat')) return () => navigate('/messages');
+    if (path.match(/^\/bookings\/[^/]+$/) && path !== '/bookings') return () => navigate('/bookings');
     if (path === '/dashboard/profile') return () => navigate('/dashboard');
     if (path === '/browse' && !userType) return () => navigate('/');
     return undefined;
