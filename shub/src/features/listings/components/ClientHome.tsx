@@ -1,8 +1,42 @@
 import React from 'react';
-import { TrendingUp, Star, MapPin, ArrowLeft, Search, Filter } from 'lucide-react';
+import { TrendingUp, Star, MapPin, ArrowLeft, Search, Filter, Zap } from 'lucide-react';
 import { Service } from '../../../types';
 import ServiceCard from './ServiceCard';
 import { categories, locations } from '../../../data/mockData';
+
+const SAVED_SEARCH_KEY = 'shub_saved_search';
+
+interface SavedSearch {
+  query: string;
+  category: string;
+  location: string;
+  availability: string;
+  minRating: number;
+  dateCreated: string;
+  featuredOnly: boolean;
+  availableNow: boolean;
+}
+
+const loadSavedSearch = (): SavedSearch | null => {
+  try {
+    const saved = localStorage.getItem(SAVED_SEARCH_KEY);
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+};
+
+const saveSavedSearch = (search: SavedSearch) => {
+  try {
+    localStorage.setItem(SAVED_SEARCH_KEY, JSON.stringify(search));
+  } catch { /* ignore storage errors */ }
+};
+
+const clearSavedSearch = () => {
+  try {
+    localStorage.removeItem(SAVED_SEARCH_KEY);
+  } catch { /* ignore storage errors */ }
+};
 
 interface ClientHomeProps {
   services: Service[];
@@ -10,7 +44,7 @@ interface ClientHomeProps {
   error: string | null;
   onServiceClick: (service: Service) => void;
   onCategoryClick: (category: string) => void;
-  onSearch: (query: string, category: string, location: string, availability?: string, minRating?: number, dateCreated?: string) => void;
+  onSearch: (query: string, category: string, location: string, availability?: string, minRating?: number, dateCreated?: string, featuredOnly?: boolean, availableNow?: boolean) => void;
   userType?: 'host' | 'client' | null;
   onBack?: () => void;
   showBackButton?: boolean;
@@ -20,25 +54,38 @@ interface ClientHomeProps {
 }
 
 const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick, onSearch, userType, onBack, showBackButton = false, onSignUpAsClient, onBecomeHost, canBecomeHost = false }) => {
-  const featuredServices = services.slice(0, 6); // Show more services for better browsing
+  const featuredServices = services.slice(0, 6);
   const popularCategories = categories.slice(1, 4);
-  
+
+  // Load saved search on mount
+  const saved = React.useMemo(() => loadSavedSearch(), []);
+
   // Search state
-  const [query, setQuery] = React.useState('');
-  const [category, setCategory] = React.useState('All');
-  const [location, setLocation] = React.useState('All Locations');
-  const [availability, setAvailability] = React.useState('All');
-  const [minRating, setMinRating] = React.useState(0);
-  const [dateCreated, setDateCreated] = React.useState('');
-  const [featuredOnly, setFeaturedOnly] = React.useState(false);
+  const [query, setQuery] = React.useState(saved?.query || '');
+  const [category, setCategory] = React.useState(saved?.category || 'All');
+  const [location, setLocation] = React.useState(saved?.location || 'All Locations');
+  const [availability, setAvailability] = React.useState(saved?.availability || 'All');
+  const [minRating, setMinRating] = React.useState(saved?.minRating || 0);
+  const [dateCreated, setDateCreated] = React.useState(saved?.dateCreated || '');
+  const [featuredOnly, setFeaturedOnly] = React.useState(saved?.featuredOnly || false);
+  const [availableNow, setAvailableNow] = React.useState(saved?.availableNow || false);
   const [showFilters, setShowFilters] = React.useState(false);
-  const [isSearchActive, setIsSearchActive] = React.useState(false);
+  const [isSearchActive, setIsSearchActive] = React.useState(!!saved);
 
   const isGuest = userType === null;
 
+  // Apply saved search on mount
+  React.useEffect(() => {
+    if (saved) {
+      const dateFilter = calculateDateFromFilter(saved.dateCreated);
+      onSearch(saved.query, saved.category, saved.location, saved.availability, saved.minRating, dateFilter, saved.featuredOnly, saved.availableNow);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const calculateDateFromFilter = (filterValue: string): string => {
     if (!filterValue || filterValue === 'Any Time') return '';
-    
+
     const now = new Date();
     switch (filterValue) {
       case 'Last 7 Days':
@@ -54,18 +101,28 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
 
   const handleSearch = () => {
     const dateFilter = calculateDateFromFilter(dateCreated);
-    onSearch(query, category, location, availability, minRating, dateFilter, featuredOnly);
+    onSearch(query, category, location, availability, minRating, dateFilter, featuredOnly, availableNow);
     setIsSearchActive(true);
+    // Persist search preferences
+    saveSavedSearch({ query, category, location, availability, minRating, dateCreated, featuredOnly, availableNow });
+  };
+
+  const handleAvailableNowToggle = () => {
+    const newValue = !availableNow;
+    setAvailableNow(newValue);
+    const dateFilter = calculateDateFromFilter(dateCreated);
+    onSearch(query, category, location, availability, minRating, dateFilter, featuredOnly, newValue);
+    setIsSearchActive(true);
+    saveSavedSearch({ query, category, location, availability, minRating, dateCreated, featuredOnly, availableNow: newValue });
   };
 
   const handleCategoryClick = (selectedCategory: string) => {
     setCategory(selectedCategory);
-    onSearch('', selectedCategory, 'All Locations', 'All', 0, '', featuredOnly);
+    onSearch('', selectedCategory, 'All Locations', 'All', 0, '', featuredOnly, availableNow);
     setIsSearchActive(true);
   };
 
   const clearSearch = () => {
-    // Reset all filter states first
     setQuery('');
     setCategory('All');
     setLocation('All Locations');
@@ -73,11 +130,10 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
     setMinRating(0);
     setDateCreated('');
     setFeaturedOnly(false);
+    setAvailableNow(false);
     setIsSearchActive(false);
-
-    // Call search with completely default parameters to restore all services
-    console.log('Clearing all filters and reloading services...');
-    onSearch('', 'All', 'All Locations', 'All', 0, '', false);
+    clearSavedSearch();
+    onSearch('', 'All', 'All Locations', 'All', 0, '', false, false);
   };
   return (
     <div className="space-y-6">
@@ -244,7 +300,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
               >
                 Apply Filters
               </button>
-              {(isSearchActive || query || category !== 'All' || location !== 'All Locations' || availability !== 'All' || minRating > 0 || dateCreated || featuredOnly) && (
+              {(isSearchActive || query || category !== 'All' || location !== 'All Locations' || availability !== 'All' || minRating > 0 || dateCreated || featuredOnly || availableNow) && (
                 <button
                   onClick={clearSearch}
                   className="px-4 py-2 border border-trust-200 text-trust-600 rounded-lg hover:bg-trust-50 transition-colors text-sm"
@@ -256,17 +312,30 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
           </div>
         )}
       </div>
-      {/* Quick Categories */}
-      <div className="px-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">Popular Categories</h3>
-        <div className="flex space-x-3 overflow-x-auto pb-2">
-          {popularCategories.map((category) => (
+      {/* Quick Filters & Categories */}
+      <div className="px-4 space-y-3">
+        <div className="flex items-center gap-3 overflow-x-auto pb-1">
+          {/* Available Now toggle */}
+          <button
+            onClick={handleAvailableNowToggle}
+            className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full border font-medium text-sm transition-all duration-200 ${
+              availableNow
+                ? 'bg-safe-100 border-safe-300 text-safe-700'
+                : 'bg-white/70 border-trust-200 text-gray-600 hover:bg-safe-50 hover:border-safe-200'
+            }`}
+          >
+            <Zap className={`w-4 h-4 ${availableNow ? 'text-safe-600' : 'text-gray-400'}`} />
+            Available Now
+          </button>
+
+          {/* Category quick-picks */}
+          {popularCategories.map((cat) => (
             <button
-              key={category}
-              onClick={() => handleCategoryClick(category)}
-              className="flex-shrink-0 bg-white/70 backdrop-blur-sm px-6 py-3 rounded-full border border-trust-200 hover:bg-trust-50 hover:border-trust-300 transition-all duration-200"
+              key={cat}
+              onClick={() => handleCategoryClick(cat)}
+              className="flex-shrink-0 bg-white/70 backdrop-blur-sm px-5 py-2.5 rounded-full border border-trust-200 hover:bg-trust-50 hover:border-trust-300 transition-all duration-200"
             >
-              <span className="font-medium text-gray-700">{category}</span>
+              <span className="font-medium text-sm text-gray-700">{cat}</span>
             </button>
           ))}
         </div>
@@ -293,7 +362,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             <p className="text-gray-600">
               {isSearchActive ? 'No services found matching your criteria' : 'No services available'}
             </p>
-            {(isSearchActive || query || category !== 'All' || location !== 'All Locations' || availability !== 'All' || minRating > 0 || dateCreated || featuredOnly) && (
+            {(isSearchActive || query || category !== 'All' || location !== 'All Locations' || availability !== 'All' || minRating > 0 || dateCreated || featuredOnly || availableNow) && (
               <button
                 onClick={clearSearch}
                 className="mt-3 px-4 py-2 bg-trust-600 text-white rounded-lg hover:bg-trust-700 transition-colors text-sm"

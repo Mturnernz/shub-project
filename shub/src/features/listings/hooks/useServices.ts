@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Service } from '../../../types';
+import { aucklandLocations } from '../../../data/mockData';
 
 export const useServices = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -16,8 +17,7 @@ export const useServices = () => {
         throw new Error('Supabase client not initialized');
       }
 
-      // Get all available services with host information - call searchServices with defaults
-      await searchServices('', 'All', 'All Locations', 'All', 0, '', false);
+      await searchServices('', 'All', 'All Locations', 'All', 0, '', false, false);
     } catch (err) {
       console.error('Error fetching services:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch services');
@@ -27,13 +27,14 @@ export const useServices = () => {
   };
 
   const searchServices = async (
-    query: string, 
-    category: string, 
-    location: string, 
-    availability?: string, 
-    minRating?: number, 
+    query: string,
+    category: string,
+    location: string,
+    availability?: string,
+    minRating?: number,
     dateCreated?: string,
-    featuredOnly?: boolean
+    featuredOnly?: boolean,
+    availableNow?: boolean
   ) => {
     try {
       setLoading(true);
@@ -42,16 +43,6 @@ export const useServices = () => {
       if (!supabase) {
         throw new Error('Supabase client not initialized');
       }
-
-      console.log('Filter parameters:', {
-        query,
-        category,
-        location,
-        availability,
-        minRating,
-        dateCreated,
-        featuredOnly
-      });
 
       // Start with base query for services and join with users table for host info
       let supabaseQuery = supabase
@@ -77,17 +68,24 @@ export const useServices = () => {
         supabaseQuery = supabaseQuery.eq('category', category);
       }
 
-      // Apply location filter
+      // Apply location filter with Auckland region matching
       if (location && location !== 'All Locations') {
-        supabaseQuery = supabaseQuery.eq('location', location);
+        if (location === 'Auckland') {
+          // "Auckland" matches all Auckland sub-regions
+          supabaseQuery = supabaseQuery.in('location', aucklandLocations);
+        } else {
+          supabaseQuery = supabaseQuery.eq('location', location);
+        }
       }
 
-      // Apply availability filter (filter by host status)
-      if (availability && availability !== 'All') {
-        // Map UI values to database values
+      // Apply "Available Now" filter — only show hosts with status = 'available'
+      if (availableNow) {
+        supabaseQuery = supabaseQuery.eq('host.status', 'available');
+      } else if (availability && availability !== 'All') {
+        // Apply availability filter (filter by host status)
         const statusMap: Record<string, string> = {
           'Available': 'available',
-          'Busy': 'busy', 
+          'Busy': 'busy',
           'Away': 'away'
         };
         const dbStatus = statusMap[availability] || availability.toLowerCase();
@@ -112,10 +110,7 @@ export const useServices = () => {
       // Order by created date descending (newest first)
       supabaseQuery = supabaseQuery.order('created_at', { ascending: false });
 
-      console.log('Executing query...');
       const { data: servicesData, error: servicesError } = await supabaseQuery;
-
-      console.log('Query result:', { servicesData, servicesError });
 
       if (servicesError) {
         console.error('Supabase query error:', servicesError);
@@ -123,12 +118,9 @@ export const useServices = () => {
       }
 
       if (!servicesData || servicesData.length === 0) {
-        console.log('No services found for current filters - this is normal and expected for some filter combinations');
         setServices([]);
         return;
       }
-
-      console.log(`Found ${servicesData.length} services`);
 
       const transformedServices: Service[] = servicesData.map(service => ({
         id: service.id,
@@ -149,7 +141,15 @@ export const useServices = () => {
         available: service.available
       }));
 
-      console.log('Transformed services:', transformedServices.map(s => ({ title: s.title, host: s.hostName, category: s.category, location: s.location })));
+      // Sort Auckland results: if filtering by Auckland region, sort by location specificity
+      if (location && aucklandLocations.includes(location) && location !== 'Auckland') {
+        transformedServices.sort((a, b) => {
+          const aMatch = a.location === location ? 0 : 1;
+          const bMatch = b.location === location ? 0 : 1;
+          return aMatch - bMatch;
+        });
+      }
+
       setServices(transformedServices);
     } catch (err) {
       console.error('Error searching services:', err);
