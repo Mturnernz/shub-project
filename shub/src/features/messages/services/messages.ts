@@ -15,6 +15,11 @@ export interface Conversation {
   booking_id: string;
   last_message?: MessageWithSender;
   unread_count: number;
+  other_user?: {
+    id: string;
+    display_name: string;
+    avatar_url?: string;
+  };
   booking?: {
     id: string;
     status: string;
@@ -156,12 +161,12 @@ export const getUserConversations = async (
   userId: string
 ): Promise<{ data: Conversation[] | null; error: any }> => {
   try {
-    // First get all bookings for the user
+    // Get all bookings the user is part of (include pending so both parties can message)
     const { data: bookings, error: bookingsError } = await supabase
       .from('bookings')
       .select('id, status, start_time, worker_id, client_id')
       .or(`worker_id.eq.${userId},client_id.eq.${userId}`)
-      .in('status', ['confirmed', 'completed'])
+      .in('status', ['pending', 'confirmed', 'completed'])
       .order('created_at', { ascending: false });
 
     if (bookingsError) {
@@ -172,11 +177,26 @@ export const getUserConversations = async (
       return { data: [], error: null };
     }
 
-    // Get latest message for each booking
+    // Collect other-user IDs to batch-fetch profiles
+    const otherUserIds = bookings.map((b) =>
+      b.worker_id === userId ? b.client_id : b.worker_id
+    );
+    const uniqueIds = [...new Set(otherUserIds)];
+
+    // Fetch other users' display names in one query
+    const { data: profiles } = await supabase
+      .from('users')
+      .select('id, display_name, avatar_url')
+      .in('id', uniqueIds);
+
+    const profileMap = new Map(
+      (profiles || []).map((p: any) => [p.id, p])
+    );
+
+    // Build conversations with latest message + unread count
     const conversations: Conversation[] = [];
 
     for (const booking of bookings) {
-      // Get latest message
       const { data: latestMessage } = await supabase
         .from('messages')
         .select(`
@@ -190,22 +210,23 @@ export const getUserConversations = async (
         .limit(1)
         .single();
 
-      // Count unread messages (simplified - could be enhanced with read receipts)
-      const { count: unreadCount } = await supabase
-        .from('messages')
-        .select('*', { count: 'exact', head: true })
-        .eq('booking_id', booking.id)
-        .neq('sender_id', userId);
+      const unreadCount = await getUnreadCount(booking.id, userId);
+
+      const otherUserId = booking.worker_id === userId ? booking.client_id : booking.worker_id;
+      const otherProfile = profileMap.get(otherUserId);
 
       conversations.push({
         booking_id: booking.id,
         last_message: latestMessage || undefined,
         unread_count: unreadCount || 0,
-        booking
+        other_user: otherProfile
+          ? { id: otherProfile.id, display_name: otherProfile.display_name, avatar_url: otherProfile.avatar_url }
+          : undefined,
+        booking,
       });
     }
 
-    // Sort by last message time or booking time
+    // Sort by last message time (most recent first), fall back to booking time
     conversations.sort((a, b) => {
       const aTime = a.last_message?.created_at || a.booking?.start_time || '';
       const bTime = b.last_message?.created_at || b.booking?.start_time || '';
@@ -219,22 +240,71 @@ export const getUserConversations = async (
 };
 
 /**
- * Mark messages as read (placeholder for read receipts)
+ * Mark messages as read by storing the current timestamp in the booking's
+ * metadata JSONB field. The key is `last_read_<userId>`.
  */
 export const markMessagesAsRead = async (
   bookingId: string,
   userId: string
 ): Promise<{ success: boolean; error?: any }> => {
   try {
-    // This is a placeholder implementation
-    // In a full implementation, you might have a separate read_receipts table
-    // or add a read_at field to messages
+    // Fetch current metadata
+    const { data: booking, error: fetchErr } = await supabase
+      .from('bookings')
+      .select('metadata')
+      .eq('id', bookingId)
+      .single();
 
-    console.log(`Marking messages as read for booking ${bookingId} by user ${userId}`);
+    if (fetchErr) return { success: false, error: fetchErr };
+
+    const metadata = (booking?.metadata as Record<string, any>) || {};
+    metadata[`last_read_${userId}`] = new Date().toISOString();
+
+    const { error: updateErr } = await supabase
+      .from('bookings')
+      .update({ metadata })
+      .eq('id', bookingId);
+
+    if (updateErr) return { success: false, error: updateErr };
 
     return { success: true };
   } catch (error) {
     return { success: false, error };
+  }
+};
+
+/**
+ * Get the count of messages sent after the user's last-read timestamp.
+ */
+export const getUnreadCount = async (
+  bookingId: string,
+  userId: string
+): Promise<number> => {
+  try {
+    // Get the last-read timestamp from booking metadata
+    const { data: booking } = await supabase
+      .from('bookings')
+      .select('metadata')
+      .eq('id', bookingId)
+      .single();
+
+    const metadata = (booking?.metadata as Record<string, any>) || {};
+    const lastRead = metadata[`last_read_${userId}`];
+
+    let query = supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('booking_id', bookingId)
+      .neq('sender_id', userId);
+
+    if (lastRead) {
+      query = query.gt('created_at', lastRead);
+    }
+
+    const { count } = await query;
+    return count || 0;
+  } catch {
+    return 0;
   }
 };
 

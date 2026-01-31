@@ -6,8 +6,10 @@ import {
   getMessagesByBooking,
   sendMessage,
   markMessagesAsRead,
-  type MessageWithSender
+  type MessageWithSender,
+  type Message,
 } from '../services/messages';
+import { useMessageRealtime } from '../hooks/useMessageRealtime';
 import type { BookingWithProfiles } from '../../bookings/services/bookings';
 import ReportModal from '../../safety/components/ReportModal';
 
@@ -30,6 +32,20 @@ const MessageThread: React.FC<MessageThreadProps> = ({
 
   const isWorker = booking.worker_id === currentUserId;
   const otherUser = isWorker ? 'Client' : 'Worker';
+
+  // Real-time message subscription
+  useMessageRealtime(booking.id, currentUserId, {
+    onMessageReceived: (message: Message) => {
+      setMessages(prev => {
+        // Avoid duplicates (in case of race with optimistic update)
+        if (prev.some(m => m.id === message.id)) return prev;
+        return [...prev, { ...message, sender: { display_name: otherUser } }];
+      });
+    },
+    onMessageDeleted: (messageId: string) => {
+      setMessages(prev => prev.filter(m => m.id !== messageId));
+    },
+  });
 
   // Load messages
   useEffect(() => {
