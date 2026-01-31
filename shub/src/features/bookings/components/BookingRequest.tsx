@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, X, AlertTriangle } from 'lucide-react';
+import { Calendar, Clock, X, AlertTriangle, DollarSign } from 'lucide-react';
 import type { BookingRequest as BookingRequestType } from '../services/bookings';
 
 interface BookingRequestProps {
@@ -202,6 +202,19 @@ const BookingRequest: React.FC<BookingRequestProps> = ({
             <p className="text-xs text-gray-500 mt-1">
               {message.length}/500 characters
             </p>
+          </div>
+
+          {/* Payment Notice */}
+          <div className="p-3 bg-trust-50 border border-trust-200 rounded-lg">
+            <div className="flex items-start gap-2">
+              <DollarSign className="w-4 h-4 text-trust-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs text-trust-800 font-medium">Payment arranged directly</p>
+                <p className="text-xs text-trust-700 mt-0.5">
+                  Payment is arranged directly between you and the provider via messaging after your booking is confirmed. Shub does not process payments.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Safety Notice */}

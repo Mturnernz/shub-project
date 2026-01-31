@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Calendar, Clock, User, MapPin, MessageSquare, XCircle, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, User, MessageSquare, XCircle, CheckCircle, DollarSign } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/stores/auth.store';
 import { getBookingById, type BookingWithProfiles } from '../../features/bookings/services/bookings';
 import { useBookings } from '../../features/bookings/hooks/useBookings';
@@ -230,6 +230,31 @@ const BookingDetailPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Payment Coordination */}
+      {(booking.status === 'confirmed' || booking.status === 'pending') && (
+        <div className="bg-trust-50 border border-trust-200 rounded-2xl p-4">
+          <div className="flex items-start gap-3">
+            <DollarSign className="w-5 h-5 text-trust-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-trust-800 font-medium">Payment arranged directly</p>
+              <p className="text-sm text-trust-700 mt-1">
+                {booking.status === 'confirmed'
+                  ? `Use the messaging feature to arrange payment directly with ${otherName}. Shub does not process or hold payments.`
+                  : 'Once confirmed, you can arrange payment details through messaging. Shub does not process payments.'}
+              </p>
+              {booking.status === 'confirmed' && (
+                <button
+                  onClick={() => navigate(`/bookings/${booking.id}/chat`, { state: { booking } })}
+                  className="mt-2 text-sm text-trust-600 font-medium hover:text-trust-700 underline"
+                >
+                  Discuss payment in chat
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Safety Reminder */}
       {booking.status === 'confirmed' && (
