@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({
   onLogout
 }) => {
   return (
-    <header className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
+    <header className="bg-gradient-to-r from-trust-600 to-warm-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           {showBackButton && onBack && (

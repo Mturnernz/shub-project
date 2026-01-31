@@ -104,7 +104,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -116,14 +116,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
           </button>
           
           <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mr-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-trust-500 to-warm-500 flex items-center justify-center mr-3">
               <LogIn className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
             </div>
           </div>
-          <p className="text-purple-100">Log in to your Shub account</p>
+          <p className="text-trust-100">Log in to your Shub account</p>
         </div>
 
         {/* Login Form */}
@@ -146,7 +146,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
                   placeholder="Enter your email address"
                   disabled={loading}
                 />
@@ -164,14 +164,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
                   placeholder="Enter your password"
                   disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-trust-500 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -182,7 +182,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing In...' : 'Log In'}
             </button>
@@ -190,7 +190,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
 
           {/* Forgot Password Link */}
           <div className="mt-4 text-center">
-            <button className="text-sm text-purple-600 hover:text-purple-700 underline">
+            <button className="text-sm text-trust-600 hover:text-trust-700 underline">
               Forgot your password?
             </button>
           </div>
@@ -198,11 +198,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
 
         {/* Sign Up Link */}
         <div className="text-center mt-6">
-          <p className="text-purple-100 text-sm">
+          <p className="text-trust-100 text-sm">
             Don't have an account?{' '}
             <button
               onClick={onBack}
-              className="text-white font-semibold underline hover:text-purple-200 transition-colors"
+              className="text-white font-semibold underline hover:text-trust-200 transition-colors"
             >
               Go back to sign up
             </button>

@@ -158,7 +158,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onPhotosUpdate, use
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Profile Photos</h3>
-        <span className={`text-sm ${hasMinimum ? 'text-green-600' : 'text-orange-600'}`}>
+        <span className={`text-sm ${hasMinimum ? 'text-safe-600' : 'text-orange-600'}`}>
           {photoItems.length}/10 photos {!hasMinimum && '(minimum 3 required)'}
         </span>
       </div>
@@ -174,8 +174,8 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onPhotosUpdate, use
         <div
           className={`border-2 border-dashed rounded-2xl p-8 text-center transition-colors ${
             dragActive
-              ? 'border-purple-400 bg-purple-50'
-              : 'border-gray-300 hover:border-purple-400 hover:bg-purple-50'
+              ? 'border-trust-400 bg-trust-50'
+              : 'border-gray-300 hover:border-trust-400 hover:bg-trust-50'
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -238,7 +238,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onPhotosUpdate, use
                   {index > 0 && (
                     <button
                       onClick={() => movePhoto(index, 'up')}
-                      className="p-1 text-gray-500 hover:text-purple-600 transition-colors"
+                      className="p-1 text-gray-500 hover:text-trust-600 transition-colors"
                     >
                       <ChevronUp className="w-4 h-4" />
                     </button>
@@ -246,7 +246,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onPhotosUpdate, use
                   {index < photoItems.length - 1 && (
                     <button
                       onClick={() => movePhoto(index, 'down')}
-                      className="p-1 text-gray-500 hover:text-purple-600 transition-colors"
+                      className="p-1 text-gray-500 hover:text-trust-600 transition-colors"
                     >
                       <ChevronDown className="w-4 h-4" />
                     </button>

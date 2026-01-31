@@ -28,9 +28,9 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-trust-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
         </div>
       </div>
@@ -39,12 +39,12 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || 'Profile not found'}</p>
           <button
             onClick={onBack}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            className="px-4 py-2 bg-trust-600 text-white rounded-lg hover:bg-trust-700 transition-colors"
           >
             Go Back
           </button>
@@ -54,12 +54,12 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
   }
 
   const sections = [
-    { id: 'overview' as Section, label: 'Overview', icon: User, color: 'text-purple-600' },
-    { id: 'photos' as Section, label: 'Photos', icon: Image, color: 'text-pink-600' },
+    { id: 'overview' as Section, label: 'Overview', icon: User, color: 'text-trust-600' },
+    { id: 'photos' as Section, label: 'Photos', icon: Image, color: 'text-warm-600' },
     { id: 'bio' as Section, label: 'Bio', icon: FileText, color: 'text-indigo-600' },
-    { id: 'services' as Section, label: 'Services', icon: Settings, color: 'text-green-600' },
+    { id: 'services' as Section, label: 'Services', icon: Settings, color: 'text-safe-600' },
     { id: 'availability' as Section, label: 'Status', icon: CheckCircle, color: 'text-orange-600' },
-    { id: 'location' as Section, label: 'Location', icon: MapPin, color: 'text-blue-600' },
+    { id: 'location' as Section, label: 'Location', icon: MapPin, color: 'text-trust-600' },
     { id: 'languages' as Section, label: 'Languages', icon: Globe, color: 'text-teal-600' },
   ];
 
@@ -108,12 +108,12 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
                 <div className="flex-1">
                   <div className="w-full bg-gray-200 rounded-full h-3">
                     <div
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-trust-600 to-warm-600 h-3 rounded-full transition-all duration-500"
                       style={{ width: `${profileCompletion}%` }}
                     ></div>
                   </div>
                 </div>
-                <span className="text-lg font-semibold text-purple-600">{profileCompletion}%</span>
+                <span className="text-lg font-semibold text-trust-600">{profileCompletion}%</span>
               </div>
               <p className="text-sm text-gray-600 mt-2">
                 Complete your profile to attract more clients and increase bookings.
@@ -128,7 +128,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
                   className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 text-left group"
                 >
                   <div className="flex items-center">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform`}>
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-trust-100 to-warm-100 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform`}>
                       <section.icon className={`w-6 h-6 ${section.color}`} />
                     </div>
                     <div className="flex-1">
@@ -151,29 +151,29 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Profile Status</h2>
               {profile.isPublished ? (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <div className="bg-safe-50 border border-safe-200 rounded-xl p-4">
                   <div className="flex items-center">
-                    <CheckCircle className="w-6 h-6 text-green-600 mr-3" />
+                    <CheckCircle className="w-6 h-6 text-safe-600 mr-3" />
                     <div>
-                      <h3 className="font-semibold text-green-900">Profile is Live!</h3>
-                      <p className="text-green-700 text-sm">Your profile is published and visible to clients.</p>
+                      <h3 className="font-semibold text-safe-900">Profile is Live!</h3>
+                      <p className="text-safe-700 text-sm">Your profile is published and visible to clients.</p>
                     </div>
                   </div>
                 </div>
               ) : profileCompletion === 100 ? (
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <div className="bg-trust-50 border border-trust-200 rounded-xl p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <Send className="w-6 h-6 text-blue-600 mr-3" />
+                      <Send className="w-6 h-6 text-trust-600 mr-3" />
                       <div>
-                        <h3 className="font-semibold text-blue-900">Ready to Publish!</h3>
-                        <p className="text-blue-700 text-sm">Your profile is complete and ready to go live.</p>
+                        <h3 className="font-semibold text-trust-900">Ready to Publish!</h3>
+                        <p className="text-trust-700 text-sm">Your profile is complete and ready to go live.</p>
                       </div>
                     </div>
                     <button
                       onClick={handlePublishProfile}
                       disabled={!canPublish}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 font-semibold"
+                      className="bg-gradient-to-r from-trust-600 to-warm-600 text-white px-4 py-2 rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 font-semibold"
                     >
                       {saving ? 'Publishing...' : 'Publish Profile'}
                     </button>
@@ -265,9 +265,9 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
   const activeTab = sections.find(s => s.id === activeSection);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
+      <header className="bg-gradient-to-r from-trust-600 to-warm-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <button
@@ -280,7 +280,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
               <h1 className="text-2xl font-bold tracking-tight">
                 {showPreview ? 'Profile Preview' : activeSection === 'overview' ? 'Profile Management' : activeTab?.label}
               </h1>
-              <p className="text-purple-100 text-sm">
+              <p className="text-trust-100 text-sm">
                 {showPreview 
                   ? 'How your profile appears to clients'
                   : activeSection === 'overview' 
@@ -305,7 +305,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
               <button
                 onClick={handlePublishProfile}
                 disabled={saving}
-                className="flex items-center px-4 py-2 bg-white/90 text-purple-600 hover:bg-white rounded-lg transition-colors font-semibold disabled:opacity-50"
+                className="flex items-center px-4 py-2 bg-white/90 text-trust-600 hover:bg-white rounded-lg transition-colors font-semibold disabled:opacity-50"
               >
                 <Send className="w-4 h-4 mr-2" />
                 {saving ? 'Publishing...' : 'Publish'}
@@ -334,7 +334,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
                 onClick={() => setActiveSection(section.id)}
                 className={`flex items-center px-4 py-2 rounded-full whitespace-nowrap transition-all duration-200 ${
                   activeSection === section.id
-                    ? 'bg-white shadow-lg text-purple-600'
+                    ? 'bg-white shadow-lg text-trust-600'
                     : 'bg-white/70 text-gray-600 hover:bg-white'
                 }`}
               >

@@ -71,7 +71,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Location & Service Areas</h3>
         {isSaving && (
-          <span className="text-sm text-blue-600">Saving...</span>
+          <span className="text-sm text-trust-600">Saving...</span>
         )}
       </div>
 
@@ -85,7 +85,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
         <select
           value={localPrimaryLocation}
           onChange={(e) => setLocalPrimaryLocation(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
         >
           <option value="">Select your primary location</option>
           {availableLocations.map((location) => (
@@ -115,7 +115,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
                 value={newAreaCity}
                 onChange={(e) => setNewAreaCity(e.target.value)}
                 placeholder="Enter city or area name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
                 onKeyPress={(e) => e.key === 'Enter' && addServiceArea()}
               />
             </div>
@@ -129,7 +129,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
                   placeholder="20"
                   min="5"
                   max="100"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
                 />
                 <span className="text-xs text-gray-500 block mt-1">km radius</span>
               </div>
@@ -137,7 +137,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
               <button
                 onClick={addServiceArea}
                 disabled={!newAreaCity.trim()}
-                className="px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -159,7 +159,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center">
-                      <MapPin className="w-4 h-4 text-purple-500 mr-2" />
+                      <MapPin className="w-4 h-4 text-trust-500 mr-2" />
                       <span className="font-medium text-gray-900">{area.city}</span>
                     </div>
                     
@@ -173,7 +173,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
                         onChange={(e) => updateServiceAreaRadius(index, parseInt(e.target.value))}
                         className="flex-1 max-w-32"
                       />
-                      <span className="text-sm font-medium text-purple-600 min-w-12">
+                      <span className="text-sm font-medium text-trust-600 min-w-12">
                         {area.radius}km
                       </span>
                     </div>
@@ -196,15 +196,15 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
       <button
         onClick={handleSave}
         disabled={isSaving}
-        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSaving ? 'Saving...' : 'Save Location Settings'}
       </button>
 
       {/* Guidelines */}
-      <div className="bg-blue-50 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 mb-2">Location Guidelines</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
+      <div className="bg-trust-50 rounded-lg p-4">
+        <h4 className="font-medium text-trust-900 mb-2">Location Guidelines</h4>
+        <ul className="text-sm text-trust-800 space-y-1">
           <li>• Set your primary location where you're based most of the time</li>
           <li>• Add service areas where you're willing to travel for appointments</li>
           <li>• Service radius determines how far you'll travel within each area</li>

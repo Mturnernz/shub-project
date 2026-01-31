@@ -15,13 +15,13 @@ const HostDashboard: React.FC<HostDashboardProps> = ({
   const { percentage, missingFields, isComplete } = useProfileCompletion(userProfile);
 
   const getCompletionColor = (percentage: number) => {
-    if (percentage >= 80) return 'text-green-600';
+    if (percentage >= 80) return 'text-safe-600';
     if (percentage >= 60) return 'text-yellow-600';
     return 'text-red-600';
   };
 
   const getCompletionBgColor = (percentage: number) => {
-    if (percentage >= 80) return 'bg-green-100 border-green-200';
+    if (percentage >= 80) return 'bg-safe-100 border-safe-200';
     if (percentage >= 60) return 'bg-yellow-100 border-yellow-200';
     return 'bg-red-100 border-red-200';
   };
@@ -29,7 +29,7 @@ const HostDashboard: React.FC<HostDashboardProps> = ({
   return (
     <div className="px-4 py-8 space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl p-6 border border-purple-200">
+      <div className="bg-gradient-to-r from-trust-500/20 to-warm-500/20 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Welcome back, {userProfile?.name || 'Host'}!
         </h2>
@@ -39,11 +39,11 @@ const HostDashboard: React.FC<HostDashboardProps> = ({
       </div>
 
       {/* Profile Management Section */}
-      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-purple-200">
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold text-gray-900">Profile Management</h3>
           {isComplete ? (
-            <CheckCircle className="w-6 h-6 text-green-600" />
+            <CheckCircle className="w-6 h-6 text-safe-600" />
           ) : (
             <AlertCircle className="w-6 h-6 text-yellow-600" />
           )}
@@ -54,7 +54,7 @@ const HostDashboard: React.FC<HostDashboardProps> = ({
             <div className="flex items-center space-x-4">
               <button
                 onClick={onManageProfile}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 font-semibold flex items-center space-x-2"
+                className="bg-gradient-to-r from-trust-600 to-warm-600 text-white px-6 py-3 rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 font-semibold flex items-center space-x-2"
               >
                 <Settings className="w-5 h-5" />
                 <span>Manage Profile</span>
@@ -127,31 +127,31 @@ const HostDashboard: React.FC<HostDashboardProps> = ({
       </div>
 
       {/* Quick Stats Section */}
-      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-purple-200">
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
           <BarChart3 className="w-5 h-5" />
           <span>Quick Stats</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
-            <div className="text-2xl font-bold text-blue-600 mb-1">0</div>
+          <div className="text-center p-4 bg-gradient-to-br from-trust-50 to-trust-100 rounded-xl">
+            <div className="text-2xl font-bold text-trust-600 mb-1">0</div>
             <div className="text-sm text-gray-600 flex items-center justify-center space-x-1">
               <Calendar className="w-4 h-4" />
               <span>Active Bookings</span>
             </div>
           </div>
 
-          <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
-            <div className="text-2xl font-bold text-green-600 mb-1">0</div>
+          <div className="text-center p-4 bg-gradient-to-br from-safe-50 to-safe-100 rounded-xl">
+            <div className="text-2xl font-bold text-safe-600 mb-1">0</div>
             <div className="text-sm text-gray-600 flex items-center justify-center space-x-1">
               <Users className="w-4 h-4" />
               <span>Total Clients</span>
             </div>
           </div>
 
-          <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl">
-            <div className="text-2xl font-bold text-purple-600 mb-1">
+          <div className="text-center p-4 bg-gradient-to-br from-trust-50 to-trust-100 rounded-xl">
+            <div className="text-2xl font-bold text-trust-600 mb-1">
               {userProfile?.verified ? 'Verified' : 'Pending'}
             </div>
             <div className="text-sm text-gray-600">Profile Status</div>

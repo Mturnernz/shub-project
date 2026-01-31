@@ -98,11 +98,11 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({
         </div>
         <div className="flex items-center gap-2">
           {isMinimumMet ? (
-            <Check className="w-5 h-5 text-green-600" />
+            <Check className="w-5 h-5 text-safe-600" />
           ) : (
             <AlertTriangle className="w-5 h-5 text-yellow-600" />
           )}
-          <span className={`text-sm font-medium ${isMinimumMet ? 'text-green-600' : 'text-yellow-600'}`}>
+          <span className={`text-sm font-medium ${isMinimumMet ? 'text-safe-600' : 'text-yellow-600'}`}>
             {photos.length}/{minPhotos} minimum
           </span>
         </div>
@@ -140,8 +140,8 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({
             className={`
               aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors
               ${dragOver
-                ? 'border-purple-500 bg-purple-50'
-                : 'border-gray-300 hover:border-purple-400 hover:bg-gray-50'
+                ? 'border-trust-500 bg-trust-50'
+                : 'border-gray-300 hover:border-trust-400 hover:bg-gray-50'
               }
               ${uploading ? 'opacity-50 cursor-not-allowed' : ''}
             `}
@@ -154,7 +154,7 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({
             onClick={() => !uploading && fileInputRef.current?.click()}
           >
             {uploading ? (
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-trust-600" />
             ) : (
               <>
                 <Upload className="w-8 h-8 text-gray-400 mb-2" />
@@ -196,9 +196,9 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({
       />
 
       {/* Requirements */}
-      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="font-medium text-blue-900 mb-2">Photo Guidelines</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
+      <div className="p-4 bg-trust-50 border border-trust-200 rounded-lg">
+        <h4 className="font-medium text-trust-900 mb-2">Photo Guidelines</h4>
+        <ul className="text-sm text-trust-800 space-y-1">
           <li>• At least {minPhotos} photos required to publish your profile</li>
           <li>• First photo will be your primary profile picture</li>
           <li>• Photos should be clear and well-lit</li>
@@ -208,8 +208,8 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({
       </div>
 
       {/* Watermark Notice */}
-      <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
-        <p className="text-sm text-purple-700">
+      <div className="p-3 bg-trust-50 border border-trust-200 rounded-lg">
+        <p className="text-sm text-trust-700">
           <strong>Privacy Protection:</strong> All photos will include a discrete watermark with your profile ID to prevent unauthorized use.
         </p>
       </div>

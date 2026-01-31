@@ -18,9 +18,17 @@
       "Bash(git add:*)",
       "Bash(git rm:*)",
       "Read(//c/Users/mturn/OneDrive/Desktop/**)",
-      "Bash(git commit:*)",
-      "Bash(git remote add:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git config:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git worktree:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nConsolidate to monorepo: absorb shub app into shub-project\n\n- Remove broken gitlink/submodule for shub/ subdirectory\n- Add all application source files directly to shub-project repo\n- Add root .gitignore \\(excludes .env, node_modules, dist, .bolt, \n  supabase/.temp, PDFs, OS artifacts, integration workspace\\)\n- Add Docker development environment \\(docker-compose.yml, Dockerfile\\)\n- Add dev-scripts.bat and README-Docker.md\n- Include all 60+ source files previously staged but uncommitted in\n  inner shub repo \\(booking system, messaging, moderation, safety,\n  verification, reporting components, hooks, and services\\)\n- Include 13 Supabase migrations covering schema setup through\n  Phase 2 bookings alignment\n- Clean up nul artifact files\n\nThe inner shub repo \\(Mturnernz/shub\\) remains on GitHub as historical\nreference. This repo \\(shub-project\\) is now the single source of truth.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx vite build)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nPhase 0: Architectural foundation for production Shub platform\n\nRestructure from bolt.new prototype to the production architecture\nprescribed by the foundational research document.\n\nArchitecture changes:\n- Feature-based \"Screaming Architecture\" folder structure\n  \\(features/auth, features/listings, features/bookings,\n   features/messages, features/profiles, features/safety,\n   features/verification, features/admin\\)\n- React Router v7 with lazy-loaded routes \\(replaces 486-line\n  state-driven App.tsx with 15-line router setup\\)\n- Zustand stores for auth and UI state \\(replaces prop drilling\\)\n- TanStack Query client configured \\(5min stale, 30min gc\\)\n- New AppShell layout with URL-based bottom navigation\n\nDesign system:\n- Tailwind semantic color tokens: trust \\(blue #0066CC\\),\n  safe \\(green #10B981\\), warm \\(coral #FF6B4A\\)\n- Surface and text tokens ready for dark mode\n- Replaces purple/pink palette with trust-first blue/green\n\nTesting:\n- Vitest + React Testing Library + jest-dom configured\n- 43 content moderation tests passing \\(safety-critical code\\)\n- Coverage targeting business logic in features/safety/\n\nPWA foundation:\n- Web app manifest with theme_color #0066CC\n- Meta tags for installability and mobile optimization\n- Service worker placeholder ready for Phase 5\n\nDatabase:\n- Schema alignment migration adding soft deletes \\(deleted_at\\),\n  JSONB metadata fields, reviews table with category ratings,\n  favorites table, and updated RLS policies\n\nBuild: vite build passes \\(1660 modules, 0 errors\\)\nTests: vitest run passes \\(43/43\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git rebase:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []

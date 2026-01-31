@@ -37,13 +37,13 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'home', onTabChan
   const tabs = userType === 'host' ? hostTabs : userType === 'client' ? clientTabs : guestTabs;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
       <main className="pb-20">
         {children}
       </main>
       
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-purple-100 px-4 py-2">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-trust-100 px-4 py-2">
         <div className="flex justify-around items-center max-w-md mx-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -55,8 +55,8 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'home', onTabChan
                 onClick={() => handleTabClick(tab.id)}
                 className={`flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 ${
                   isActive 
-                    ? 'text-purple-600 bg-purple-100' 
-                    : 'text-gray-500 hover:text-purple-500 hover:bg-purple-50'
+                    ? 'text-trust-600 bg-trust-100' 
+                    : 'text-gray-500 hover:text-trust-500 hover:bg-trust-50'
                 }`}
               >
                 <Icon className="w-5 h-5 mb-1" />

@@ -56,7 +56,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
       <div className="relative">
         <button
           onClick={onBack}
@@ -85,7 +85,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
               key={index}
               onClick={() => setSelectedImage(index)}
               className={`w-3 h-3 rounded-full transition-colors ${
-                selectedImage === index ? 'bg-purple-600' : 'bg-gray-300'
+                selectedImage === index ? 'bg-trust-600' : 'bg-gray-300'
               }`}
             />
           ))}
@@ -107,13 +107,13 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
                   <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
                   <span className="text-sm text-gray-600">{service.rating} ({service.reviewCount} reviews)</span>
                   {service.verified && (
-                    <Shield className="w-4 h-4 text-green-500 ml-2" />
+                    <Shield className="w-4 h-4 text-safe-500 ml-2" />
                   )}
                 </div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-purple-600">${service.price}</div>
+              <div className="text-2xl font-bold text-trust-600">${service.price}</div>
               <div className="text-sm text-gray-500">per session</div>
             </div>
           </div>
@@ -160,8 +160,8 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
               disabled={bookingLoading}
               className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-colors disabled:opacity-50 ${
                 isGuest
-                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 cursor-pointer'
-                  : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700'
+                  ? 'bg-gradient-to-r from-safe-600 to-emerald-600 text-white hover:from-safe-700 hover:to-emerald-700 cursor-pointer'
+                  : 'bg-gradient-to-r from-trust-600 to-warm-600 text-white hover:from-trust-700 hover:to-warm-700'
               }`}
             >
               <Calendar className="w-5 h-5 inline mr-2" />
@@ -172,8 +172,8 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
               disabled={!isGuest && !onSignUpAsClient}
               className={`px-6 py-4 border-2 rounded-xl font-semibold transition-colors ${
                 isGuest 
-                  ? 'border-green-200 text-green-600 hover:bg-green-50 cursor-pointer' 
-                  : 'border-purple-200 text-purple-600 hover:bg-purple-50'
+                  ? 'border-safe-200 text-safe-600 hover:bg-safe-50 cursor-pointer' 
+                  : 'border-trust-200 text-trust-600 hover:bg-trust-50'
               }`}
             >
               <MessageSquare className="w-5 h-5" />

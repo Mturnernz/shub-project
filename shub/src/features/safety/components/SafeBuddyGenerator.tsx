@@ -110,8 +110,8 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <Shield className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-safe-100 rounded-full flex items-center justify-center">
+              <Shield className="w-5 h-5 text-safe-600" />
             </div>
             <div>
               <h2 className="text-xl font-semibold text-gray-900">Safe Buddy Link</h2>
@@ -160,7 +160,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                       placeholder="e.g., 123 Queen Street, Auckland CBD"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-safe-500 focus:border-transparent"
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
@@ -177,7 +177,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
                     value={emergencyContact}
                     onChange={(e) => setEmergencyContact(e.target.value)}
                     placeholder="e.g., Police, Security, Building Management"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-safe-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -198,7 +198,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
               </button>
               <button
                 onClick={() => setStep('contacts')}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="flex-1 px-4 py-2 bg-safe-600 text-white rounded-lg hover:bg-safe-700 transition-colors"
                 disabled={!location.trim()}
               >
                 Next: Add Contacts
@@ -214,7 +214,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
               <h3 className="font-medium text-gray-900">Safety Contacts</h3>
               <button
                 onClick={() => setStep('info')}
-                className="text-sm text-green-600 hover:text-green-700"
+                className="text-sm text-safe-600 hover:text-safe-700"
               >
                 ← Back
               </button>
@@ -257,14 +257,14 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
                   placeholder="Name"
                   value={newContact.name || ''}
                   onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-safe-500 focus:border-transparent"
                 />
                 <input
                   type="text"
                   placeholder="Relationship"
                   value={newContact.relationship || ''}
                   onChange={(e) => setNewContact({ ...newContact, relationship: e.target.value })}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-safe-500 focus:border-transparent"
                 />
               </div>
 
@@ -276,7 +276,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
                     placeholder="Phone (optional)"
                     value={newContact.phone || ''}
                     onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-safe-500 focus:border-transparent"
                   />
                 </div>
                 <div className="relative">
@@ -286,7 +286,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
                     placeholder="Email (optional)"
                     value={newContact.email || ''}
                     onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-safe-500 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -296,7 +296,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
                   type="checkbox"
                   checked={newContact.notify_if_overdue || false}
                   onChange={(e) => setNewContact({ ...newContact, notify_if_overdue: e.target.checked })}
-                  className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  className="rounded border-gray-300 text-safe-600 focus:ring-safe-500"
                 />
                 Notify if overdue
               </label>
@@ -320,7 +320,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
               </button>
               <button
                 onClick={handleGenerateLink}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-safe-600 text-white rounded-lg hover:bg-safe-700 transition-colors disabled:opacity-50"
                 disabled={isGenerating}
               >
                 {isGenerating ? 'Generating...' : 'Generate Safety Link'}
@@ -332,8 +332,8 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
         {/* Step 3: Generated Link */}
         {step === 'generated' && (
           <div className="space-y-4 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-              <Shield className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-safe-100 rounded-full flex items-center justify-center mx-auto">
+              <Shield className="w-8 h-8 text-safe-600" />
             </div>
 
             <div>
@@ -353,7 +353,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
                 />
                 <button
                   onClick={handleCopyLink}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-safe-600 text-white rounded-lg hover:bg-safe-700 transition-colors flex items-center gap-2"
                 >
                   {copied ? (
                     <>
@@ -373,9 +373,9 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
               </p>
             </div>
 
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-left">
-              <h4 className="font-medium text-blue-900 mb-2">How it works:</h4>
-              <ul className="text-sm text-blue-800 space-y-1">
+            <div className="p-4 bg-trust-50 border border-trust-200 rounded-lg text-left">
+              <h4 className="font-medium text-trust-900 mb-2">How it works:</h4>
+              <ul className="text-sm text-trust-800 space-y-1">
                 <li>• Share this link with trusted contacts before your meeting</li>
                 <li>• Use the link to check in when your meeting is complete</li>
                 <li>• If you don't check in on time, your contacts will be notified</li>
@@ -385,7 +385,7 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
 
             <button
               onClick={onClose}
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="w-full px-4 py-2 bg-safe-600 text-white rounded-lg hover:bg-safe-700 transition-colors"
             >
               Done
             </button>

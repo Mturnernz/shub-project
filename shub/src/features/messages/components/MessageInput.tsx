@@ -111,7 +111,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
             disabled={disabled || isLoading}
             rows={1}
             maxLength={1000}
-            className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none max-h-32 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-trust-500 focus:border-transparent resize-none max-h-32 disabled:opacity-50 disabled:cursor-not-allowed"
           />
 
           {/* Character count */}
@@ -129,7 +129,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         <button
           type="submit"
           disabled={!message.trim() || disabled || isLoading}
-          className="p-3 bg-purple-600 text-white rounded-2xl hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+          className="p-3 bg-trust-600 text-white rounded-2xl hover:bg-trust-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
         >
           {isLoading ? (
             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -118,7 +118,7 @@ const BookingList: React.FC<BookingListProps> = ({
                       setShowFiltersDropdown(false);
                     }}
                     className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center justify-between ${
-                      statusFilter === option.value ? 'text-purple-600 bg-purple-50' : 'text-gray-700'
+                      statusFilter === option.value ? 'text-trust-600 bg-trust-50' : 'text-gray-700'
                     }`}
                   >
                     <span>{option.label}</span>
@@ -165,7 +165,7 @@ const BookingList: React.FC<BookingListProps> = ({
       {/* Load More Button (placeholder for pagination) */}
       {filteredBookings.length > 0 && filteredBookings.length % 10 === 0 && (
         <div className="text-center pt-4">
-          <button className="px-6 py-2 text-purple-600 hover:text-purple-700 font-medium transition-colors">
+          <button className="px-6 py-2 text-trust-600 hover:text-trust-700 font-medium transition-colors">
             Load More Bookings
           </button>
         </div>

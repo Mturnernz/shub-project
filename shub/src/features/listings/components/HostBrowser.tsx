@@ -178,7 +178,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
 
   const getStatusColor = (status?: string) => {
     switch (status) {
-      case 'available': return 'text-green-600 bg-green-100';
+      case 'available': return 'text-safe-600 bg-safe-100';
       case 'busy': return 'text-orange-600 bg-orange-100';
       case 'away': return 'text-gray-600 bg-gray-100';
       default: return 'text-gray-600 bg-gray-100';
@@ -195,16 +195,16 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
       {/* Header */}
-      <div className="bg-white/70 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-10">
+      <div className="bg-white/70 backdrop-blur-sm border-b border-trust-100 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               {showBackButton && onBack && (
                 <button
                   onClick={onBack}
-                  className="mr-3 p-2 text-purple-600 hover:bg-purple-100 rounded-full transition-colors"
+                  className="mr-3 p-2 text-trust-600 hover:bg-trust-100 rounded-full transition-colors"
                 >
                   ←
                 </button>
@@ -213,7 +213,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-trust-600 text-white rounded-lg hover:bg-trust-700 transition-colors"
             >
               <Filter className="w-4 h-4" />
               Filters
@@ -228,14 +228,14 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
               placeholder="Search hosts by name, location, or services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-trust-500 focus:border-transparent"
             />
           </div>
         </div>
 
         {/* Filters Panel */}
         {showFilters && (
-          <div className="border-t border-purple-100 bg-white/90 backdrop-blur-sm">
+          <div className="border-t border-trust-100 bg-white/90 backdrop-blur-sm">
             <div className="max-w-4xl mx-auto px-4 py-4 space-y-4">
               {/* Location Filter */}
               <div>
@@ -243,7 +243,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                 <select
                   value={filters.location}
                   onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
-                  className="border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500"
+                  className="border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-trust-500"
                 >
                   {locations.map(location => (
                     <option key={location} value={location}>{location}</option>
@@ -257,7 +257,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                 <select
                   value={filters.availability}
                   onChange={(e) => setFilters(prev => ({ ...prev, availability: e.target.value }))}
-                  className="border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500"
+                  className="border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-trust-500"
                 >
                   <option value="All">All</option>
                   <option value="available">Available</option>
@@ -273,7 +273,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                   id="verified"
                   checked={filters.verified}
                   onChange={(e) => setFilters(prev => ({ ...prev, verified: e.target.checked }))}
-                  className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                  className="rounded border-gray-300 text-trust-600 focus:ring-trust-500"
                 />
                 <label htmlFor="verified" className="ml-2 text-sm text-gray-700">
                   Verified hosts only
@@ -288,7 +288,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
       <div className="max-w-4xl mx-auto px-4 py-6">
         {loading ? (
           <div className="text-center py-12">
-            <div className="animate-spin w-8 h-8 border-2 border-purple-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <div className="animate-spin w-8 h-8 border-2 border-trust-600 border-t-transparent rounded-full mx-auto mb-4"></div>
             <p className="text-gray-600">Loading hosts...</p>
           </div>
         ) : (
@@ -320,7 +320,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-gray-900">{host.name}</h3>
                         {host.verified && (
-                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                          <div className="w-5 h-5 bg-safe-500 rounded-full flex items-center justify-center">
                             <span className="text-white text-xs">✓</span>
                           </div>
                         )}

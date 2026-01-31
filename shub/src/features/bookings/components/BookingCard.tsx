@@ -76,8 +76,8 @@ const BookingCard: React.FC<BookingCardProps> = ({
               className="w-12 h-12 rounded-full object-cover"
             />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-              <User className="w-6 h-6 text-purple-600" />
+            <div className="w-12 h-12 rounded-full bg-trust-100 flex items-center justify-center">
+              <User className="w-6 h-6 text-trust-600" />
             </div>
           )}
           <div>
@@ -121,7 +121,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
             <>
               <button
                 onClick={() => onUpdateStatus(booking.id, 'confirmed')}
-                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                className="flex-1 bg-safe-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-safe-700 transition-colors"
               >
                 Confirm
               </button>
@@ -148,7 +148,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           {canMessage && onOpenChat && (
             <button
               onClick={() => onOpenChat(booking)}
-              className="flex items-center gap-2 bg-purple-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
+              className="flex items-center gap-2 bg-trust-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-trust-700 transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
               Message
@@ -159,7 +159,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           {userRole === 'worker' && booking.status === 'confirmed' && (
             <button
               onClick={() => setShowSafeBuddy(true)}
-              className="flex items-center gap-2 bg-green-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+              className="flex items-center gap-2 bg-safe-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-safe-700 transition-colors"
             >
               <Shield className="w-4 h-4" />
               Safety Link

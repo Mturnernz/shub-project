@@ -28,17 +28,17 @@ const BookingStatus: React.FC<BookingStatusProps> = ({
         return {
           icon: CheckCircle,
           text: userRole === 'client' ? 'Accepted' : 'Confirmed',
-          color: 'text-green-600',
-          bgColor: 'bg-green-100',
-          borderColor: 'border-green-200'
+          color: 'text-safe-600',
+          bgColor: 'bg-safe-100',
+          borderColor: 'border-safe-200'
         };
       case 'completed':
         return {
           icon: Calendar,
           text: 'Completed',
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-100',
-          borderColor: 'border-blue-200'
+          color: 'text-trust-600',
+          bgColor: 'bg-trust-100',
+          borderColor: 'border-trust-200'
         };
       case 'cancelled':
         return {

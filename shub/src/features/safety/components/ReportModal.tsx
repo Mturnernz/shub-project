@@ -146,7 +146,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
       case 'critical': return 'text-red-600 bg-red-50 border-red-200';
       case 'high': return 'text-orange-600 bg-orange-50 border-orange-200';
       case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'low': return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'low': return 'text-trust-600 bg-trust-50 border-trust-200';
     }
   };
 
@@ -219,7 +219,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
           <div className="space-y-4">
             <button
               onClick={() => setStep('category')}
-              className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1"
+              className="text-sm text-trust-600 hover:text-trust-700 flex items-center gap-1"
             >
               ← Back to categories
             </button>
@@ -242,7 +242,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
                 placeholder="Provide specific details about what happened, when it occurred, and any other relevant information that will help our moderation team..."
                 rows={5}
                 maxLength={1000}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-500 focus:border-transparent resize-none"
                 disabled={isSubmitting}
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -294,8 +294,8 @@ const ReportModal: React.FC<ReportModalProps> = ({
         {/* Confirmation Step */}
         {step === 'confirmation' && (
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-              <Flag className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-safe-100 rounded-full flex items-center justify-center mx-auto">
+              <Flag className="w-8 h-8 text-safe-600" />
             </div>
 
             <div>

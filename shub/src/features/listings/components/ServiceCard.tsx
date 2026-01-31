@@ -20,10 +20,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
           className="w-full h-48 object-cover"
         />
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
-          <span className="text-purple-600 font-semibold text-sm">${service.price}</span>
+          <span className="text-trust-600 font-semibold text-sm">${service.price}</span>
         </div>
         {service.verified && (
-          <div className="absolute top-3 left-3 bg-green-500 rounded-full p-1">
+          <div className="absolute top-3 left-3 bg-safe-500 rounded-full p-1">
             <Shield className="w-4 h-4 text-white" />
           </div>
         )}

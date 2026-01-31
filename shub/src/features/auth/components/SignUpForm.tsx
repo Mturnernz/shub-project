@@ -120,7 +120,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -135,8 +135,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
           <div className="flex items-center justify-center mb-4">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mr-3 ${
               userType === 'host' 
-                ? 'bg-gradient-to-br from-pink-500 to-purple-500'
-                : 'bg-gradient-to-br from-purple-500 to-pink-500'
+                ? 'bg-gradient-to-br from-warm-500 to-trust-500'
+                : 'bg-gradient-to-br from-trust-500 to-warm-500'
             }`}>
               {userType === 'host' ? (
                 <UserCheck className="w-6 h-6 text-white" />
@@ -148,7 +148,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
               <h2 className="text-xl font-semibold text-white">
                 {userType === 'host' ? 'Host Account' : 'Client Account'}
               </h2>
-              <p className="text-purple-100 text-sm">
+              <p className="text-trust-100 text-sm">
                 {userType === 'host' ? 'Offer your services' : 'Browse and book services'}
               </p>
             </div>
@@ -175,7 +175,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
                   placeholder="Enter your full name"
                   disabled={loading}
                 />
@@ -193,7 +193,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
                   placeholder="Enter your email address"
                   disabled={loading}
                 />
@@ -211,14 +211,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
                   placeholder="Create a password"
                   disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-trust-500 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -236,14 +236,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
                   placeholder="Confirm your password"
                   disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-500 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-trust-500 transition-colors"
                 >
                   {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -254,7 +254,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating Account...' : `Create ${userType === 'host' ? 'Host' : 'Client'} Account`}
             </button>
@@ -264,11 +264,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-500">
               By creating an account, you agree to our{' '}
-              <button className="text-purple-600 hover:text-purple-700 underline">
+              <button className="text-trust-600 hover:text-trust-700 underline">
                 Terms of Service
               </button>{' '}
               and{' '}
-              <button className="text-purple-600 hover:text-purple-700 underline">
+              <button className="text-trust-600 hover:text-trust-700 underline">
                 Privacy Policy
               </button>
             </p>
@@ -278,7 +278,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
         {/* Password Requirements */}
         <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-lg p-4">
           <h4 className="text-white font-medium mb-2 text-sm">Password Requirements:</h4>
-          <ul className="text-purple-100 text-xs space-y-1">
+          <ul className="text-trust-100 text-xs space-y-1">
             <li>• At least 6 characters long</li>
             <li>• Must match confirmation password</li>
             <li>• Use a strong, unique password</li>

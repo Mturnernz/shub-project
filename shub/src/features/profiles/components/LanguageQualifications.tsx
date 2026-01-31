@@ -175,7 +175,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
               <select
                 value={newLanguage}
                 onChange={(e) => setNewLanguage(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
               >
                 <option value="">Select language</option>
                 {commonLanguages.map((lang) => (
@@ -188,7 +188,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
               <select
                 value={newProficiency}
                 onChange={(e) => setNewProficiency(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
               >
                 {proficiencyLevels.map((level) => (
                   <option key={level} value={level}>{level}</option>
@@ -199,7 +199,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
             <button
               onClick={addLanguage}
               disabled={!newLanguage}
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="px-4 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               <Plus className="w-4 h-4 inline mr-1" />
               Add
@@ -220,14 +220,14 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
               <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center">
-                    <Globe className="w-4 h-4 text-purple-500 mr-2" />
+                    <Globe className="w-4 h-4 text-trust-500 mr-2" />
                     <span className="font-medium text-gray-900">{lang.language}</span>
                   </div>
                   
                   <select
                     value={lang.proficiency}
                     onChange={(e) => updateProficiency(index, e.target.value)}
-                    className="mt-2 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="mt-2 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-trust-500"
                   >
                     {proficiencyLevels.map((level) => (
                       <option key={level} value={level}>{level}</option>
@@ -255,7 +255,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
         </h4>
 
         {/* Upload Area */}
-        <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-purple-400 hover:bg-purple-50 transition-colors">
+        <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-trust-400 hover:bg-trust-50 transition-colors">
           <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-600 mb-2">
             Upload certificates, licenses, or other qualifications
@@ -264,7 +264,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
             PDF, JPEG, PNG, WebP • Max 10MB each
           </p>
           
-          <label className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 cursor-pointer">
+          <label className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 cursor-pointer">
             <Upload className="w-4 h-4 mr-2" />
             {uploading ? 'Uploading...' : 'Select Documents'}
             <input
@@ -290,7 +290,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
             qualificationDocuments.map((doc, index) => (
               <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between">
                 <div className="flex items-center flex-1">
-                  <FileText className="w-5 h-5 text-purple-500 mr-3" />
+                  <FileText className="w-5 h-5 text-trust-500 mr-3" />
                   <div>
                     <div className="font-medium text-gray-900 truncate">
                       {getFileNameFromUrl(doc)}
@@ -307,7 +307,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
                     href={doc}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1 text-sm text-purple-600 hover:text-purple-700 transition-colors"
+                    className="px-3 py-1 text-sm text-trust-600 hover:text-trust-700 transition-colors"
                   >
                     View
                   </a>
@@ -325,9 +325,9 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
       </div>
 
       {/* Guidelines */}
-      <div className="bg-blue-50 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 mb-2">Guidelines</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
+      <div className="bg-trust-50 rounded-lg p-4">
+        <h4 className="font-medium text-trust-900 mb-2">Guidelines</h4>
+        <ul className="text-sm text-trust-800 space-y-1">
           <li>• <strong>Languages:</strong> Add all languages you can communicate in professionally</li>
           <li>• <strong>Qualifications:</strong> Upload relevant certificates, licenses, or training documents</li>
           <li>• <strong>Verification:</strong> Documents will be reviewed for verification status</li>

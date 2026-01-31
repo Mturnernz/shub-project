@@ -60,7 +60,7 @@ const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
   const getCharCountColor = () => {
     if (charCount < minChars) return 'text-orange-600';
     if (charCount > maxChars * 0.9) return 'text-red-600';
-    return 'text-green-600';
+    return 'text-safe-600';
   };
 
   return (
@@ -69,7 +69,7 @@ const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
         <h3 className="text-lg font-semibold text-gray-900">Professional Bio</h3>
         <div className="flex items-center space-x-2">
           {isSaving && (
-            <span className="text-sm text-blue-600">Saving...</span>
+            <span className="text-sm text-trust-600">Saving...</span>
           )}
           {lastSaved && !isSaving && (
             <span className="text-sm text-gray-500">
@@ -80,15 +80,15 @@ const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
       </div>
 
       {/* Writing prompts */}
-      <div className="bg-purple-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-purple-900 mb-2 flex items-center">
+      <div className="bg-trust-50 rounded-lg p-4">
+        <h4 className="text-sm font-medium text-trust-900 mb-2 flex items-center">
           <FileText className="w-4 h-4 mr-2" />
           Writing Tips
         </h4>
-        <ul className="text-sm text-purple-800 space-y-1">
+        <ul className="text-sm text-trust-800 space-y-1">
           {bioPrompts.map((prompt, index) => (
             <li key={index} className="flex items-start">
-              <span className="text-purple-400 mr-2">•</span>
+              <span className="text-trust-400 mr-2">•</span>
               {prompt}
             </li>
           ))}
@@ -103,7 +103,7 @@ const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
           placeholder="Write a professional bio that showcases your personality, experience, and what makes you special. Be authentic and engaging to attract the right clients..."
           className={`w-full h-48 p-4 border-2 rounded-xl resize-none transition-colors focus:outline-none ${
             isValid 
-              ? 'border-gray-300 focus:border-purple-500' 
+              ? 'border-gray-300 focus:border-trust-500' 
               : charCount < minChars
               ? 'border-orange-300 focus:border-orange-500'
               : 'border-red-300 focus:border-red-500'
@@ -123,8 +123,8 @@ const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
           
           <div className="text-sm text-gray-500">
             {isValid ? (
-              <span className="text-green-600 flex items-center">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+              <span className="text-safe-600 flex items-center">
+                <span className="w-2 h-2 bg-safe-500 rounded-full mr-2"></span>
                 Bio is ready
               </span>
             ) : (

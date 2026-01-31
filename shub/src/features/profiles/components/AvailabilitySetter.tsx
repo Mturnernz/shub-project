@@ -20,9 +20,9 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
     {
       value: 'available' as const,
       label: 'Available',
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
-      borderColor: 'border-green-300',
+      color: 'text-safe-600',
+      bgColor: 'bg-safe-100',
+      borderColor: 'border-safe-300',
       description: 'Ready to accept new bookings',
       icon: '🟢',
     },
@@ -81,7 +81,7 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Availability Status</h3>
         {isSaving && (
-          <span className="text-sm text-blue-600">Saving...</span>
+          <span className="text-sm text-trust-600">Saving...</span>
         )}
       </div>
 
@@ -149,13 +149,13 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
             value={localMessage}
             onChange={handleMessageChange}
             placeholder="Add a custom message (optional)"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
             maxLength={100}
           />
           <button
             onClick={handleMessageSave}
             disabled={isSaving}
-            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50"
+            className="px-4 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50"
           >
             Save
           </button>
@@ -167,9 +167,9 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
       </div>
 
       {/* Status Guidelines */}
-      <div className="bg-blue-50 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 mb-2">Status Guidelines</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
+      <div className="bg-trust-50 rounded-lg p-4">
+        <h4 className="font-medium text-trust-900 mb-2">Status Guidelines</h4>
+        <ul className="text-sm text-trust-800 space-y-1">
           <li>• <strong>Available:</strong> Use when you're ready to accept new bookings</li>
           <li>• <strong>Busy:</strong> Use during active bookings or when temporarily unavailable</li>
           <li>• <strong>Away:</strong> Use when taking extended breaks or holidays</li>

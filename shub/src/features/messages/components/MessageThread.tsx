@@ -141,7 +141,7 @@ const MessageThread: React.FC<MessageThreadProps> = ({
         {/* Loading state */}
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-trust-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading messages...</p>
           </div>
         </div>
@@ -171,7 +171,7 @@ const MessageThread: React.FC<MessageThreadProps> = ({
             <p className="text-red-600 mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              className="px-4 py-2 bg-trust-600 text-white rounded-lg hover:bg-trust-700 transition-colors"
             >
               Retry
             </button>
@@ -193,8 +193,8 @@ const MessageThread: React.FC<MessageThreadProps> = ({
         </button>
 
         <div className="flex items-center gap-3 flex-1">
-          <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-            <User className="w-5 h-5 text-purple-600" />
+          <div className="w-10 h-10 rounded-full bg-trust-100 flex items-center justify-center">
+            <User className="w-5 h-5 text-trust-600" />
           </div>
           <div>
             <h2 className="font-semibold text-gray-900">{otherUser}</h2>
@@ -212,8 +212,8 @@ const MessageThread: React.FC<MessageThreadProps> = ({
       </div>
 
       {/* Booking Info */}
-      <div className="p-4 bg-purple-50 border-b border-purple-100">
-        <div className="flex items-center gap-4 text-sm text-purple-700">
+      <div className="p-4 bg-trust-50 border-b border-trust-100">
+        <div className="flex items-center gap-4 text-sm text-trust-700">
           <div className="flex items-center gap-1">
             <Calendar className="w-4 h-4" />
             <span>{bookingTime.date}</span>
@@ -226,11 +226,11 @@ const MessageThread: React.FC<MessageThreadProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-br from-purple-50/50 to-pink-50/50">
+      <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-br from-trust-50/50 to-warm-50/50">
         {messages.length === 0 ? (
           <div className="text-center py-8">
-            <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
-              <User className="w-8 h-8 text-purple-600" />
+            <div className="w-16 h-16 rounded-full bg-trust-100 flex items-center justify-center mx-auto mb-4">
+              <User className="w-8 h-8 text-trust-600" />
             </div>
             <h3 className="font-medium text-gray-900 mb-2">Start the conversation</h3>
             <p className="text-gray-600 text-sm">

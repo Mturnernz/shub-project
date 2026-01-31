@@ -10,10 +10,10 @@ interface HostProfilePreviewProps {
 const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, services }) => {
   const getStatusColor = () => {
     switch (profile.status) {
-      case 'available': return 'text-green-600 bg-green-100';
+      case 'available': return 'text-safe-600 bg-safe-100';
       case 'busy': return 'text-orange-600 bg-orange-100';
       case 'away': return 'text-red-600 bg-red-100';
-      default: return 'text-green-600 bg-green-100';
+      default: return 'text-safe-600 bg-safe-100';
     }
   };
 
@@ -29,7 +29,7 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
   return (
     <div className="space-y-6">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-br from-trust-500 to-warm-500 rounded-2xl p-6 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10">
           <div className="flex items-start space-x-4 mb-6">
@@ -113,7 +113,7 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="font-semibold text-gray-900 text-lg">{service.title}</h3>
                   <div className="text-right">
-                    <div className="text-xl font-bold text-purple-600">${service.price}</div>
+                    <div className="text-xl font-bold text-trust-600">${service.price}</div>
                     <div className="text-sm text-gray-500">per session</div>
                   </div>
                 </div>
@@ -126,17 +126,17 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
                       <Clock className="w-4 h-4 mr-1" />
                       <span>{service.duration}min</span>
                     </div>
-                    <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
+                    <span className="bg-trust-100 text-trust-700 px-2 py-1 rounded-full text-xs">
                       {service.category}
                     </span>
                   </div>
                   
                   <div className="flex space-x-2">
-                    <button className="px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg text-xs hover:from-purple-700 hover:to-pink-700 transition-all duration-200">
+                    <button className="px-3 py-1 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg text-xs hover:from-trust-700 hover:to-warm-700 transition-all duration-200">
                       <Calendar className="w-3 h-3 inline mr-1" />
                       Book
                     </button>
-                    <button className="px-3 py-1 border border-purple-200 text-purple-600 rounded-lg text-xs hover:bg-purple-50 transition-colors">
+                    <button className="px-3 py-1 border border-trust-200 text-trust-600 rounded-lg text-xs hover:bg-trust-50 transition-colors">
                       <MessageSquare className="w-3 h-3 inline mr-1" />
                       Message
                     </button>
@@ -153,7 +153,7 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
         {/* Primary Location */}
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
           <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <MapPin className="w-5 h-5 mr-2 text-purple-500" />
+            <MapPin className="w-5 h-5 mr-2 text-trust-500" />
             Primary Location
           </h3>
           <p className="text-gray-700">{profile.primaryLocation || profile.location || 'Not specified'}</p>
@@ -163,7 +163,7 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
         {profile.serviceAreas && profile.serviceAreas.length > 0 && (
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-              <MapPin className="w-5 h-5 mr-2 text-purple-500" />
+              <MapPin className="w-5 h-5 mr-2 text-trust-500" />
               Service Areas
             </h3>
             <div className="space-y-2">
@@ -187,12 +187,12 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
       {profile.languages && profile.languages.length > 0 && (
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
           <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <Globe className="w-5 h-5 mr-2 text-purple-500" />
+            <Globe className="w-5 h-5 mr-2 text-trust-500" />
             Languages Spoken
           </h3>
           <div className="flex flex-wrap gap-3">
             {profile.languages.map((lang, index) => (
-              <div key={index} className="bg-purple-100 text-purple-800 px-3 py-2 rounded-full text-sm">
+              <div key={index} className="bg-trust-100 text-trust-800 px-3 py-2 rounded-full text-sm">
                 {lang.language} - {lang.proficiency}
               </div>
             ))}
@@ -204,11 +204,11 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
       {profile.qualificationDocuments && profile.qualificationDocuments.length > 0 && (
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
           <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-            <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
+            <CheckCircle className="w-5 h-5 mr-2 text-safe-500" />
             Verified Qualifications
           </h3>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-green-800 text-sm">
+          <div className="bg-safe-50 border border-safe-200 rounded-lg p-4">
+            <p className="text-safe-800 text-sm">
               <Shield className="w-4 h-4 inline mr-2" />
               This host has uploaded {profile.qualificationDocuments.length} qualification document{profile.qualificationDocuments.length > 1 ? 's' : ''} for verification.
             </p>
@@ -217,9 +217,9 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
       )}
 
       {/* Contact Section */}
-      <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white text-center">
+      <div className="bg-gradient-to-r from-trust-500 to-warm-500 rounded-2xl p-6 text-white text-center">
         <h3 className="text-xl font-semibold mb-2">Ready to Connect?</h3>
-        <p className="text-purple-100 mb-4">
+        <p className="text-trust-100 mb-4">
           Book a service or send a message to get started
         </p>
         <div className="flex space-x-3 justify-center">
@@ -227,7 +227,7 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
             <MessageSquare className="w-5 h-5 inline mr-2" />
             Send Message
           </button>
-          <button className="bg-white text-purple-600 hover:bg-gray-100 px-6 py-3 rounded-xl font-semibold transition-colors">
+          <button className="bg-white text-trust-600 hover:bg-gray-100 px-6 py-3 rounded-xl font-semibold transition-colors">
             <Calendar className="w-5 h-5 inline mr-2" />
             View Services
           </button>

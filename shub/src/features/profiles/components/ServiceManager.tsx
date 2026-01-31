@@ -213,7 +213,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
         <h3 className="text-lg font-semibold text-gray-900">Service Listings</h3>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+          className="flex items-center px-4 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Service
@@ -242,7 +242,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
                 placeholder="e.g., Premium Companionship"
                 required
               />
@@ -256,7 +256,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
                 placeholder="Describe your service in detail..."
                 required
               />
@@ -274,7 +274,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
                   step="0.01"
                   value={form.price}
                   onChange={(e) => setForm({ ...form, price: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
                   placeholder="150"
                   required
                 />
@@ -291,7 +291,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
                   step="15"
                   value={form.duration}
                   onChange={(e) => setForm({ ...form, duration: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
                   placeholder="120"
                   required
                 />
@@ -305,7 +305,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
               >
                 {categories.slice(1).map((category) => (
                   <option key={category} value={category}>
@@ -324,7 +324,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
                 type="text"
                 value={form.tags}
                 onChange={(e) => setForm({ ...form, tags: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
                 placeholder="professional, premium, outcall"
               />
             </div>
@@ -333,7 +333,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50"
+                className="flex-1 bg-gradient-to-r from-trust-600 to-warm-600 text-white py-2 px-4 rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : editingService ? 'Update Service' : 'Create Service'}
               </button>
@@ -376,7 +376,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
                       <Clock className="w-4 h-4 mr-1" />
                       {service.duration}min
                     </span>
-                    <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
+                    <span className="bg-trust-100 text-trust-700 px-2 py-1 rounded-full text-xs">
                       {service.category}
                     </span>
                   </div>
@@ -396,7 +396,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
                 <div className="flex space-x-2 ml-4">
                   <button
                     onClick={() => handleEdit(service)}
-                    className="p-2 text-gray-500 hover:text-purple-600 transition-colors"
+                    className="p-2 text-gray-500 hover:text-trust-600 transition-colors"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>

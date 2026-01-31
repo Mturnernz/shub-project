@@ -58,13 +58,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onBack, showBackButton 
           placeholder="Search services..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full pl-12 pr-12 py-4 bg-white/70 backdrop-blur-sm border border-purple-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full pl-12 pr-12 py-4 bg-white/70 backdrop-blur-sm border border-trust-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
           onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
         />
         <button
           onClick={() => setShowFilters(!showFilters)}
           className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-lg transition-colors ${
-            showFilters ? 'text-purple-600 bg-purple-100' : 'text-gray-400 hover:text-purple-500'
+            showFilters ? 'text-trust-600 bg-trust-100' : 'text-gray-400 hover:text-trust-500'
           }`}
         >
           <Filter className="w-5 h-5" />
@@ -72,13 +72,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onBack, showBackButton 
       </div>
 
       {showFilters && (
-        <div className="space-y-3 bg-white/70 backdrop-blur-sm rounded-2xl p-4 border border-purple-200">
+        <div className="space-y-3 bg-white/70 backdrop-blur-sm rounded-2xl p-4 border border-trust-200">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>{cat}</option>
@@ -93,7 +93,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onBack, showBackButton 
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full pl-10 pr-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
               >
                 {locations.map((loc) => (
                   <option key={loc} value={loc}>{loc}</option>
@@ -107,7 +107,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onBack, showBackButton 
             <select
               value={availability}
               onChange={(e) => setAvailability(e.target.value)}
-              className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
             >
               <option value="All">All Hosts</option>
               <option value="Available">Available</option>
@@ -121,7 +121,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onBack, showBackButton 
             <select
               value={minRating}
               onChange={(e) => setMinRating(Number(e.target.value))}
-              className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
             >
               <option value={0}>Any Rating</option>
               <option value={4}>4 Stars & Up</option>
@@ -135,7 +135,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onBack, showBackButton 
             <select
               value={dateCreated}
               onChange={(e) => setDateCreated(e.target.value)}
-              className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500"
             >
               <option value="">Any Time</option>
               <option value="Last 7 Days">Last 7 Days</option>
@@ -146,7 +146,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onBack, showBackButton 
 
           <button
             onClick={handleSearch}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+            className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200"
           >
             Apply Filters
           </button>

@@ -61,7 +61,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           className={`
             px-4 py-2 rounded-2xl break-words
             ${isOwn
-              ? 'bg-purple-600 text-white rounded-br-md'
+              ? 'bg-trust-600 text-white rounded-br-md'
               : 'bg-white/70 backdrop-blur-sm text-gray-900 rounded-bl-md border border-white/20'
             }
             ${containsFilteredContent ? 'border-yellow-300' : ''}
@@ -84,7 +84,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           {showTime && (
             <div className={`
               flex items-center justify-end gap-1 mt-1 text-xs
-              ${isOwn ? 'text-purple-200' : 'text-gray-500'}
+              ${isOwn ? 'text-trust-200' : 'text-gray-500'}
             `}>
               <span>{formatTime(message.created_at)}</span>
               {isOwn && (

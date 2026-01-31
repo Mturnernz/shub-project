@@ -138,9 +138,9 @@ const AgeGate: React.FC<AgeGateProps> = ({ onVerified }) => {
         </div>
 
         {/* Legal Compliance */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
-          <h3 className="text-sm sm:text-base font-semibold text-blue-900 mb-2">New Zealand Legal Compliance</h3>
-          <p className="text-blue-800 text-xs sm:text-sm">
+        <div className="bg-trust-50 border border-trust-200 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+          <h3 className="text-sm sm:text-base font-semibold text-trust-900 mb-2">New Zealand Legal Compliance</h3>
+          <p className="text-trust-800 text-xs sm:text-sm">
             This platform operates in accordance with New Zealand law. All services listed 
             are legal adult services provided by consenting adults. We are committed to 
             maintaining a safe, legal, and regulated environment.
@@ -152,7 +152,7 @@ const AgeGate: React.FC<AgeGateProps> = ({ onVerified }) => {
           <button
             onClick={handleConfirmAge}
             disabled={isConfirming}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold text-base sm:text-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full bg-gradient-to-r from-safe-600 to-emerald-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold text-base sm:text-lg hover:from-safe-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {isConfirming ? (
               <>

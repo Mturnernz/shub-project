@@ -13,7 +13,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
   onNavigateToSignUpSelection,
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Welcome Header */}
         <div className="text-center mb-8">
@@ -23,10 +23,10 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </div>
             <h1 className="text-4xl font-bold text-white">Shub</h1>
           </div>
-          <p className="text-purple-100 text-lg">
+          <p className="text-trust-100 text-lg">
             Connect, Browse, Book
           </p>
-          <p className="text-purple-200 text-sm mt-2">
+          <p className="text-trust-200 text-sm mt-2">
             Discover amazing services from verified providers
           </p>
         </div>
@@ -39,7 +39,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 bg-gradient-to-br from-trust-500 to-warm-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
                 <LogIn className="w-6 h-6 text-white" />
               </div>
               <div className="text-left flex-1">
@@ -57,7 +57,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 bg-gradient-to-br from-safe-500 to-emerald-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
                 <UserPlus className="w-6 h-6 text-white" />
               </div>
               <div className="text-left flex-1">
@@ -75,7 +75,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-teal-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 bg-gradient-to-br from-trust-500 to-teal-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
                 <Eye className="w-6 h-6 text-white" />
               </div>
               <div className="text-left flex-1">
@@ -90,7 +90,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-purple-100 text-sm">
+          <p className="text-trust-100 text-sm">
             By continuing, you agree to our Terms of Service and Privacy Policy
           </p>
         </div>

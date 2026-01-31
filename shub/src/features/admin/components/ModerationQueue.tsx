@@ -89,7 +89,7 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
       );
     }
     return (
-      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-trust-100 text-trust-800">
         NORMAL
       </span>
     );
@@ -100,9 +100,9 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
       case 'open':
         return <Clock className="w-4 h-4 text-yellow-600" />;
       case 'in_review':
-        return <Eye className="w-4 h-4 text-blue-600" />;
+        return <Eye className="w-4 h-4 text-trust-600" />;
       case 'resolved':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
+        return <CheckCircle className="w-4 h-4 text-safe-600" />;
       case 'dismissed':
         return <XCircle className="w-4 h-4 text-gray-600" />;
       default:
@@ -199,7 +199,7 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
               <select
                 value={filters.status}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value as any })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-500"
               >
                 <option value="all">All Status</option>
                 <option value="open">Open</option>
@@ -214,7 +214,7 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
               <select
                 value={filters.category}
                 onChange={(e) => setFilters({ ...filters, category: e.target.value as any })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-500"
               >
                 <option value="all">All Categories</option>
                 <option value="unsafe_services">Unsafe Services</option>
@@ -234,7 +234,7 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
               <select
                 value={filters.urgency}
                 onChange={(e) => setFilters({ ...filters, urgency: e.target.value as any })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-500"
               >
                 <option value="all">All Priorities</option>
                 <option value="emergency">Emergency</option>
@@ -315,7 +315,7 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
                           e.stopPropagation();
                           handleStatusUpdate(report.id, 'in_review');
                         }}
-                        className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                        className="px-3 py-1 text-sm bg-trust-600 text-white rounded hover:bg-trust-700"
                       >
                         Review
                       </button>
@@ -338,7 +338,7 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
                           e.stopPropagation();
                           handleStatusUpdate(report.id, 'resolved', 'Issue resolved');
                         }}
-                        className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                        className="px-3 py-1 text-sm bg-safe-600 text-white rounded hover:bg-safe-700"
                       >
                         Resolve
                       </button>
@@ -385,12 +385,12 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
 
               {/* Reporter & Target Info */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-medium text-blue-900 mb-2">Reporter</h4>
-                  <p className="text-blue-800">
+                <div className="p-4 bg-trust-50 rounded-lg">
+                  <h4 className="font-medium text-trust-900 mb-2">Reporter</h4>
+                  <p className="text-trust-800">
                     {selectedReport.reporter?.display_name || 'Anonymous'}
                   </p>
-                  <p className="text-sm text-blue-600">
+                  <p className="text-sm text-trust-600">
                     Role: {selectedReport.reporter?.role || 'Unknown'}
                   </p>
                 </div>
@@ -434,7 +434,7 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
                         handleStatusUpdate(selectedReport.id, 'in_review');
                         setSelectedReport(null);
                       }}
-                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="flex-1 px-4 py-2 bg-trust-600 text-white rounded-lg hover:bg-trust-700"
                     >
                       Start Review
                     </button>
@@ -457,7 +457,7 @@ const ModerationQueue: React.FC<ModerationQueueProps> = ({ adminId }) => {
                         handleStatusUpdate(selectedReport.id, 'resolved', 'Issue resolved after investigation');
                         setSelectedReport(null);
                       }}
-                      className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      className="flex-1 px-4 py-2 bg-safe-600 text-white rounded-lg hover:bg-safe-700"
                     >
                       Mark Resolved
                     </button>

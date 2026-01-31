@@ -18,7 +18,7 @@ const ConsentCheckbox: React.FC<ConsentCheckboxProps> = ({
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <Shield className="w-5 h-5 text-purple-600" />
+        <Shield className="w-5 h-5 text-trust-600" />
         <h3 className="text-lg font-medium text-gray-900">Safety Requirements</h3>
         {required && <span className="text-red-500">*</span>}
       </div>
@@ -44,8 +44,8 @@ const ConsentCheckbox: React.FC<ConsentCheckboxProps> = ({
         className={`
           flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-colors
           ${checked
-            ? 'border-green-300 bg-green-50'
-            : 'border-gray-300 hover:border-purple-400 hover:bg-purple-50'
+            ? 'border-safe-300 bg-safe-50'
+            : 'border-gray-300 hover:border-trust-400 hover:bg-trust-50'
           }
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         `}
@@ -55,7 +55,7 @@ const ConsentCheckbox: React.FC<ConsentCheckboxProps> = ({
           className={`
             flex-shrink-0 w-5 h-5 border-2 rounded flex items-center justify-center transition-colors
             ${checked
-              ? 'border-green-600 bg-green-600'
+              ? 'border-safe-600 bg-safe-600'
               : 'border-gray-400'
             }
           `}
@@ -67,7 +67,7 @@ const ConsentCheckbox: React.FC<ConsentCheckboxProps> = ({
           <label
             className={`
               font-medium cursor-pointer
-              ${checked ? 'text-green-900' : 'text-gray-900'}
+              ${checked ? 'text-safe-900' : 'text-gray-900'}
               ${disabled ? 'cursor-not-allowed' : ''}
             `}
           >
@@ -81,9 +81,9 @@ const ConsentCheckbox: React.FC<ConsentCheckboxProps> = ({
       </div>
 
       {/* Additional Safety Information */}
-      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="font-medium text-blue-900 mb-2">Additional Safety Resources</h4>
-        <div className="text-sm text-blue-800 space-y-1">
+      <div className="p-4 bg-trust-50 border border-trust-200 rounded-lg">
+        <h4 className="font-medium text-trust-900 mb-2">Additional Safety Resources</h4>
+        <div className="text-sm text-trust-800 space-y-1">
           <p>• Free STI testing available at local health clinics</p>
           <p>• Safety tips and resources available in our Help Center</p>
           <p>• Report any unsafe requests immediately</p>

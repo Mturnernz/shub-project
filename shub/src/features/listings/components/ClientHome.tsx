@@ -83,7 +83,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="px-4">
-        <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl p-6 border border-purple-200">
+        <div className="bg-gradient-to-r from-trust-500/20 to-warm-500/20 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             {isGuest ? 'Browse Services' : 'Welcome back!'}
           </h2>
@@ -98,7 +98,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
               <p className="text-sm text-gray-700">
                 <button
                   onClick={onSignUpAsClient}
-                  className="font-bold text-green-600 hover:text-green-700 underline hover:no-underline transition-colors"
+                  className="font-bold text-safe-600 hover:text-safe-700 underline hover:no-underline transition-colors"
                 >
                   Sign up as a client
                 </button>
@@ -118,13 +118,13 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             placeholder="Search services..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full pl-12 pr-12 py-4 bg-white/70 backdrop-blur-sm border border-purple-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full pl-12 pr-12 py-4 bg-white/70 backdrop-blur-sm border border-trust-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-lg transition-colors ${
-              showFilters ? 'text-purple-600 bg-purple-100' : 'text-gray-400 hover:text-purple-500'
+              showFilters ? 'text-trust-600 bg-trust-100' : 'text-gray-400 hover:text-trust-500'
             }`}
           >
             <Filter className="w-5 h-5" />
@@ -132,7 +132,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
         </div>
 
         {showFilters && (
-          <div className="mt-3 space-y-3 bg-white/70 backdrop-blur-sm rounded-2xl p-4 border border-purple-200">
+          <div className="mt-3 space-y-3 bg-white/70 backdrop-blur-sm rounded-2xl p-4 border border-trust-200">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
@@ -142,7 +142,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
                     setCategory(e.target.value);
                     // Don't auto-search on filter changes - let user click Apply
                   }}
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -158,7 +158,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
                     setLocation(e.target.value);
                     // Don't auto-search on filter changes - let user click Apply
                   }}
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
                 >
                   {locations.map((loc) => (
                     <option key={loc} value={loc}>{loc}</option>
@@ -174,7 +174,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
                     setAvailability(e.target.value);
                     // Don't auto-search on filter changes - let user click Apply
                   }}
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
                 >
                   <option value="All">All Hosts</option>
                   <option value="Available">Available</option>
@@ -191,7 +191,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
                     setMinRating(Number(e.target.value));
                     // Don't auto-search on filter changes - let user click Apply
                   }}
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
                 >
                   <option value={0}>Any Rating</option>
                   <option value={4}>4 Stars & Up</option>
@@ -208,7 +208,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
                     setDateCreated(e.target.value);
                     // Don't auto-search on filter changes - let user click Apply
                   }}
-                  className="w-full px-4 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  className="w-full px-4 py-2 border border-trust-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 text-sm"
                 >
                   <option value="">Any Time</option>
                   <option value="Last 7 Days">Last 7 Days</option>
@@ -226,11 +226,11 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
                       setFeaturedOnly(e.target.checked);
                       // Don't auto-search on filter changes - let user click Apply
                     }}
-                    className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
+                    className="w-4 h-4 text-trust-600 bg-gray-100 border-gray-300 rounded focus:ring-trust-500 focus:ring-2"
                   />
                   <span className="text-sm font-medium text-gray-700">Featured Profiles Only</span>
-                  <div className="flex items-center text-purple-600">
-                    <span className="text-xs bg-purple-100 px-2 py-1 rounded-full">Verified</span>
+                  <div className="flex items-center text-trust-600">
+                    <span className="text-xs bg-trust-100 px-2 py-1 rounded-full">Verified</span>
                   </div>
                 </label>
                 <p className="text-xs text-gray-500 mt-1 ml-7">Show only verified hosts with premium profiles</p>
@@ -240,14 +240,14 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             <div className="flex space-x-3">
               <button
                 onClick={handleSearch}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-200 text-sm"
+                className="flex-1 bg-gradient-to-r from-trust-600 to-warm-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 text-sm"
               >
                 Apply Filters
               </button>
               {(isSearchActive || query || category !== 'All' || location !== 'All Locations' || availability !== 'All' || minRating > 0 || dateCreated || featuredOnly) && (
                 <button
                   onClick={clearSearch}
-                  className="px-4 py-2 border border-purple-200 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors text-sm"
+                  className="px-4 py-2 border border-trust-200 text-trust-600 rounded-lg hover:bg-trust-50 transition-colors text-sm"
                 >
                   Clear All
                 </button>
@@ -264,7 +264,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             <button
               key={category}
               onClick={() => handleCategoryClick(category)}
-              className="flex-shrink-0 bg-white/70 backdrop-blur-sm px-6 py-3 rounded-full border border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
+              className="flex-shrink-0 bg-white/70 backdrop-blur-sm px-6 py-3 rounded-full border border-trust-200 hover:bg-trust-50 hover:border-trust-300 transition-all duration-200"
             >
               <span className="font-medium text-gray-700">{category}</span>
             </button>
@@ -278,7 +278,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
           <h3 className="text-lg font-semibold text-gray-900">
             {isSearchActive ? 'Search Results' : 'Featured'}
           </h3>
-          <TrendingUp className="w-5 h-5 text-purple-500" />
+          <TrendingUp className="w-5 h-5 text-trust-500" />
         </div>
         {loading ? (
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center">
@@ -296,7 +296,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             {(isSearchActive || query || category !== 'All' || location !== 'All Locations' || availability !== 'All' || minRating > 0 || dateCreated || featuredOnly) && (
               <button
                 onClick={clearSearch}
-                className="mt-3 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                className="mt-3 px-4 py-2 bg-trust-600 text-white rounded-lg hover:bg-trust-700 transition-colors text-sm"
               >
                 Clear all filters to see all services
               </button>
@@ -318,14 +318,14 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
       {/* Become a Host Section */}
       {canBecomeHost && userType === 'client' && !isSearchActive && (
         <div className="px-4">
-          <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm rounded-2xl p-6 border border-green-200">
+          <div className="bg-gradient-to-r from-safe-500/20 to-emerald-500/20 backdrop-blur-sm rounded-2xl p-6 border border-safe-200">
             <h3 className="text-xl font-bold text-gray-900 mb-2">Ready to earn as a Host?</h3>
             <p className="text-gray-600 mb-4">
               Share your skills and start earning by hosting your own services
             </p>
             <button
               onClick={onBecomeHost}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-semibold"
+              className="bg-gradient-to-r from-safe-600 to-emerald-600 text-white px-6 py-3 rounded-lg hover:from-safe-700 hover:to-emerald-700 transition-all duration-200 font-semibold"
             >
               Become a Host
             </button>
@@ -336,21 +336,21 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
       {/* Stats Section */}
       {!isSearchActive && (
         <div className="px-4">
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-purple-200">
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-purple-600">100+</div>
+              <div className="text-2xl font-bold text-trust-600">100+</div>
               <div className="text-sm text-gray-600">Verified Hosts</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-pink-600">4.8</div>
+              <div className="text-2xl font-bold text-warm-600">4.8</div>
               <div className="text-sm text-gray-600 flex items-center justify-center">
                 <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
                 Average Rating
               </div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-purple-600">5+</div>
+              <div className="text-2xl font-bold text-trust-600">5+</div>
               <div className="text-sm text-gray-600 flex items-center justify-center">
                 <MapPin className="w-4 h-4 mr-1" />
                 Cities

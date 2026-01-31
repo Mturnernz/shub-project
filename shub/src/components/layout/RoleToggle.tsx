@@ -19,7 +19,7 @@ const RoleToggle: React.FC<RoleToggleProps> = ({
         disabled={disabled}
         className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
           currentRole === 'client'
-            ? 'bg-white/90 text-purple-600 shadow-sm'
+            ? 'bg-white/90 text-trust-600 shadow-sm'
             : 'text-white/80 hover:text-white hover:bg-white/10'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
       >
@@ -32,7 +32,7 @@ const RoleToggle: React.FC<RoleToggleProps> = ({
         disabled={disabled}
         className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
           currentRole === 'host'
-            ? 'bg-white/90 text-purple-600 shadow-sm'
+            ? 'bg-white/90 text-trust-600 shadow-sm'
             : 'text-white/80 hover:text-white hover:bg-white/10'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
       >

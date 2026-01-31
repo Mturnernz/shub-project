@@ -115,8 +115,8 @@ const BookingRequest: React.FC<BookingRequestProps> = ({
         </div>
 
         {workerName && (
-          <div className="mb-4 p-3 bg-purple-50 rounded-lg">
-            <p className="text-sm text-purple-700">
+          <div className="mb-4 p-3 bg-trust-50 rounded-lg">
+            <p className="text-sm text-trust-700">
               Booking with <span className="font-medium">{workerName}</span>
             </p>
           </div>
@@ -141,7 +141,7 @@ const BookingRequest: React.FC<BookingRequestProps> = ({
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-500 focus:border-transparent"
               required
               disabled={isLoading}
             />
@@ -158,7 +158,7 @@ const BookingRequest: React.FC<BookingRequestProps> = ({
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-500 focus:border-transparent"
                 required
                 disabled={isLoading}
               />
@@ -171,7 +171,7 @@ const BookingRequest: React.FC<BookingRequestProps> = ({
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-500 focus:border-transparent"
                 required
                 disabled={isLoading}
               />
@@ -196,7 +196,7 @@ const BookingRequest: React.FC<BookingRequestProps> = ({
               placeholder="Add any specific requests or notes..."
               rows={3}
               maxLength={500}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-trust-500 focus:border-transparent resize-none"
               disabled={isLoading}
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -224,7 +224,7 @@ const BookingRequest: React.FC<BookingRequestProps> = ({
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-trust-600 text-white rounded-lg hover:bg-trust-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? 'Sending...' : 'Send Request'}
