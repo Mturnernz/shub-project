@@ -1,10 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, UserPlus, LogIn, Sparkles } from 'lucide-react';
 
 interface LandingPageProps {
-  onBrowseAsGuest: () => void;
-  onNavigateToLogin: () => void;
-  onNavigateToSignUpSelection: () => void;
+  onBrowseAsGuest?: () => void;
+  onNavigateToLogin?: () => void;
+  onNavigateToSignUpSelection?: () => void;
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({
@@ -12,6 +13,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
   onNavigateToLogin,
   onNavigateToSignUpSelection,
 }) => {
+  const navigate = useNavigate();
+
+  const handleBrowseAsGuest = onBrowseAsGuest || (() => navigate('/browse'));
+  const handleNavigateToLogin = onNavigateToLogin || (() => navigate('/login'));
+  const handleNavigateToSignUp = onNavigateToSignUpSelection || (() => navigate('/signup'));
   return (
     <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -35,7 +41,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
         <div className="space-y-4">
           {/* Log In */}
           <button
-            onClick={onNavigateToLogin}
+            onClick={handleNavigateToLogin}
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
@@ -53,7 +59,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Create Account */}
           <button
-            onClick={onNavigateToSignUpSelection}
+            onClick={handleNavigateToSignUp}
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
@@ -71,7 +77,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Browse as Guest */}
           <button
-            onClick={onBrowseAsGuest}
+            onClick={handleBrowseAsGuest}
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
