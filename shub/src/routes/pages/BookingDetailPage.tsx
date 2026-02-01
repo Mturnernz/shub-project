@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Calendar, Clock, User, MessageSquare, XCircle, CheckCircle, DollarSign } from 'lucide-react';
+import { Calendar, Clock, User, MessageSquare, XCircle, CheckCircle, DollarSign, Shield } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/stores/auth.store';
 import { getBookingById, type BookingWithProfiles } from '../../features/bookings/services/bookings';
 import { useBookings } from '../../features/bookings/hooks/useBookings';
 import BookingStatus from '../../features/bookings/components/BookingStatus';
+import ClientNotes from '../../features/safety/components/ClientNotes';
+import SafetyCheckIn from '../../features/safety/components/SafetyCheckIn';
 
 const BookingDetailPage: React.FC = () => {
   const navigate = useNavigate();
@@ -259,11 +261,42 @@ const BookingDetailPage: React.FC = () => {
       {/* Safety Reminder */}
       {booking.status === 'confirmed' && (
         <div className="bg-safe-50 border border-safe-200 rounded-2xl p-4">
-          <p className="text-sm text-safe-800 font-medium">Safety Reminder</p>
-          <p className="text-sm text-safe-700 mt-1">
-            Always meet in a safe location. Use the Safe Buddy feature to share your booking details with a trusted contact.
-          </p>
+          <div className="flex items-start gap-3">
+            <Shield className="w-5 h-5 text-safe-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-safe-800 font-medium">Safety Reminder</p>
+              <p className="text-sm text-safe-700 mt-1">
+                Always meet in a safe location. Use the Safe Buddy feature to share your booking details with a trusted contact.
+              </p>
+              <button
+                onClick={() => navigate('/safety')}
+                className="mt-2 text-sm text-safe-600 font-medium hover:text-safe-700 underline"
+              >
+                Open Safety Hub
+              </button>
+            </div>
+          </div>
         </div>
+      )}
+
+      {/* Safety Check-in Timer — for confirmed bookings */}
+      {booking.status === 'confirmed' && (
+        <SafetyCheckIn
+          token={booking.id}
+          scheduledTime={booking.start_time}
+          durationHours={durationHours}
+          workerName={isWorker ? undefined : booking.worker_profile?.name}
+        />
+      )}
+
+      {/* Provider Client Notes — only visible to host after booking */}
+      {isWorker && (booking.status === 'confirmed' || booking.status === 'completed') && (
+        <ClientNotes
+          clientId={booking.client_id}
+          clientName={booking.client_profile?.name || 'Client'}
+          bookingId={booking.id}
+          compact={booking.status === 'confirmed'}
+        />
       )}
     </div>
   );

@@ -18,6 +18,9 @@ const BookingDetailPage = lazy(() => import('./pages/BookingDetailPage'));
 const MessagesPage = lazy(() => import('./pages/MessagesPage'));
 const MessageThreadPage = lazy(() => import('./pages/MessageThreadPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const SafetyHubPage = lazy(() => import('./pages/SafetyHubPage'));
+const VerificationPage = lazy(() => import('./pages/VerificationPage'));
+const ClientNotesPage = lazy(() => import('./pages/ClientNotesPage'));
 
 const LoadingFallback = () => (
   <div className="min-h-screen bg-gradient-to-br from-trust-50 to-slate-50 flex items-center justify-center">
@@ -144,6 +147,30 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<LoadingFallback />}>
                 <ProfilePage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/safety',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <SafetyHubPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/safety/notes',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <ClientNotesPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/verify',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <VerificationPage />
               </Suspense>
             ),
           },

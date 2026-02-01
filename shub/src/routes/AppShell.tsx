@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, MessageSquare, User, Calendar } from 'lucide-react';
+import { Home, MessageSquare, User, Calendar, Shield } from 'lucide-react';
 import { useAuthStore } from '../features/auth/stores/auth.store';
 import { useAuthInit } from '../features/auth/hooks/useAuthInit';
 import { useMessagesStore } from '../features/messages/stores/messages.store';
@@ -39,6 +39,7 @@ const AppShell: React.FC = () => {
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
     { path: '/bookings', icon: Calendar, label: 'Bookings' },
     { path: '/messages', icon: MessageSquare, label: 'Messages' },
+    { path: '/safety', icon: Shield, label: 'Safety' },
     { path: '/profile', icon: User, label: 'Profile' },
   ];
 
@@ -59,6 +60,9 @@ const AppShell: React.FC = () => {
     if (path.startsWith('/bookings/') && path.endsWith('/chat')) return 'Chat';
     if (path.match(/^\/bookings\/[^/]+$/) && path !== '/bookings') return 'Booking Details';
     if (path === '/dashboard/profile') return 'Manage Profile';
+    if (path === '/safety') return 'Safety Hub';
+    if (path === '/safety/notes') return 'Client Notes';
+    if (path === '/verify') return 'Identity Verification';
     return 'Shub';
   };
 
@@ -68,6 +72,8 @@ const AppShell: React.FC = () => {
     if (path.startsWith('/bookings/') && path.endsWith('/chat')) return () => navigate('/messages');
     if (path.match(/^\/bookings\/[^/]+$/) && path !== '/bookings') return () => navigate('/bookings');
     if (path === '/dashboard/profile') return () => navigate('/dashboard');
+    if (path === '/safety/notes') return () => navigate('/safety');
+    if (path === '/verify') return () => navigate('/profile');
     if (path === '/browse' && !userType) return () => navigate('/');
     return undefined;
   };
