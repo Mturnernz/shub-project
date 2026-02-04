@@ -5,7 +5,7 @@ import AppShell from './AppShell';
 
 // Lazy load route components for code splitting
 const LandingPage = lazy(() => import('../components/layout/LandingPage'));
-const LoginForm = lazy(() => import('../features/auth/components/LoginForm'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
 const SignUpFlow = lazy(() => import('./SignUpFlow'));
 const EmailVerificationPending = lazy(() => import('../features/auth/components/EmailVerificationPending'));
 const EmailVerificationSuccessPage = lazy(() => import('../features/auth/components/EmailVerificationSuccessPage'));
@@ -47,7 +47,7 @@ export const router = createBrowserRouter([
         path: '/login',
         element: (
           <Suspense fallback={<LoadingFallback />}>
-            <LoginForm />
+            <LoginPage />
           </Suspense>
         ),
       },

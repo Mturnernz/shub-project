@@ -23,6 +23,8 @@ const transformSupabaseUserToProfile = (data: any): AppUserProfile => ({
 
 const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> => {
   try {
+    console.log('Fetching user profile for:', userId);
+
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -30,32 +32,54 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
       .single();
 
     if (error) {
+      console.log('Profile fetch error:', error.code, error.message);
+
       if (error.code === 'PGRST116') {
         // No profile found — create one for newly verified users
+        console.log('No profile found, attempting to create one...');
+
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return null;
+        if (!user) {
+          console.error('No auth user found');
+          return null;
+        }
+
+        console.log('Auth user metadata:', user.user_metadata);
 
         const metadata = user.user_metadata;
-        if (!metadata.name || !metadata.type) return null;
+        if (!metadata.name || !metadata.type) {
+          console.error('Missing required metadata (name or type):', metadata);
+          return null;
+        }
+
+        const newUser = {
+          id: userId,
+          display_name: metadata.name,
+          email: user.email || '',
+          role: metadata.type === 'host' ? 'worker' : 'client',
+          is_verified: false,
+        };
+
+        console.log('Inserting new user:', newUser);
 
         const { data: newProfile, error: insertError } = await supabase
           .from('users')
-          .insert([{
-            id: userId,
-            display_name: metadata.name,
-            email: user.email || '',
-            role: metadata.type === 'host' ? 'worker' : 'client',
-            is_verified: false,
-          }])
+          .insert([newUser])
           .select('*')
           .single();
 
-        if (insertError) throw insertError;
+        if (insertError) {
+          console.error('Insert error:', insertError.code, insertError.message, insertError.details);
+          throw insertError;
+        }
+
+        console.log('Created new profile:', newProfile);
         return transformSupabaseUserToProfile(newProfile);
       }
       throw error;
     }
 
+    console.log('Found existing profile:', data);
     return transformSupabaseUserToProfile(data);
   } catch (err) {
     console.error('Error fetching user profile:', err);
