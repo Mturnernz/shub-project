@@ -4,13 +4,13 @@ import { useAuthStore, type AppUserProfile } from '../stores/auth.store';
 
 const transformSupabaseUserToProfile = (data: any): AppUserProfile => ({
   id: data.id,
-  name: data.name,
+  name: data.display_name,
   email: data.email,
-  type: data.type,
-  currentRole: data.current_role,
-  avatar: data.avatar,
+  type: data.role === 'worker' ? 'host' : 'client',
+  currentRole: data.role === 'worker' ? 'host' : 'client',
+  avatar: data.avatar_url,
   location: data.location,
-  verified: data.verified,
+  verified: data.is_verified,
   bio: data.bio,
   profilePhotos: data.profile_photos || [],
   status: data.status || 'available',
@@ -42,10 +42,10 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
           .from('users')
           .insert([{
             id: userId,
-            name: metadata.name,
+            display_name: metadata.name,
             email: user.email || '',
-            type: metadata.type,
-            verified: false,
+            role: metadata.type === 'host' ? 'worker' : 'client',
+            is_verified: false,
           }])
           .select('*')
           .single();
