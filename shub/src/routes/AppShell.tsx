@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, MessageSquare, User, Calendar, Shield } from 'lucide-react';
+import { Home, MessageSquare, User, Calendar, Shield, LayoutDashboard, Users, Flag, FileText } from 'lucide-react';
 import { useAuthStore } from '../features/auth/stores/auth.store';
 import { useAuthInit } from '../features/auth/hooks/useAuthInit';
 import { useMessagesStore } from '../features/messages/stores/messages.store';
@@ -47,7 +47,21 @@ const AppShell: React.FC = () => {
     { path: '/browse', icon: Home, label: 'Browse' },
   ];
 
-  const tabs = userType === 'host' ? hostTabs : userType === 'client' ? clientTabs : guestTabs;
+  const adminTabs = [
+    { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/admin/verifications', icon: Shield, label: 'Verify' },
+    { path: '/admin/profiles', icon: Users, label: 'Profiles' },
+    { path: '/admin/reports', icon: Flag, label: 'Reports' },
+    { path: '/admin/audit-log', icon: FileText, label: 'Audit' },
+  ];
+
+  const tabs = userType === 'admin'
+    ? adminTabs
+    : userType === 'host'
+      ? hostTabs
+      : userType === 'client'
+        ? clientTabs
+        : guestTabs;
 
   const getTitle = () => {
     const path = location.pathname;
@@ -63,6 +77,12 @@ const AppShell: React.FC = () => {
     if (path === '/safety') return 'Safety Hub';
     if (path === '/safety/notes') return 'Client Notes';
     if (path === '/verify') return 'Identity Verification';
+    // Admin pages
+    if (path === '/admin') return 'Admin Dashboard';
+    if (path === '/admin/verifications') return 'Verification Queue';
+    if (path === '/admin/profiles') return 'Profile Publishing';
+    if (path === '/admin/reports') return 'Moderation Queue';
+    if (path === '/admin/audit-log') return 'Audit Log';
     return 'Shub';
   };
 

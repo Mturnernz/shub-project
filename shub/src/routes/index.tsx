@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AgeGateGuard } from './guards';
+import { AdminGuard } from './guards/AdminGuard';
 import AppShell from './AppShell';
 
 // Lazy load route components for code splitting
@@ -21,6 +22,13 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const SafetyHubPage = lazy(() => import('./pages/SafetyHubPage'));
 const VerificationPage = lazy(() => import('./pages/VerificationPage'));
 const ClientNotesPage = lazy(() => import('./pages/ClientNotesPage'));
+
+// Admin pages
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
+const VerificationQueuePage = lazy(() => import('./pages/admin/VerificationQueuePage'));
+const ProfilePublishingPage = lazy(() => import('./pages/admin/ProfilePublishingPage'));
+const ModerationQueuePage = lazy(() => import('./pages/admin/ModerationQueuePage'));
+const AuditLogPage = lazy(() => import('./pages/admin/AuditLogPage'));
 
 const LoadingFallback = () => (
   <div className="min-h-screen bg-gradient-to-br from-trust-50 to-slate-50 flex items-center justify-center">
@@ -171,6 +179,52 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<LoadingFallback />}>
                 <VerificationPage />
+              </Suspense>
+            ),
+          },
+        ],
+      },
+      // Admin routes (protected by AdminGuard)
+      {
+        element: <AdminGuard />,
+        children: [
+          {
+            path: '/admin',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <AdminDashboardPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/admin/verifications',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <VerificationQueuePage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/admin/profiles',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <ProfilePublishingPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/admin/reports',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <ModerationQueuePage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/admin/audit-log',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <AuditLogPage />
               </Suspense>
             ),
           },

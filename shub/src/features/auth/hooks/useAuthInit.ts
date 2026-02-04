@@ -2,12 +2,18 @@ import { useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useAuthStore, type AppUserProfile } from '../stores/auth.store';
 
+const mapRoleToType = (role: string): 'host' | 'client' | 'admin' => {
+  if (role === 'admin') return 'admin';
+  if (role === 'worker') return 'host';
+  return 'client';
+};
+
 const transformSupabaseUserToProfile = (data: any): AppUserProfile => ({
   id: data.id,
   name: data.display_name,
   email: data.email,
-  type: data.role === 'worker' ? 'host' : 'client',
-  currentRole: data.role === 'worker' ? 'host' : 'client',
+  type: mapRoleToType(data.role),
+  currentRole: mapRoleToType(data.role),
   avatar: data.avatar_url,
   location: data.location,
   verified: data.is_verified,

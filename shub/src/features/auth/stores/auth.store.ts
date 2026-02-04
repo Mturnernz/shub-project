@@ -5,8 +5,8 @@ export interface AppUserProfile {
   id: string;
   name: string;
   email: string;
-  type: 'host' | 'client';
-  currentRole?: 'host' | 'client';
+  type: 'host' | 'client' | 'admin';
+  currentRole?: 'host' | 'client' | 'admin';
   avatar?: string;
   location?: string;
   verified?: boolean;
@@ -26,14 +26,15 @@ interface AuthState {
   userProfile: AppUserProfile | null;
   isAuthenticated: boolean;
   loading: boolean;
-  currentRole: 'host' | 'client';
+  currentRole: 'host' | 'client' | 'admin';
   setUser: (user: SupabaseUser | null) => void;
   setUserProfile: (profile: AppUserProfile | null) => void;
   setLoading: (loading: boolean) => void;
-  setCurrentRole: (role: 'host' | 'client') => void;
+  setCurrentRole: (role: 'host' | 'client' | 'admin') => void;
   clearAuth: () => void;
-  getEffectiveUserType: () => 'host' | 'client' | null;
+  getEffectiveUserType: () => 'host' | 'client' | 'admin' | null;
   canToggleRoles: () => boolean;
+  isAdmin: () => boolean;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -52,7 +53,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setUserProfile: (profile) =>
     set({
       userProfile: profile,
-      currentRole: profile?.type === 'host' ? (profile.currentRole || 'host') : 'client',
+      currentRole: profile?.type === 'admin'
+        ? 'admin'
+        : profile?.type === 'host'
+          ? (profile.currentRole || 'host')
+          : 'client',
     }),
 
   setLoading: (loading) => set({ loading }),
@@ -70,6 +75,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   getEffectiveUserType: () => {
     const { userProfile, currentRole } = get();
     if (!userProfile) return null;
+    if (userProfile.type === 'admin') return 'admin';
     if (userProfile.type === 'host') return currentRole;
     return userProfile.type;
   },
@@ -77,5 +83,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   canToggleRoles: () => {
     const { userProfile } = get();
     return userProfile?.type === 'host';
+  },
+
+  isAdmin: () => {
+    const { userProfile } = get();
+    return userProfile?.type === 'admin';
   },
 }));
