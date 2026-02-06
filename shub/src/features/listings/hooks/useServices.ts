@@ -49,7 +49,7 @@ export const useServices = () => {
         .from('services')
         .select(`
           *,
-          host:users!inner (
+          host:users!services_host_id_fkey!inner (
             status,
             created_at,
             is_published
