@@ -35,16 +35,23 @@ CREATE TABLE IF NOT EXISTS public.users (
   is_verified   BOOLEAN      NOT NULL DEFAULT false,
   is_active     BOOLEAN      NOT NULL DEFAULT true,
   last_seen_at  TIMESTAMPTZ,
-  current_role  VARCHAR(20),
+  "current_role"  VARCHAR(20),
   metadata      JSONB        NOT NULL DEFAULT '{}'::jsonb,
   deleted_at    TIMESTAMPTZ  DEFAULT NULL,
   created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- Ensure columns exist that may be missing on older schemas
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS "current_role" VARCHAR(20);
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ DEFAULT NULL;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+
 CREATE INDEX IF NOT EXISTS idx_users_email        ON public.users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role         ON public.users(role);
-CREATE INDEX IF NOT EXISTS idx_users_current_role ON public.users(current_role);
+CREATE INDEX IF NOT EXISTS idx_users_current_role ON public.users("current_role");
 CREATE INDEX IF NOT EXISTS idx_users_deleted_at   ON public.users(deleted_at) WHERE deleted_at IS NULL;
 
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
@@ -144,6 +151,18 @@ CREATE TABLE IF NOT EXISTS public.services (
   updated_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- Ensure columns exist that may be missing on older schemas
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS worker_name TEXT;
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS worker_avatar TEXT;
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS rating NUMERIC NOT NULL DEFAULT 0.0;
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS review_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS available BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS location VARCHAR(100);
+
 CREATE INDEX IF NOT EXISTS idx_services_worker_id ON public.services(worker_id);
 CREATE INDEX IF NOT EXISTS idx_services_category  ON public.services(category);
 CREATE INDEX IF NOT EXISTS idx_services_location  ON public.services(location);
@@ -186,6 +205,16 @@ CREATE INDEX IF NOT EXISTS idx_bookings_status     ON public.bookings(status);
 CREATE INDEX IF NOT EXISTS idx_bookings_start_time ON public.bookings(start_time);
 CREATE INDEX IF NOT EXISTS idx_bookings_end_time   ON public.bookings(end_time);
 CREATE INDEX IF NOT EXISTS idx_bookings_time_range ON public.bookings(start_time, end_time);
+
+-- Ensure columns exist that may be missing on older schemas
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ DEFAULT NULL;
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS cancellation_reason TEXT;
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS cancelled_by UUID;
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ;
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS location_type VARCHAR(20);
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS location_address TEXT;
+
 CREATE INDEX IF NOT EXISTS idx_bookings_deleted_at ON public.bookings(deleted_at) WHERE deleted_at IS NULL;
 
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
@@ -274,6 +303,14 @@ CREATE TABLE IF NOT EXISTS public.reviews (
 CREATE INDEX IF NOT EXISTS idx_reviews_booking_id  ON public.reviews(booking_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_reviewee_id ON public.reviews(reviewee_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_reviewer_id ON public.reviews(reviewer_id);
+-- Ensure columns exist that may be missing on older schemas
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending';
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ DEFAULT NULL;
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS communication_rating SMALLINT;
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS accuracy_rating SMALLINT;
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS experience_rating SMALLINT;
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS response TEXT;
+
 CREATE INDEX IF NOT EXISTS idx_reviews_status      ON public.reviews(status) WHERE deleted_at IS NULL;
 CREATE INDEX IF NOT EXISTS idx_reviews_deleted_at  ON public.reviews(deleted_at) WHERE deleted_at IS NULL;
 
@@ -295,6 +332,10 @@ CREATE TABLE IF NOT EXISTS public.favorites (
   UNIQUE(user_id, favorited_user_id)
 );
 
+-- Ensure columns exist that may be missing on older schemas
+ALTER TABLE public.favorites ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE public.favorites ADD COLUMN IF NOT EXISTS favorited_user_id UUID;
+
 CREATE INDEX IF NOT EXISTS idx_favorites_user_id    ON public.favorites(user_id);
 CREATE INDEX IF NOT EXISTS idx_favorites_favorited  ON public.favorites(favorited_user_id);
 
@@ -311,6 +352,11 @@ CREATE TABLE IF NOT EXISTS public.blocked_users (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE(blocker_id, blocked_id)
 );
+
+-- Ensure columns exist that may be missing on older schemas
+ALTER TABLE public.blocked_users ADD COLUMN IF NOT EXISTS blocker_id UUID;
+ALTER TABLE public.blocked_users ADD COLUMN IF NOT EXISTS blocked_id UUID;
+ALTER TABLE public.blocked_users ADD COLUMN IF NOT EXISTS reason TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_blocked_users_blocker_id ON public.blocked_users(blocker_id);
 CREATE INDEX IF NOT EXISTS idx_blocked_users_blocked_id ON public.blocked_users(blocked_id);
@@ -338,6 +384,12 @@ CREATE TABLE IF NOT EXISTS public.reports (
   updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Ensure columns exist that may be missing on older schemas
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS evidence_urls TEXT[] DEFAULT '{}';
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS resolution_notes TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS resolved_by UUID;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMPTZ;
+
 CREATE INDEX IF NOT EXISTS idx_reports_reporter_id ON public.reports(reporter_id);
 CREATE INDEX IF NOT EXISTS idx_reports_status      ON public.reports(status);
 CREATE INDEX IF NOT EXISTS idx_reports_target      ON public.reports(target_type, target_id);
@@ -363,6 +415,12 @@ CREATE TABLE IF NOT EXISTS public.safe_buddy_tokens (
   alert_sent_at       TIMESTAMPTZ,
   created_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
+
+-- Ensure columns exist that may be missing on older schemas
+ALTER TABLE public.safe_buddy_tokens ADD COLUMN IF NOT EXISTS check_in_interval INTEGER NOT NULL DEFAULT 30;
+ALTER TABLE public.safe_buddy_tokens ADD COLUMN IF NOT EXISTS next_check_in_at TIMESTAMPTZ;
+ALTER TABLE public.safe_buddy_tokens ADD COLUMN IF NOT EXISTS alert_sent BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE public.safe_buddy_tokens ADD COLUMN IF NOT EXISTS alert_sent_at TIMESTAMPTZ;
 
 CREATE INDEX IF NOT EXISTS idx_safe_buddy_tokens_booking_id ON public.safe_buddy_tokens(booking_id);
 CREATE INDEX IF NOT EXISTS idx_safe_buddy_tokens_token      ON public.safe_buddy_tokens(token);

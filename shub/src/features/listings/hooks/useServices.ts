@@ -44,21 +44,12 @@ export const useServices = () => {
         throw new Error('Supabase client not initialized');
       }
 
-      // Query services joined with worker_profiles for published check and users for worker info
+      // Query available services — RLS policy on services table filters for
+      // published workers automatically via worker_profiles.published check
       let supabaseQuery = supabase
         .from('services')
-        .select(`
-          *,
-          worker:users!services_worker_id_fkey!inner (
-            status,
-            created_at
-          ),
-          worker_profile:worker_profiles!inner (
-            published
-          )
-        `)
-        .eq('available', true)
-        .eq('worker_profile.published', true);
+        .select('*')
+        .eq('available', true);
 
       // Apply text search filter
       if (query && query.trim()) {
@@ -80,29 +71,16 @@ export const useServices = () => {
         }
       }
 
-      // Apply "Available Now" filter — only show workers with status = 'available'
-      if (availableNow) {
-        supabaseQuery = supabaseQuery.eq('worker.status', 'available');
-      } else if (availability && availability !== 'All') {
-        // Apply availability filter (filter by worker status)
-        const statusMap: Record<string, string> = {
-          'Available': 'available',
-          'Busy': 'busy',
-          'Away': 'away'
-        };
-        const dbStatus = statusMap[availability] || availability.toLowerCase();
-        supabaseQuery = supabaseQuery.eq('worker.status', dbStatus);
-      }
+      // Availability filter — reserved for future use with availability_slots table
+      // Currently no-op since bridging 'status' column on users was removed
 
       // Apply minimum rating filter
       if (minRating && minRating > 0) {
         supabaseQuery = supabaseQuery.gte('rating', minRating);
       }
 
-      // Apply date created filter (filter by when worker profile was created)
-      if (dateCreated) {
-        supabaseQuery = supabaseQuery.gte('worker.created_at', dateCreated);
-      }
+      // Date created filter — reserved for future use (requires join to worker_profiles)
+      // Currently no-op since we no longer join workers in this query
 
       // Apply featured/verified filter
       if (featuredOnly) {
