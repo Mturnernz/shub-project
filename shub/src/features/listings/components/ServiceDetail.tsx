@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Star, MapPin, Clock, Shield, Heart, MessageSquare, Calendar, CheckCircle } from 'lucide-react';
+import { Star, MapPin, Clock, Shield, Heart, MessageSquare, Calendar, CheckCircle, User } from 'lucide-react';
 import { Service } from '../../../types';
 import { useWorkerProfile } from '../../profiles/hooks/useWorkerProfile';
 import { useAuth } from '../../auth/hooks/useAuth';
@@ -60,13 +60,6 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
     <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
       <div className="relative">
         <button
-          onClick={onBack}
-          className="absolute top-4 left-4 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-colors"
-        >
-          <ArrowLeft className="w-6 h-6 text-gray-700" />
-        </button>
-        
-        <button
           onClick={() => setIsFavorited(!isFavorited)}
           disabled={isGuest}
           className="absolute top-4 right-4 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-colors"
@@ -74,11 +67,18 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
           <Heart className={`w-6 h-6 ${isFavorited ? 'text-red-500 fill-current' : 'text-gray-700'}`} />
         </button>
 
-        <img
-          src={service.images[selectedImage]}
-          alt={service.title}
-          className="w-full h-80 object-cover"
-        />
+        {service.images?.[selectedImage] ? (
+          <img
+            src={service.images[selectedImage]}
+            alt={service.title}
+            className="w-full h-64 sm:h-80 object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-64 sm:h-80 bg-gradient-to-br from-trust-100 to-warm-100 flex items-center justify-center">
+            <span className="text-gray-400 text-lg">No image available</span>
+          </div>
+        )}
         
         <div className="flex justify-center space-x-2 mt-4 px-4">
           {service.images.map((_, index) => (
@@ -97,11 +97,18 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              <img 
-                src={service.workerAvatar} 
-                alt={service.workerName}
-                className="w-12 h-12 rounded-full mr-4"
-              />
+              {service.workerAvatar ? (
+                <img
+                  src={service.workerAvatar}
+                  alt={service.workerName}
+                  className="w-12 h-12 rounded-full mr-4 object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full mr-4 bg-trust-100 flex items-center justify-center flex-shrink-0">
+                  <User className="w-6 h-6 text-trust-500" />
+                </div>
+              )}
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">{service.workerName}</h2>
                 <div className="flex items-center">

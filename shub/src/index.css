@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* iOS safe area support for bottom navigation */
+.safe-area-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Prevent text selection on interactive elements for mobile */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling on mobile */
+html {
+  -webkit-overflow-scrolling: touch;
+}

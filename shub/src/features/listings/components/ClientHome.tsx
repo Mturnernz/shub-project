@@ -46,6 +46,7 @@ interface ClientHomeProps {
   onCategoryClick: (category: string) => void;
   onSearch: (query: string, category: string, location: string, availability?: string, minRating?: number, dateCreated?: string, featuredOnly?: boolean, availableNow?: boolean) => void;
   userType?: 'worker' | 'client' | null;
+  isAuthenticated?: boolean;
   onBack?: () => void;
   showBackButton?: boolean;
   onSignUpAsClient?: () => void;
@@ -53,7 +54,7 @@ interface ClientHomeProps {
   canBecomeHost?: boolean;
 }
 
-const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick, onSearch, userType, onBack, showBackButton = false, onSignUpAsClient, onBecomeHost, canBecomeHost = false }) => {
+const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick, onSearch, userType, isAuthenticated = false, onBack, showBackButton = false, onSignUpAsClient, onBecomeHost, canBecomeHost = false }) => {
   const featuredServices = services.slice(0, 6);
   const popularCategories = categories.slice(1, 4);
 
@@ -72,7 +73,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
   const [showFilters, setShowFilters] = React.useState(false);
   const [isSearchActive, setIsSearchActive] = React.useState(!!saved);
 
-  const isGuest = userType === null;
+  const isGuest = !isAuthenticated && (userType === null || userType === undefined);
 
   // Apply saved search on mount
   React.useEffect(() => {

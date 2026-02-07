@@ -21,6 +21,31 @@ const transformSupabaseUserToProfile = (data: any): AppUserProfile => ({
   qualificationDocuments: data.qualification_documents || [],
 });
 
+/**
+ * Build a minimal fallback profile from auth user data when the DB profile
+ * cannot be fetched or created. This ensures authenticated users always
+ * see at least client-level navigation instead of guest tabs.
+ */
+const buildFallbackProfile = (userId: string, email: string, metadata: Record<string, any> = {}): AppUserProfile => {
+  const resolvedRole = (metadata.type === 'host' || metadata.type === 'worker')
+    ? 'worker' as const
+    : 'client' as const;
+
+  return {
+    id: userId,
+    name: metadata.name || email.split('@')[0] || 'User',
+    email,
+    role: resolvedRole,
+    currentRole: resolvedRole,
+    verified: false,
+    profilePhotos: [],
+    status: 'available',
+    serviceAreas: [],
+    languages: [],
+    qualificationDocuments: [],
+  };
+};
+
 const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> => {
   try {
     console.log('Fetching user profile for:', userId);
@@ -45,21 +70,16 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
 
         console.log('Auth user metadata:', user.user_metadata);
 
-        const metadata = user.user_metadata;
-        if (!metadata.name || !metadata.type) {
-          console.error('Missing required metadata (name or type):', metadata);
-          return null;
-        }
+        const metadata = user.user_metadata || {};
 
-        // Map metadata.type to canonical role:
-        // Old sign-ups sent 'host', new sign-ups send 'worker'
+        // Resolve role from metadata, defaulting to 'client'
         const resolvedRole = (metadata.type === 'host' || metadata.type === 'worker')
           ? 'worker'
           : 'client';
 
         const newUser = {
           id: userId,
-          display_name: metadata.name,
+          display_name: metadata.name || user.email?.split('@')[0] || 'User',
           email: user.email || '',
           role: resolvedRole,
           is_verified: false,
@@ -75,7 +95,8 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
 
         if (insertError) {
           console.error('Insert error:', insertError.code, insertError.message, insertError.details);
-          throw insertError;
+          // Return a fallback profile so the user isn't stuck as guest
+          return buildFallbackProfile(userId, user.email || '', metadata);
         }
 
         console.log('Created new profile:', newProfile);
@@ -88,6 +109,17 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
     return transformSupabaseUserToProfile(data);
   } catch (err) {
     console.error('Error fetching user profile:', err);
+
+    // Last resort: build a fallback from auth user so they aren't stuck as guest
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        return buildFallbackProfile(userId, user.email || '', user.user_metadata || {});
+      }
+    } catch {
+      // ignore secondary failure
+    }
+
     return null;
   }
 };

@@ -9,7 +9,7 @@ import Header from '../components/layout/Header';
 const AppShell: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userProfile, loading, currentRole, setCurrentRole, getEffectiveUserType, canToggleRoles } = useAuthStore();
+  const { userProfile, loading, currentRole, setCurrentRole, getEffectiveUserType, canToggleRoles, isAuthenticated } = useAuthStore();
   const totalUnread = useMessagesStore((s) => s.totalUnread);
 
   // Initialize auth listener
@@ -55,13 +55,16 @@ const AppShell: React.FC = () => {
     { path: '/admin/audit-log', icon: FileText, label: 'Audit' },
   ];
 
+  // If user is authenticated but profile hasn't loaded yet, show client tabs
   const tabs = userType === 'admin'
     ? adminTabs
     : userType === 'worker'
       ? workerTabs
       : userType === 'client'
         ? clientTabs
-        : guestTabs;
+        : isAuthenticated
+          ? clientTabs
+          : guestTabs;
 
   const getTitle = () => {
     const path = location.pathname;
@@ -94,7 +97,7 @@ const AppShell: React.FC = () => {
     if (path === '/dashboard/profile') return () => navigate('/dashboard');
     if (path === '/safety/notes') return () => navigate('/safety');
     if (path === '/verify') return () => navigate('/profile');
-    if (path === '/browse' && !userType) return () => navigate('/');
+    if (path === '/browse' && !userType && !userProfile) return () => navigate('/');
     return undefined;
   };
 
@@ -137,7 +140,7 @@ const AppShell: React.FC = () => {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-trust-100 px-4 py-2 z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-trust-100 px-2 sm:px-4 z-50 safe-area-bottom">
         <div className="flex justify-around items-center max-w-md mx-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -148,21 +151,21 @@ const AppShell: React.FC = () => {
               <button
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
-                className={`relative flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 ${
+                className={`relative flex flex-col items-center min-w-[48px] min-h-[48px] justify-center px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 ${
                   isActive
                     ? 'text-trust-500 bg-trust-50'
-                    : 'text-gray-500 hover:text-trust-500 hover:bg-trust-50'
+                    : 'text-gray-500 hover:text-trust-500 hover:bg-trust-50 active:bg-trust-100'
                 }`}
               >
                 <div className="relative">
-                  <Icon className="w-5 h-5 mb-1" />
+                  <Icon className="w-5 h-5 mb-0.5" />
                   {showBadge && (
                     <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 bg-warm-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
                       {totalUnread > 9 ? '9+' : totalUnread}
                     </span>
                   )}
                 </div>
-                <span className="text-xs font-medium">{tab.label}</span>
+                <span className="text-[11px] sm:text-xs font-medium leading-tight">{tab.label}</span>
               </button>
             );
           })}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Star, MapPin, Clock, Shield } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, MapPin, Clock, Shield, User } from 'lucide-react';
 import { Service } from '../../../types';
 
 interface ServiceCardProps {
@@ -7,17 +7,27 @@ interface ServiceCardProps {
   onClick: () => void;
 }
 
+const FALLBACK_SERVICE_IMG = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" fill="%23e2e8f0"%3E%3Crect width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="16"%3ENo image%3C/text%3E%3C/svg%3E';
+
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
+  const [imgError, setImgError] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+
+  const serviceImage = (!imgError && service.images?.[0]) || FALLBACK_SERVICE_IMG;
+  const avatarSrc = service.workerAvatar;
+
   return (
-    <div 
-      className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1"
+    <div
+      className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 active:scale-[0.98]"
       onClick={onClick}
     >
       <div className="relative">
-        <img 
-          src={service.images[0]} 
+        <img
+          src={serviceImage}
           alt={service.title}
           className="w-full h-48 object-cover"
+          onError={() => setImgError(true)}
+          loading="lazy"
         />
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
           <span className="text-trust-600 font-semibold text-sm">${service.price}</span>
@@ -28,32 +38,40 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
           </div>
         )}
       </div>
-      
+
       <div className="p-4">
         <div className="flex items-center mb-2">
-          <img 
-            src={service.workerAvatar} 
-            alt={service.workerName}
-            className="w-8 h-8 rounded-full mr-3"
-          />
-          <div>
-            <h3 className="font-semibold text-gray-900 text-sm">{service.workerName}</h3>
+          {avatarSrc && !avatarError ? (
+            <img
+              src={avatarSrc}
+              alt={service.workerName}
+              className="w-8 h-8 rounded-full mr-3 object-cover"
+              onError={() => setAvatarError(true)}
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full mr-3 bg-trust-100 flex items-center justify-center flex-shrink-0">
+              <User className="w-4 h-4 text-trust-500" />
+            </div>
+          )}
+          <div className="min-w-0">
+            <h3 className="font-semibold text-gray-900 text-sm truncate">{service.workerName}</h3>
             <div className="flex items-center">
-              <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
+              <Star className="w-4 h-4 text-yellow-400 fill-current mr-1 flex-shrink-0" />
               <span className="text-xs text-gray-600">{service.rating} ({service.reviewCount})</span>
             </div>
           </div>
         </div>
-        
-        <h4 className="font-bold text-lg text-gray-900 mb-2">{service.title}</h4>
+
+        <h4 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1">{service.title}</h4>
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{service.description}</p>
-        
+
         <div className="flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center">
-            <MapPin className="w-4 h-4 mr-1" />
-            <span>{service.location}</span>
+          <div className="flex items-center min-w-0">
+            <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+            <span className="truncate">{service.location}</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0 ml-2">
             <Clock className="w-4 h-4 mr-1" />
             <span>{service.duration}min</span>
           </div>

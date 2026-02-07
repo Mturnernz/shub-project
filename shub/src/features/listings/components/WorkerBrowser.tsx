@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, Star, Filter, Users, Clock } from 'lucide-react';
+import { Search, MapPin, Star, Filter, Users, Clock, User as UserIcon } from 'lucide-react';
 import { User } from '../../../types';
 import { supabase } from '../../../lib/supabase';
 
@@ -311,11 +311,18 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
                   className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
                 >
                   <div className="flex items-center mb-4">
-                    <img
-                      src={worker.avatar || 'https://images.unsplash.com/photo-1494790108755-2616b76ce8c8?w=60&h=60&fit=crop&crop=face'}
-                      alt={worker.name}
-                      className="w-16 h-16 rounded-full object-cover mr-4"
-                    />
+                    {worker.avatar ? (
+                      <img
+                        src={worker.avatar}
+                        alt={worker.name}
+                        className="w-16 h-16 rounded-full object-cover mr-4"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full mr-4 bg-trust-100 flex items-center justify-center flex-shrink-0">
+                        <UserIcon className="w-8 h-8 text-trust-400" />
+                      </div>
+                    )}
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-gray-900">{worker.name}</h3>
