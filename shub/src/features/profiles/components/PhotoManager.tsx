@@ -187,7 +187,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({ photos, onPhotosUpdate, use
             Drag and drop photos here, or click to select
           </p>
           <p className="text-sm text-gray-500">
-            JPEG, PNG, WebP • Max 2MB each • {10 - photoItems.length} remaining
+            JPEG, PNG, WebP • Max 4MB each • {10 - photoItems.length} remaining
           </p>
           
           <input

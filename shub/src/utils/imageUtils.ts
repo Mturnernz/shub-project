@@ -6,7 +6,7 @@ export interface CompressedImage {
   isCompressed: boolean;
 }
 
-export const compressImage = async (file: File, maxSizeMB: number = 2, quality: number = 0.8): Promise<File> => {
+export const compressImage = async (file: File, maxSizeMB: number = 4, quality: number = 0.8): Promise<File> => {
   return new Promise((resolve) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');

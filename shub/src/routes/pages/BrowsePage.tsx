@@ -7,7 +7,7 @@ import { useAuthStore } from '../../features/auth/stores/auth.store';
 const BrowsePage: React.FC = () => {
   const navigate = useNavigate();
   const { services, loading, error, searchServices } = useServices();
-  const { getEffectiveUserType } = useAuthStore();
+  const { getEffectiveUserType, isAuthenticated } = useAuthStore();
   const userType = getEffectiveUserType();
 
   return (
@@ -19,8 +19,9 @@ const BrowsePage: React.FC = () => {
       onCategoryClick={(category) => searchServices('', category, 'All Locations')}
       onSearch={searchServices}
       userType={userType}
-      onBack={!userType ? () => navigate('/') : undefined}
-      showBackButton={!userType}
+      isAuthenticated={isAuthenticated}
+      onBack={!userType && !isAuthenticated ? () => navigate('/') : undefined}
+      showBackButton={!userType && !isAuthenticated}
       onSignUpAsClient={() => navigate('/signup')}
       canBecomeHost={false}
     />
