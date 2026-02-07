@@ -3,14 +3,14 @@ import { Settings, BarChart3, Users, Calendar, CheckCircle, AlertCircle, Camera,
 import { User } from '../../../types';
 import { useProfileCompletion } from '../hooks/useProfileCompletion';
 
-const WELCOME_DISMISSED_KEY = 'shub_host_welcome_dismissed';
+const WELCOME_DISMISSED_KEY = 'shub_worker_welcome_dismissed';
 
-interface HostDashboardProps {
+interface WorkerDashboardProps {
   userProfile: User | null;
   onManageProfile: () => void;
 }
 
-// Getting started steps for new hosts
+// Getting started steps for new workers
 const getOnboardingSteps = (completedFields: string[]) => {
   const isFieldComplete = (label: string) => completedFields.includes(label);
   return [
@@ -23,7 +23,7 @@ const getOnboardingSteps = (completedFields: string[]) => {
   ];
 };
 
-const HostDashboard: React.FC<HostDashboardProps> = ({
+const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
   userProfile,
   onManageProfile
 }) => {
@@ -59,7 +59,7 @@ const HostDashboard: React.FC<HostDashboardProps> = ({
 
   return (
     <div className="px-4 py-8 space-y-6">
-      {/* Welcome Flow for New Hosts */}
+      {/* Welcome Flow for New Workers */}
       {showWelcome && (
         <div className="bg-gradient-to-br from-trust-600 to-warm-600 rounded-2xl p-6 text-white">
           <h2 className="text-2xl font-bold mb-2">Welcome to Shub!</h2>
@@ -101,10 +101,10 @@ const HostDashboard: React.FC<HostDashboardProps> = ({
       {!showWelcome && (
         <div className="bg-gradient-to-r from-trust-500/20 to-warm-500/20 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Welcome back, {userProfile?.name || 'Host'}!
+            Welcome back, {userProfile?.name || 'Worker'}!
           </h2>
           <p className="text-gray-600">
-            Manage your services and grow your hosting business
+            Manage your services and grow your business
           </p>
         </div>
       )}
@@ -301,4 +301,4 @@ const HostDashboard: React.FC<HostDashboardProps> = ({
   );
 };
 
-export default HostDashboard;
+export default WorkerDashboard;

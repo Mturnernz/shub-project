@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Star, MapPin, Clock, Shield, Heart, MessageSquare, Calendar, CheckCircle } from 'lucide-react';
 import { Service } from '../../../types';
-import { useHostProfile } from '../../profiles/hooks/useHostProfile';
+import { useWorkerProfile } from '../../profiles/hooks/useWorkerProfile';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { useBookings } from '../../bookings/hooks/useBookings';
 import BookingRequest from '../../bookings/components/BookingRequest';
@@ -10,7 +10,7 @@ interface ServiceDetailProps {
   service: Service;
   onBack: () => void;
   onBook: () => void;
-  userType?: 'host' | 'client' | null;
+  userType?: 'worker' | 'client' | null;
   onSignUpAsClient?: () => void;
 }
 
@@ -21,7 +21,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
   const { userProfile } = useAuth();
-  const { profile: hostProfile, loading: hostLoading } = useHostProfile(service.hostId);
+  const { profile: workerProfile, loading: workerLoading } = useWorkerProfile(service.workerId);
   const { createNewBooking, loading: bookingLoading } = useBookings(
     userProfile?.id || null,
     userType
@@ -98,12 +98,12 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <img 
-                src={service.hostAvatar} 
-                alt={service.hostName}
+                src={service.workerAvatar} 
+                alt={service.workerName}
                 className="w-12 h-12 rounded-full mr-4"
               />
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">{service.hostName}</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{service.workerName}</h2>
                 <div className="flex items-center">
                   <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
                   <span className="text-sm text-gray-600">{service.rating} ({service.reviewCount} reviews)</span>
@@ -135,22 +135,22 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
           <p className="text-gray-700 mb-6 leading-relaxed">{service.description}</p>
 
           {/* Host Bio Section */}
-          {hostProfile?.bio && (
+          {workerProfile?.bio && (
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">About {service.hostName}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">About {service.workerName}</h3>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {hostProfile.bio}
+                  {workerProfile.bio}
                 </p>
               </div>
             </div>
           )}
           
-          {hostLoading && (
+          {workerLoading && (
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">About {service.hostName}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">About {service.workerName}</h3>
               <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-gray-500 italic">Loading host information...</p>
+                <p className="text-gray-500 italic">Loading worker information...</p>
               </div>
             </div>
           )}
@@ -163,7 +163,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
                 <div>
                   <h3 className="font-semibold text-safe-800">Booking request sent!</h3>
                   <p className="text-sm text-safe-700 mt-1">
-                    {service.hostName} will review your request. You&apos;ll be notified when they respond.
+                    {service.workerName} will review your request. You&apos;ll be notified when they respond.
                   </p>
                 </div>
               </div>
@@ -202,9 +202,9 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
       {/* Booking Request Modal */}
       {showBookingRequest && canBook && (
         <BookingRequest
-          workerId={service.hostId}
+          workerId={service.workerId}
           clientId={userProfile!.id}
-          workerName={service.hostName}
+          workerName={service.workerName}
           onSubmit={handleBookingRequest}
           onCancel={() => setShowBookingRequest(false)}
           isLoading={bookingLoading}

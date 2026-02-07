@@ -2,8 +2,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  type: 'host' | 'client';
-  currentRole?: 'host' | 'client'; // Active view mode for hosts (hosts can view as client)
+  role: 'worker' | 'client';
+  currentRole?: 'worker' | 'client'; // Active view mode for workers (workers can view as client)
   avatar?: string;
   location?: string;
   verified?: boolean;
@@ -20,9 +20,9 @@ export interface User {
 
 export interface Service {
   id: string;
-  hostId: string;
-  hostName: string;
-  hostAvatar?: string;
+  workerId: string;
+  workerName: string;
+  workerAvatar?: string;
   title: string;
   description: string;
   price: number;
@@ -41,7 +41,7 @@ export interface Booking {
   id: string;
   serviceId: string;
   clientId: string;
-  hostId: string;
+  workerId: string;
   date: Date;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   totalAmount: number;

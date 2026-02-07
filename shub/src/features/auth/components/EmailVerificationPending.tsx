@@ -4,7 +4,7 @@ import { supabase } from '../../../lib/supabase';
 
 interface EmailVerificationPendingProps {
   email: string;
-  userType: 'host' | 'client';
+  userType: 'worker' | 'client';
   onBack: () => void;
 }
 
@@ -98,8 +98,8 @@ const EmailVerificationPending: React.FC<EmailVerificationPendingProps> = ({
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold mr-2">3.</span>
-                  {userType === 'host' 
-                    ? 'Complete your host profile setup'
+                  {userType === 'worker'
+                    ? 'Complete your worker profile setup'
                     : 'Start browsing and booking services'
                   }
                 </li>

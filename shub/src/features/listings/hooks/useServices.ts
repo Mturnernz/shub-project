@@ -44,23 +44,25 @@ export const useServices = () => {
         throw new Error('Supabase client not initialized');
       }
 
-      // Start with base query for services and join with users table for host info
+      // Query services joined with worker_profiles for published check and users for worker info
       let supabaseQuery = supabase
         .from('services')
         .select(`
           *,
-          host:users!services_host_id_fkey!inner (
+          worker:users!services_worker_id_fkey!inner (
             status,
-            created_at,
-            is_published
+            created_at
+          ),
+          worker_profile:worker_profiles!inner (
+            published
           )
         `)
         .eq('available', true)
-        .eq('host.is_published', true);
+        .eq('worker_profile.published', true);
 
       // Apply text search filter
       if (query && query.trim()) {
-        supabaseQuery = supabaseQuery.or(`title.ilike.%${query.trim()}%,description.ilike.%${query.trim()}%,host_name.ilike.%${query.trim()}%`);
+        supabaseQuery = supabaseQuery.or(`title.ilike.%${query.trim()}%,description.ilike.%${query.trim()}%,worker_name.ilike.%${query.trim()}%`);
       }
 
       // Apply category filter
@@ -78,18 +80,18 @@ export const useServices = () => {
         }
       }
 
-      // Apply "Available Now" filter — only show hosts with status = 'available'
+      // Apply "Available Now" filter — only show workers with status = 'available'
       if (availableNow) {
-        supabaseQuery = supabaseQuery.eq('host.status', 'available');
+        supabaseQuery = supabaseQuery.eq('worker.status', 'available');
       } else if (availability && availability !== 'All') {
-        // Apply availability filter (filter by host status)
+        // Apply availability filter (filter by worker status)
         const statusMap: Record<string, string> = {
           'Available': 'available',
           'Busy': 'busy',
           'Away': 'away'
         };
         const dbStatus = statusMap[availability] || availability.toLowerCase();
-        supabaseQuery = supabaseQuery.eq('host.status', dbStatus);
+        supabaseQuery = supabaseQuery.eq('worker.status', dbStatus);
       }
 
       // Apply minimum rating filter
@@ -97,9 +99,9 @@ export const useServices = () => {
         supabaseQuery = supabaseQuery.gte('rating', minRating);
       }
 
-      // Apply date created filter (filter by when host profile was created)
+      // Apply date created filter (filter by when worker profile was created)
       if (dateCreated) {
-        supabaseQuery = supabaseQuery.gte('host.created_at', dateCreated);
+        supabaseQuery = supabaseQuery.gte('worker.created_at', dateCreated);
       }
 
       // Apply featured/verified filter
@@ -124,9 +126,9 @@ export const useServices = () => {
 
       const transformedServices: Service[] = servicesData.map(service => ({
         id: service.id,
-        hostId: service.host_id,
-        hostName: service.host_name,
-        hostAvatar: service.host_avatar,
+        workerId: service.worker_id,
+        workerName: service.worker_name,
+        workerAvatar: service.worker_avatar,
         title: service.title,
         description: service.description,
         price: service.price,

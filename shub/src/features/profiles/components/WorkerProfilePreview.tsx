@@ -2,12 +2,12 @@ import React from 'react';
 import { Star, MapPin, Globe, Shield, CheckCircle, MessageSquare, Calendar, Clock, DollarSign } from 'lucide-react';
 import { User, Service } from '../../../types';
 
-interface HostProfilePreviewProps {
+interface WorkerProfilePreviewProps {
   profile: User;
   services: Service[];
 }
 
-const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, services }) => {
+const WorkerProfilePreview: React.FC<WorkerProfilePreviewProps> = ({ profile, services }) => {
   const getStatusColor = () => {
     switch (profile.status) {
       case 'available': return 'text-safe-600 bg-safe-100';
@@ -45,16 +45,16 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
                   <Shield className="w-6 h-6 text-white" />
                 )}
               </div>
-              
+
               <div className="flex items-center space-x-2 mb-2">
                 <span className="text-lg">{getStatusIcon()}</span>
                 <span className="font-medium capitalize">{profile.status || 'available'}</span>
               </div>
-              
+
               {profile.statusMessage && (
                 <p className="text-white/90 italic">"{profile.statusMessage}"</p>
               )}
-              
+
               <div className="flex items-center space-x-4 mt-3 text-white/90">
                 <div className="flex items-center">
                   <MapPin className="w-4 h-4 mr-1" />
@@ -62,7 +62,7 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
                 </div>
                 <div className="flex items-center">
                   <Star className="w-4 h-4 mr-1 fill-current" />
-                  <span className="text-sm">New Host</span>
+                  <span className="text-sm">New Worker</span>
                 </div>
               </div>
             </div>
@@ -117,9 +117,9 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
                     <div className="text-sm text-gray-500">per session</div>
                   </div>
                 </div>
-                
+
                 <p className="text-gray-600 text-sm mb-3 line-clamp-2">{service.description}</p>
-                
+
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center">
@@ -130,7 +130,7 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
                       {service.category}
                     </span>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     <button className="px-3 py-1 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg text-xs hover:from-trust-700 hover:to-warm-700 transition-all duration-200">
                       <Calendar className="w-3 h-3 inline mr-1" />
@@ -210,7 +210,7 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
           <div className="bg-safe-50 border border-safe-200 rounded-lg p-4">
             <p className="text-safe-800 text-sm">
               <Shield className="w-4 h-4 inline mr-2" />
-              This host has uploaded {profile.qualificationDocuments.length} qualification document{profile.qualificationDocuments.length > 1 ? 's' : ''} for verification.
+              This worker has uploaded {profile.qualificationDocuments.length} qualification document{profile.qualificationDocuments.length > 1 ? 's' : ''} for verification.
             </p>
           </div>
         </div>
@@ -237,4 +237,4 @@ const HostProfilePreview: React.FC<HostProfilePreviewProps> = ({ profile, servic
   );
 };
 
-export default HostProfilePreview;
+export default WorkerProfilePreview;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import HostDashboard from '../../features/profiles/components/HostDashboard';
+import WorkerDashboard from '../../features/profiles/components/WorkerDashboard';
 import { useAuthStore } from '../../features/auth/stores/auth.store';
 
 const DashboardPage: React.FC = () => {
@@ -8,14 +8,14 @@ const DashboardPage: React.FC = () => {
   const { userProfile, getEffectiveUserType } = useAuthStore();
   const userType = getEffectiveUserType();
 
-  // Redirect non-hosts to browse
-  if (userType !== 'host') {
+  // Redirect non-workers to browse
+  if (userType !== 'worker') {
     navigate('/browse', { replace: true });
     return null;
   }
 
   return (
-    <HostDashboard
+    <WorkerDashboard
       userProfile={userProfile}
       onManageProfile={() => navigate('/dashboard/profile')}
     />

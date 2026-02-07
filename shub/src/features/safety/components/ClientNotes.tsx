@@ -91,7 +91,7 @@ const ClientNotes: React.FC<ClientNotesProps> = ({ clientId, clientName, booking
 
   const flagConfig = SAFETY_FLAGS.find((f) => f.value === highestFlag) || SAFETY_FLAGS[0];
 
-  if (!userProfile || userProfile.type !== 'host') return null;
+  if (!userProfile || userProfile.role !== 'worker') return null;
 
   return (
     <div className="bg-white/70 backdrop-blur-sm rounded-2xl overflow-hidden">

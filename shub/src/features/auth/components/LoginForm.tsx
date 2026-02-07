@@ -3,7 +3,7 @@ import { ArrowLeft, Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
 interface LoginFormProps {
-  onLoginSuccess: (userId: string, userType: 'host' | 'client') => void;
+  onLoginSuccess: () => void;
   onBack: () => void;
 }
 
@@ -64,24 +64,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
         throw new Error('No user data returned from login');
       }
 
-      // Fetch user profile from the users table
-      const { data: profileData, error: profileError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authData.user.id)
-        .single();
-
-      if (profileError) {
-        console.error('Profile fetch error:', profileError);
-        throw new Error('Failed to fetch user profile');
-      }
-
-      if (!profileData) {
-        throw new Error('User profile not found');
-      }
-
-      // Success! Call the success handler
-      onLoginSuccess(profileData.id, profileData.type);
+      // Success! useAuthInit will handle profile fetch/creation via onAuthStateChange
+      onLoginSuccess();
 
     } catch (err) {
       console.error('Login error:', err);

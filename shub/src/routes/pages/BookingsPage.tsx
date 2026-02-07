@@ -9,7 +9,7 @@ const BookingsPage: React.FC = () => {
   const navigate = useNavigate();
   const { userProfile, getEffectiveUserType } = useAuthStore();
   const userType = getEffectiveUserType();
-  const userRole = userType === 'host' ? 'worker' : 'client';
+  const userRole = userType === 'worker' ? 'worker' : 'client';
 
   const {
     bookings,

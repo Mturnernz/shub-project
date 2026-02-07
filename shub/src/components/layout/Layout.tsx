@@ -5,7 +5,7 @@ interface LayoutProps {
   children: ReactNode;
   activeTab?: string;
   onTabChange?: (tab: string) => void;
-  userType?: 'host' | 'client' | null;
+  userType?: 'worker' | 'client' | null;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'home', onTabChange, userType }) => {
@@ -22,7 +22,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'home', onTabChan
     { id: 'profile', icon: User, label: 'Profile' }
   ];
 
-  const hostTabs = [
+  const workerTabs = [
     { id: 'home', icon: Home, label: 'Dashboard' },
     { id: 'bookings', icon: Calendar, label: 'Bookings' },
     { id: 'messages', icon: MessageSquare, label: 'Messages' },
@@ -34,7 +34,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'home', onTabChan
     { id: 'home', icon: Home, label: 'Browse' }
   ];
 
-  const tabs = userType === 'host' ? hostTabs : userType === 'client' ? clientTabs : guestTabs;
+  const tabs = userType === 'worker' ? workerTabs : userType === 'client' ? clientTabs : guestTabs;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">

@@ -2,7 +2,7 @@ import React from 'react';
 import { CheckCircle, ArrowRight, UserCheck, Users } from 'lucide-react';
 
 interface EmailVerificationSuccessPageProps {
-  userType: 'host' | 'client';
+  userType: 'worker' | 'client';
   onProceed: () => void;
 }
 
@@ -32,11 +32,11 @@ const EmailVerificationSuccessPage: React.FC<EmailVerificationSuccessPageProps> 
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
           <div className="text-center mb-6">
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-              userType === 'host' 
+              userType === 'worker'
                 ? 'bg-gradient-to-br from-warm-500 to-trust-500'
                 : 'bg-gradient-to-br from-trust-500 to-warm-500'
             }`}>
-              {userType === 'host' ? (
+              {userType === 'worker' ? (
                 <UserCheck className="w-8 h-8 text-white" />
               ) : (
                 <Users className="w-8 h-8 text-white" />
@@ -49,9 +49,9 @@ const EmailVerificationSuccessPage: React.FC<EmailVerificationSuccessPageProps> 
             
             <p className="text-gray-600 mb-4">
               Your {userType} account has been successfully created and verified.
-              {userType === 'host' 
+              {userType === 'worker'
                 ? ' You can now set up your profile and start offering your services.'
-                : ' You can now browse and book amazing services from verified hosts.'
+                : ' You can now browse and book amazing services from verified workers.'
               }
             </p>
 
@@ -71,7 +71,7 @@ const EmailVerificationSuccessPage: React.FC<EmailVerificationSuccessPageProps> 
             onClick={onProceed}
             className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-4 rounded-xl font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 flex items-center justify-center"
           >
-            {userType === 'host' ? 'Set Up My Profile' : 'Start Browsing'}
+            {userType === 'worker' ? 'Set Up My Profile' : 'Start Browsing'}
             <ArrowRight className="w-5 h-5 ml-2" />
           </button>
         </div>
@@ -79,10 +79,10 @@ const EmailVerificationSuccessPage: React.FC<EmailVerificationSuccessPageProps> 
         {/* Welcome Tips */}
         <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-lg p-4">
           <h4 className="text-white font-medium mb-3">
-            {userType === 'host' ? 'Host Tips:' : 'Getting Started:'}
+            {userType === 'worker' ? 'Worker Tips:' : 'Getting Started:'}
           </h4>
           <ul className="text-trust-100 text-sm space-y-2">
-            {userType === 'host' ? (
+            {userType === 'worker' ? (
               <>
                 <li>• Complete your profile with photos and bio</li>
                 <li>• Add your services and set competitive pricing</li>
@@ -92,7 +92,7 @@ const EmailVerificationSuccessPage: React.FC<EmailVerificationSuccessPageProps> 
             ) : (
               <>
                 <li>• Browse services by category or location</li>
-                <li>• Read host profiles and reviews</li>
+                <li>• Read worker profiles and reviews</li>
                 <li>• Use search filters to find exactly what you need</li>
                 <li>• Book securely through our platform</li>
               </>

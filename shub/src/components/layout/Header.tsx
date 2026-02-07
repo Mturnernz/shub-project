@@ -9,8 +9,8 @@ interface HeaderProps {
   onBack?: () => void;
   showBackButton?: boolean;
   showRoleToggle?: boolean;
-  currentRole?: 'host' | 'client';
-  onRoleChange?: (role: 'host' | 'client') => void;
+  currentRole?: 'worker' | 'client';
+  onRoleChange?: (role: 'worker' | 'client') => void;
   isRoleToggling?: boolean;
   showLogout?: boolean;
   onLogout?: () => void;

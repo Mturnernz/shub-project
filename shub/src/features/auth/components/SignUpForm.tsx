@@ -3,9 +3,9 @@ import { ArrowLeft, Eye, EyeOff, User, Mail, Lock, UserCheck, Users } from 'luci
 import { supabase } from '../../../lib/supabase';
 
 interface SignUpFormProps {
-  userType: 'host' | 'client';
+  userType: 'worker' | 'client';
   onBack: () => void;
-  onSignUpSuccess: (type: 'host' | 'client', email: string) => void;
+  onSignUpSuccess: (type: 'worker' | 'client', email: string) => void;
 }
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSuccess }) => {
@@ -134,11 +134,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
           <h1 className="text-4xl font-bold text-white mb-2">Join Shub</h1>
           <div className="flex items-center justify-center mb-4">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mr-3 ${
-              userType === 'host' 
+              userType === 'worker' 
                 ? 'bg-gradient-to-br from-warm-500 to-trust-500'
                 : 'bg-gradient-to-br from-trust-500 to-warm-500'
             }`}>
-              {userType === 'host' ? (
+              {userType === 'worker' ? (
                 <UserCheck className="w-6 h-6 text-white" />
               ) : (
                 <Users className="w-6 h-6 text-white" />
@@ -146,10 +146,10 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
             </div>
             <div>
               <h2 className="text-xl font-semibold text-white">
-                {userType === 'host' ? 'Host Account' : 'Client Account'}
+                {userType === 'worker' ? 'Worker Account' : 'Client Account'}
               </h2>
               <p className="text-trust-100 text-sm">
-                {userType === 'host' ? 'Offer your services' : 'Browse and book services'}
+                {userType === 'worker' ? 'Offer your services' : 'Browse and book services'}
               </p>
             </div>
           </div>
@@ -256,7 +256,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
               disabled={loading}
               className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating Account...' : `Create ${userType === 'host' ? 'Host' : 'Client'} Account`}
+              {loading ? 'Creating Account...' : `Create ${userType === 'worker' ? 'Worker' : 'Client'} Account`}
             </button>
           </form>
 

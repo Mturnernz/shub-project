@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Filter, Users, Clock } from 'lucide-react';
-import { User } from '../types';
-import { supabase } from '../lib/supabase';
+import { User } from '../../../types';
+import { supabase } from '../../../lib/supabase';
 
-interface HostBrowserProps {
-  onHostSelect?: (host: User) => void;
+interface WorkerBrowserProps {
+  onWorkerSelect?: (worker: User) => void;
   showBackButton?: boolean;
   onBack?: () => void;
 }
@@ -16,9 +16,9 @@ interface FilterState {
   verified: boolean;
 }
 
-const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton, onBack }) => {
-  const [hosts, setHosts] = useState<User[]>([]);
-  const [filteredHosts, setFilteredHosts] = useState<User[]>([]);
+const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackButton, onBack }) => {
+  const [workers, setWorkers] = useState<User[]>([]);
+  const [filteredWorkers, setFilteredWorkers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -29,7 +29,6 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
     verified: false
   });
 
-  // Mock locations for filtering
   const locations = [
     'All Locations',
     'Auckland',
@@ -40,7 +39,6 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
     'Dunedin'
   ];
 
-  // Mock service categories
   const serviceCategories = [
     'Massage Therapy',
     'Personal Training',
@@ -51,46 +49,58 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
   ];
 
   useEffect(() => {
-    fetchHosts();
+    fetchWorkers();
   }, []);
 
   useEffect(() => {
     applyFilters();
-  }, [hosts, searchQuery, filters]);
+  }, [workers, searchQuery, filters]);
 
-  const fetchHosts = async () => {
+  const fetchWorkers = async () => {
     try {
       setLoading(true);
 
-      // Fetch published host profiles
+      // Fetch published worker profiles
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('type', 'host')
-        .eq('verified', true)
+        .eq('role', 'worker')
+        .eq('is_verified', true)
         .not('bio', 'is', null);
 
       if (error) {
-        console.error('Error fetching hosts:', error);
-        // Use mock data if database query fails
-        setHosts(getMockHosts());
+        console.error('Error fetching workers:', error);
+        setWorkers(getMockWorkers());
       } else {
-        setHosts(data || []);
+        const transformed = (data || []).map((d: any) => ({
+          id: d.id,
+          name: d.display_name || d.name,
+          email: d.email,
+          role: d.role as 'worker' | 'client',
+          avatar: d.avatar_url || d.avatar,
+          location: d.location,
+          verified: d.is_verified || d.verified,
+          bio: d.bio,
+          profilePhotos: d.profile_photos || [],
+          status: d.status || 'available',
+          primaryLocation: d.primary_location,
+        }));
+        setWorkers(transformed);
       }
     } catch (err) {
       console.error('Error:', err);
-      setHosts(getMockHosts());
+      setWorkers(getMockWorkers());
     } finally {
       setLoading(false);
     }
   };
 
-  const getMockHosts = (): User[] => [
+  const getMockWorkers = (): User[] => [
     {
-      id: 'host1',
+      id: 'worker1',
       name: 'Sarah Johnson',
       email: 'sarah@example.com',
-      type: 'host',
+      role: 'worker',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b76ce8c8?w=150&h=150&fit=crop&crop=face',
       location: 'Auckland',
       verified: true,
@@ -103,10 +113,10 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
       primaryLocation: 'Auckland CBD'
     },
     {
-      id: 'host2',
+      id: 'worker2',
       name: 'Mike Chen',
       email: 'mike@example.com',
-      type: 'host',
+      role: 'worker',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
       location: 'Wellington',
       verified: true,
@@ -118,10 +128,10 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
       primaryLocation: 'Wellington Central'
     },
     {
-      id: 'host3',
+      id: 'worker3',
       name: 'Emma Wilson',
       email: 'emma@example.com',
-      type: 'host',
+      role: 'worker',
       avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
       location: 'Christchurch',
       verified: true,
@@ -135,36 +145,32 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
   ];
 
   const applyFilters = () => {
-    let filtered = hosts;
+    let filtered = workers;
 
-    // Apply search query
     if (searchQuery.trim()) {
-      filtered = filtered.filter(host =>
-        host.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (host.bio && host.bio.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (host.location && host.location.toLowerCase().includes(searchQuery.toLowerCase()))
+      filtered = filtered.filter(worker =>
+        worker.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (worker.bio && worker.bio.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (worker.location && worker.location.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
-    // Apply location filter
     if (filters.location !== 'All Locations') {
-      filtered = filtered.filter(host =>
-        host.location?.includes(filters.location) ||
-        host.primaryLocation?.includes(filters.location)
+      filtered = filtered.filter(worker =>
+        worker.location?.includes(filters.location) ||
+        worker.primaryLocation?.includes(filters.location)
       );
     }
 
-    // Apply verified filter
     if (filters.verified) {
-      filtered = filtered.filter(host => host.verified);
+      filtered = filtered.filter(worker => worker.verified);
     }
 
-    // Apply availability filter
     if (filters.availability !== 'All') {
-      filtered = filtered.filter(host => host.status === filters.availability);
+      filtered = filtered.filter(worker => worker.status === filters.availability);
     }
 
-    setFilteredHosts(filtered);
+    setFilteredWorkers(filtered);
   };
 
   const toggleServiceFilter = (service: string) => {
@@ -209,7 +215,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                   ←
                 </button>
               )}
-              <h1 className="text-2xl font-bold text-gray-900">Browse Hosts</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Browse Workers</h1>
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
@@ -225,7 +231,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search hosts by name, location, or services..."
+              placeholder="Search workers by name, location, or services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-trust-500 focus:border-transparent"
@@ -237,7 +243,6 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
         {showFilters && (
           <div className="border-t border-trust-100 bg-white/90 backdrop-blur-sm">
             <div className="max-w-4xl mx-auto px-4 py-4 space-y-4">
-              {/* Location Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                 <select
@@ -251,7 +256,6 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                 </select>
               </div>
 
-              {/* Availability Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
                 <select
@@ -266,7 +270,6 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                 </select>
               </div>
 
-              {/* Verified Filter */}
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -276,7 +279,7 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                   className="rounded border-gray-300 text-trust-600 focus:ring-trust-500"
                 />
                 <label htmlFor="verified" className="ml-2 text-sm text-gray-700">
-                  Verified hosts only
+                  Verified workers only
                 </label>
               </div>
             </div>
@@ -289,37 +292,34 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin w-8 h-8 border-2 border-trust-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading hosts...</p>
+            <p className="text-gray-600">Loading workers...</p>
           </div>
         ) : (
           <>
-            {/* Results Count */}
             <div className="mb-6">
               <p className="text-gray-600">
-                Showing {filteredHosts.length} of {hosts.length} hosts
+                Showing {filteredWorkers.length} of {workers.length} workers
                 {searchQuery && ` for "${searchQuery}"`}
               </p>
             </div>
 
-            {/* Host Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredHosts.map(host => (
+              {filteredWorkers.map(worker => (
                 <div
-                  key={host.id}
-                  onClick={() => onHostSelect?.(host)}
+                  key={worker.id}
+                  onClick={() => onWorkerSelect?.(worker)}
                   className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
                 >
-                  {/* Host Avatar */}
                   <div className="flex items-center mb-4">
                     <img
-                      src={host.avatar || 'https://images.unsplash.com/photo-1494790108755-2616b76ce8c8?w=60&h=60&fit=crop&crop=face'}
-                      alt={host.name}
+                      src={worker.avatar || 'https://images.unsplash.com/photo-1494790108755-2616b76ce8c8?w=60&h=60&fit=crop&crop=face'}
+                      alt={worker.name}
                       className="w-16 h-16 rounded-full object-cover mr-4"
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-900">{host.name}</h3>
-                        {host.verified && (
+                        <h3 className="font-semibold text-gray-900">{worker.name}</h3>
+                        {worker.verified && (
                           <div className="w-5 h-5 bg-safe-500 rounded-full flex items-center justify-center">
                             <span className="text-white text-xs">✓</span>
                           </div>
@@ -327,21 +327,19 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
                       </div>
                       <p className="text-sm text-gray-600 flex items-center">
                         <MapPin className="w-4 h-4 mr-1" />
-                        {host.location || host.primaryLocation}
+                        {worker.location || worker.primaryLocation}
                       </p>
                     </div>
                   </div>
 
-                  {/* Bio */}
                   <p className="text-gray-700 text-sm mb-4 line-clamp-3">
-                    {host.bio}
+                    {worker.bio}
                   </p>
 
-                  {/* Status and Rating */}
                   <div className="flex items-center justify-between">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(host.status)}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(worker.status)}`}>
                       <Clock className="w-3 h-3 inline mr-1" />
-                      {getStatusText(host.status)}
+                      {getStatusText(worker.status)}
                     </span>
                     <div className="flex items-center text-yellow-500">
                       <Star className="w-4 h-4 fill-current" />
@@ -352,13 +350,12 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
               ))}
             </div>
 
-            {/* No Results */}
-            {filteredHosts.length === 0 && !loading && (
+            {filteredWorkers.length === 0 && !loading && (
               <div className="text-center py-12">
                 <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No hosts found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No workers found</h3>
                 <p className="text-gray-600">
-                  Try adjusting your search or filters to find more hosts.
+                  Try adjusting your search or filters to find more workers.
                 </p>
               </div>
             )}
@@ -369,4 +366,4 @@ const HostBrowser: React.FC<HostBrowserProps> = ({ onHostSelect, showBackButton,
   );
 };
 
-export default HostBrowser;
+export default WorkerBrowser;

@@ -10,7 +10,7 @@ interface ProfileCompletionDetails {
 
 export const useProfileCompletion = (userProfile: User | null): ProfileCompletionDetails => {
   return useMemo(() => {
-    if (!userProfile || userProfile.type !== 'host') {
+    if (!userProfile || userProfile.role !== 'worker') {
       return {
         percentage: 0,
         missingFields: [],

@@ -2,18 +2,12 @@ import { useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useAuthStore, type AppUserProfile } from '../stores/auth.store';
 
-const mapRoleToType = (role: string): 'host' | 'client' | 'admin' => {
-  if (role === 'admin') return 'admin';
-  if (role === 'worker') return 'host';
-  return 'client';
-};
-
 const transformSupabaseUserToProfile = (data: any): AppUserProfile => ({
   id: data.id,
   name: data.display_name,
   email: data.email,
-  type: mapRoleToType(data.role),
-  currentRole: mapRoleToType(data.role),
+  role: data.role,
+  currentRole: data.role,
   avatar: data.avatar_url,
   location: data.location,
   verified: data.is_verified,
@@ -41,7 +35,6 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
       console.log('Profile fetch error:', error.code, error.message);
 
       if (error.code === 'PGRST116') {
-        // No profile found — create one for newly verified users
         console.log('No profile found, attempting to create one...');
 
         const { data: { user } } = await supabase.auth.getUser();
@@ -58,11 +51,17 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
           return null;
         }
 
+        // Map metadata.type to canonical role:
+        // Old sign-ups sent 'host', new sign-ups send 'worker'
+        const resolvedRole = (metadata.type === 'host' || metadata.type === 'worker')
+          ? 'worker'
+          : 'client';
+
         const newUser = {
           id: userId,
           display_name: metadata.name,
           email: user.email || '',
-          role: metadata.type === 'host' ? 'worker' : 'client',
+          role: resolvedRole,
           is_verified: false,
         };
 

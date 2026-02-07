@@ -45,7 +45,7 @@ interface ClientHomeProps {
   onServiceClick: (service: Service) => void;
   onCategoryClick: (category: string) => void;
   onSearch: (query: string, category: string, location: string, availability?: string, minRating?: number, dateCreated?: string, featuredOnly?: boolean, availableNow?: boolean) => void;
-  userType?: 'host' | 'client' | null;
+  userType?: 'worker' | 'client' | null;
   onBack?: () => void;
   showBackButton?: boolean;
   onSignUpAsClient?: () => void;

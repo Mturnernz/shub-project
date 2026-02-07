@@ -37,7 +37,7 @@ const ClientNotesPage: React.FC = () => {
     avoid: summaries.filter((s) => s.latest_safety_flag === 'avoid').length,
   };
 
-  if (!userProfile || userProfile.type !== 'host') {
+  if (!userProfile || userProfile.role !== 'worker') {
     return (
       <div className="px-4 py-8 text-center">
         <p className="text-gray-600 mb-4">Client notes are only available for providers.</p>

@@ -4,15 +4,15 @@ import { useAuth } from './useAuth';
 
 export const useRole = () => {
   const { userProfile, refetchProfile } = useAuth();
-  const [currentRole, setCurrentRole] = useState<'host' | 'client'>('client');
+  const [currentRole, setCurrentRole] = useState<'worker' | 'client'>('client');
   const [isToggling, setIsToggling] = useState(false);
 
   // Initialize current role based on user profile
   useEffect(() => {
     if (userProfile) {
-      if (userProfile.type === 'host') {
-        // Hosts can toggle - use their currentRole or default to 'host'
-        setCurrentRole(userProfile.currentRole || 'host');
+      if (userProfile.role === 'worker') {
+        // Workers can toggle - use their currentRole or default to 'worker'
+        setCurrentRole(userProfile.currentRole || 'worker');
       } else {
         // Clients always stay as clients
         setCurrentRole('client');
@@ -20,12 +20,12 @@ export const useRole = () => {
     }
   }, [userProfile]);
 
-  // Only hosts can toggle roles
-  const canToggleRoles = userProfile?.type === 'host';
+  // Only workers can toggle roles
+  const canToggleRoles = userProfile?.role === 'worker';
 
-  // Switch between roles (only works for hosts)
-  const switchRole = async (newRole: 'host' | 'client'): Promise<boolean> => {
-    if (!userProfile || userProfile.type !== 'host') return false;
+  // Switch between roles (only works for workers)
+  const switchRole = async (newRole: 'worker' | 'client'): Promise<boolean> => {
+    if (!userProfile || userProfile.role !== 'worker') return false;
 
     try {
       setIsToggling(true);
@@ -52,14 +52,14 @@ export const useRole = () => {
   };
 
   // Get effective user type for UI logic
-  const getEffectiveUserType = (): 'host' | 'client' | null => {
+  const getEffectiveUserType = (): 'worker' | 'client' | null => {
     if (!userProfile) return null;
 
-    if (userProfile.type === 'host') {
-      return currentRole; // Hosts can view as either host or client
+    if (userProfile.role === 'worker') {
+      return currentRole; // Workers can view as either worker or client
     }
 
-    return userProfile.type; // Clients stay as clients
+    return userProfile.role; // Clients stay as clients
   };
 
   return {

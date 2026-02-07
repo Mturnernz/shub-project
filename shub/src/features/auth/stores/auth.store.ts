@@ -5,8 +5,8 @@ export interface AppUserProfile {
   id: string;
   name: string;
   email: string;
-  type: 'host' | 'client' | 'admin';
-  currentRole?: 'host' | 'client' | 'admin';
+  role: 'worker' | 'client' | 'admin';
+  currentRole?: 'worker' | 'client' | 'admin';
   avatar?: string;
   location?: string;
   verified?: boolean;
@@ -26,13 +26,13 @@ interface AuthState {
   userProfile: AppUserProfile | null;
   isAuthenticated: boolean;
   loading: boolean;
-  currentRole: 'host' | 'client' | 'admin';
+  currentRole: 'worker' | 'client' | 'admin';
   setUser: (user: SupabaseUser | null) => void;
   setUserProfile: (profile: AppUserProfile | null) => void;
   setLoading: (loading: boolean) => void;
-  setCurrentRole: (role: 'host' | 'client' | 'admin') => void;
+  setCurrentRole: (role: 'worker' | 'client' | 'admin') => void;
   clearAuth: () => void;
-  getEffectiveUserType: () => 'host' | 'client' | 'admin' | null;
+  getEffectiveUserType: () => 'worker' | 'client' | 'admin' | null;
   canToggleRoles: () => boolean;
   isAdmin: () => boolean;
 }
@@ -53,10 +53,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setUserProfile: (profile) =>
     set({
       userProfile: profile,
-      currentRole: profile?.type === 'admin'
+      currentRole: profile?.role === 'admin'
         ? 'admin'
-        : profile?.type === 'host'
-          ? (profile.currentRole || 'host')
+        : profile?.role === 'worker'
+          ? (profile.currentRole || 'worker')
           : 'client',
     }),
 
@@ -75,18 +75,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   getEffectiveUserType: () => {
     const { userProfile, currentRole } = get();
     if (!userProfile) return null;
-    if (userProfile.type === 'admin') return 'admin';
-    if (userProfile.type === 'host') return currentRole;
-    return userProfile.type;
+    if (userProfile.role === 'admin') return 'admin';
+    if (userProfile.role === 'worker') return currentRole;
+    return userProfile.role;
   },
 
   canToggleRoles: () => {
     const { userProfile } = get();
-    return userProfile?.type === 'host';
+    return userProfile?.role === 'worker';
   },
 
   isAdmin: () => {
     const { userProfile } = get();
-    return userProfile?.type === 'admin';
+    return userProfile?.role === 'admin';
   },
 }));

@@ -11,7 +11,7 @@ const SafetyHubPage: React.FC = () => {
   const navigate = useNavigate();
   const { userProfile, getEffectiveUserType } = useAuthStore();
   const userType = getEffectiveUserType();
-  const isHost = userType === 'host';
+  const isWorker = userType === 'worker';
   const [view, setView] = useState<SafetyView>('hub');
 
   if (!userProfile) {
@@ -72,7 +72,7 @@ const SafetyHubPage: React.FC = () => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
-        {isHost && (
+        {isWorker && (
           <button
             onClick={() => setView('report')}
             className="flex flex-col items-center gap-2 p-4 bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-100 hover:bg-red-50 hover:border-red-200 transition-all"
@@ -96,7 +96,7 @@ const SafetyHubPage: React.FC = () => {
           </span>
         </button>
 
-        {isHost && (
+        {isWorker && (
           <button
             onClick={() => navigate('/safety/notes')}
             className="flex flex-col items-center gap-2 p-4 bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-100 hover:bg-amber-50 hover:border-amber-200 transition-all"
@@ -122,7 +122,7 @@ const SafetyHubPage: React.FC = () => {
       </div>
 
       {/* Ugly Mugs Feed */}
-      {isHost && (
+      {isWorker && (
         <UglyMugsFeed region={userProfile.primaryLocation || userProfile.location || 'Auckland'} />
       )}
 

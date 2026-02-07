@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import HostProfileManagement from '../../features/profiles/components/HostProfileManagement';
+import WorkerProfileManagement from '../../features/profiles/components/WorkerProfileManagement';
 import { useAuthStore } from '../../features/auth/stores/auth.store';
 
 const ProfileManagementPage: React.FC = () => {
@@ -13,7 +13,7 @@ const ProfileManagementPage: React.FC = () => {
   }
 
   return (
-    <HostProfileManagement
+    <WorkerProfileManagement
       onBack={() => navigate('/dashboard')}
       userId={userProfile.id}
     />

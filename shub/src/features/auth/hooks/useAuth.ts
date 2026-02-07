@@ -6,13 +6,13 @@ import { User as AppUser } from '../../../types';
 // Helper function to transform Supabase user data to AppUser
 const transformSupabaseUserToAppUser = (data: any): AppUser => ({
   id: data.id,
-  name: data.name,
+  name: data.display_name || data.name,
   email: data.email,
-  type: data.type,
-  currentRole: data.current_role,
-  avatar: data.avatar,
+  role: data.role,
+  currentRole: data.current_role || data.role,
+  avatar: data.avatar_url || data.avatar,
   location: data.location,
-  verified: data.verified,
+  verified: data.is_verified || data.verified,
   bio: data.bio,
   profilePhotos: data.profile_photos || [],
   status: data.status || 'available',
@@ -61,26 +61,32 @@ export const useAuth = () => {
     try {
       // Get user metadata from auth
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) throw new Error('No authenticated user found');
-      
+
       const userData = user.user_metadata;
-      
+
       if (!userData.name || !userData.type) {
         throw new Error('Missing user metadata for profile creation');
       }
 
       console.log('Creating profile with metadata:', userData);
 
+      // Map metadata.type to canonical role:
+      // Old sign-ups sent 'host', new sign-ups send 'worker'
+      const resolvedRole = (userData.type === 'host' || userData.type === 'worker')
+        ? 'worker'
+        : 'client';
+
       const { data: newProfile, error: insertError } = await supabase
         .from('users')
         .insert([
           {
             id: userId,
-            name: userData.name,
+            display_name: userData.name,
             email: user.email || '',
-            type: userData.type,
-            verified: false,
+            role: resolvedRole,
+            is_verified: false,
           }
         ])
         .select('*')
@@ -89,7 +95,7 @@ export const useAuth = () => {
       if (insertError) throw insertError;
 
       console.log('Profile created successfully');
-      
+
       return transformSupabaseUserToAppUser(newProfile);
     } catch (err) {
       console.error('Error creating profile for verified user:', err);
@@ -101,7 +107,7 @@ export const useAuth = () => {
   const handleAuthChange = async (authUser: User | null) => {
     try {
       setUser(authUser);
-      
+
       if (authUser) {
         await fetchUserProfile(authUser.id);
       } else {

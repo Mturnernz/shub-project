@@ -32,12 +32,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
       <div className="p-4">
         <div className="flex items-center mb-2">
           <img 
-            src={service.hostAvatar} 
-            alt={service.hostName}
+            src={service.workerAvatar} 
+            alt={service.workerName}
             className="w-8 h-8 rounded-full mr-3"
           />
           <div>
-            <h3 className="font-semibold text-gray-900 text-sm">{service.hostName}</h3>
+            <h3 className="font-semibold text-gray-900 text-sm">{service.workerName}</h3>
             <div className="flex items-center">
               <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
               <span className="text-xs text-gray-600">{service.rating} ({service.reviewCount})</span>

@@ -35,7 +35,7 @@ const AppShell: React.FC = () => {
     { path: '/profile', icon: User, label: 'Profile' },
   ];
 
-  const hostTabs = [
+  const workerTabs = [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
     { path: '/bookings', icon: Calendar, label: 'Bookings' },
     { path: '/messages', icon: MessageSquare, label: 'Messages' },
@@ -57,8 +57,8 @@ const AppShell: React.FC = () => {
 
   const tabs = userType === 'admin'
     ? adminTabs
-    : userType === 'host'
-      ? hostTabs
+    : userType === 'worker'
+      ? workerTabs
       : userType === 'client'
         ? clientTabs
         : guestTabs;
@@ -98,7 +98,7 @@ const AppShell: React.FC = () => {
     return undefined;
   };
 
-  const handleRoleChange = async (newRole: 'host' | 'client') => {
+  const handleRoleChange = async (newRole: 'worker' | 'client') => {
     if (canToggleRoles()) {
       // Update role in database
       const { supabase } = await import('../lib/supabase');
@@ -107,7 +107,7 @@ const AppShell: React.FC = () => {
       }
       setCurrentRole(newRole);
       // Navigate to appropriate home
-      navigate(newRole === 'host' ? '/dashboard' : '/browse');
+      navigate(newRole === 'worker' ? '/dashboard' : '/browse');
     }
   };
 
@@ -120,7 +120,7 @@ const AppShell: React.FC = () => {
         onBack={backHandler}
         showBackButton={!!backHandler}
         showRoleToggle={canToggleRoles()}
-        currentRole={currentRole}
+        currentRole={currentRole as 'worker' | 'client'}
         onRoleChange={handleRoleChange}
         isRoleToggling={false}
         showLogout={!!userProfile}

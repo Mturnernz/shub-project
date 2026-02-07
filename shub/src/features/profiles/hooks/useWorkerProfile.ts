@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { User } from '../../../types';
 
-export const useHostProfile = (userId: string | undefined) => {
+export const useWorkerProfile = (userId: string | undefined) => {
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,12 +29,12 @@ export const useHostProfile = (userId: string | undefined) => {
       // Transform database fields to match our interface
       const transformedProfile: User = {
         id: data.id,
-        name: data.name,
+        name: data.display_name || data.name,
         email: data.email,
-        type: data.type,
-        avatar: data.avatar,
+        role: data.role,
+        avatar: data.avatar_url || data.avatar,
         location: data.location,
-        verified: data.verified,
+        verified: data.is_verified || data.verified,
         isPublished: data.is_published,
         bio: data.bio,
         profilePhotos: data.profile_photos || [],
@@ -48,7 +48,7 @@ export const useHostProfile = (userId: string | undefined) => {
 
       setProfile(transformedProfile);
     } catch (err) {
-      console.error('Error fetching host profile:', err);
+      console.error('Error fetching worker profile:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch profile');
     } finally {
       setLoading(false);

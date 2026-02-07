@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import UserTypeSelection from '../features/auth/components/UserTypeSelection';
 import SignUpForm from '../features/auth/components/SignUpForm';
 
-type UserType = 'host' | 'client' | null;
+type UserType = 'worker' | 'client' | null;
 
 const SignUpFlow: React.FC = () => {
   const navigate = useNavigate();

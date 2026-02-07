@@ -62,7 +62,7 @@ const IdentityVerification: React.FC<{ onComplete?: () => void }> = ({ onComplet
         userProfile.id,
         selfieUrl,
         documentUrl,
-        userProfile.type === 'host' ? 'worker' : 'client'
+        userProfile.role === 'worker' ? 'worker' : 'client'
       );
 
       if (result.success && result.verification) {

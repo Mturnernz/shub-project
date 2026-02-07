@@ -1,11 +1,11 @@
 import { Service, User } from '../types';
 
-export const mockHosts: User[] = [
+export const mockWorkers: User[] = [
   {
     id: '1',
     name: 'Sophia Clarke',
     email: 'sophia@example.com',
-    type: 'host',
+    role: 'worker',
     avatar: 'https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&w=400',
     location: 'Auckland',
     verified: true
@@ -14,7 +14,7 @@ export const mockHosts: User[] = [
     id: '2',
     name: 'Isabella Rose',
     email: 'isabella@example.com',
-    type: 'host',
+    role: 'worker',
     avatar: 'https://images.pexels.com/photos/1858175/pexels-photo-1858175.jpeg?auto=compress&cs=tinysrgb&w=400',
     location: 'Wellington',
     verified: true
@@ -23,7 +23,7 @@ export const mockHosts: User[] = [
     id: '3',
     name: 'Emma Davis',
     email: 'emma@example.com',
-    type: 'host',
+    role: 'worker',
     avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400',
     location: 'Christchurch',
     verified: true
@@ -33,9 +33,9 @@ export const mockHosts: User[] = [
 export const mockServices: Service[] = [
   {
     id: '1',
-    hostId: '1',
-    hostName: 'Sophia Clarke',
-    hostAvatar: 'https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&w=400',
+    workerId: '1',
+    workerName: 'Sophia Clarke',
+    workerAvatar: 'https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&w=400',
     title: 'Premium Companionship',
     description: 'Professional companion services for social events, dinners, and private occasions. Discreet and sophisticated.',
     price: 300,
@@ -53,9 +53,9 @@ export const mockServices: Service[] = [
   },
   {
     id: '2',
-    hostId: '2',
-    hostName: 'Isabella Rose',
-    hostAvatar: 'https://images.pexels.com/photos/1858175/pexels-photo-1858175.jpeg?auto=compress&cs=tinysrgb&w=400',
+    workerId: '2',
+    workerName: 'Isabella Rose',
+    workerAvatar: 'https://images.pexels.com/photos/1858175/pexels-photo-1858175.jpeg?auto=compress&cs=tinysrgb&w=400',
     title: 'Elite Evening Services',
     description: 'Sophisticated evening companionship with a focus on creating memorable experiences. Available for outcalls.',
     price: 450,
@@ -73,9 +73,9 @@ export const mockServices: Service[] = [
   },
   {
     id: '3',
-    hostId: '3',
-    hostName: 'Emma Davis',
-    hostAvatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400',
+    workerId: '3',
+    workerName: 'Emma Davis',
+    workerAvatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400',
     title: 'Relaxation & Wellness',
     description: 'Professional therapeutic services focusing on relaxation and wellness. Private studio available.',
     price: 250,
@@ -96,7 +96,7 @@ export const mockServices: Service[] = [
 export const categories = [
   'All',
   'Companionship',
-  'Evening Services', 
+  'Evening Services',
   'Wellness',
   'Social Events',
   'Travel Companion'
@@ -117,7 +117,6 @@ export const locations = [
   'Dunedin'
 ];
 
-// Auckland suburbs grouped by region for location-based sorting
 export const aucklandSuburbs: Record<string, string[]> = {
   'Auckland - Central': ['CBD', 'Ponsonby', 'Parnell', 'Newmarket', 'Grey Lynn', 'Mt Eden', 'Remuera', 'Epsom', 'Grafton', 'Freemans Bay', 'Herne Bay'],
   'Auckland - North Shore': ['Takapuna', 'Devonport', 'Milford', 'Browns Bay', 'Albany', 'Birkenhead', 'Northcote', 'Glenfield'],
@@ -126,5 +125,4 @@ export const aucklandSuburbs: Record<string, string[]> = {
   'Auckland - East': ['Mission Bay', 'St Heliers', 'Kohimarama', 'Pakuranga', 'Half Moon Bay', 'Howick'],
 };
 
-// All Auckland-area location values for matching
 export const aucklandLocations = ['Auckland', 'Auckland - Central', 'Auckland - North Shore', 'Auckland - West', 'Auckland - South', 'Auckland - East'];

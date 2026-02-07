@@ -2,7 +2,7 @@ import React from 'react';
 import { UserCheck, Users, ArrowLeft } from 'lucide-react';
 
 interface UserTypeSelectionProps {
-  onSelect: (type: 'host' | 'client') => void;
+  onSelect: (role: 'worker' | 'client') => void;
   onBack: () => void;
 }
 
@@ -16,7 +16,7 @@ const UserTypeSelection: React.FC<UserTypeSelectionProps> = ({ onSelect, onBack 
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        
+
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Shub</h1>
           <p className="text-trust-100">
@@ -43,7 +43,7 @@ const UserTypeSelection: React.FC<UserTypeSelectionProps> = ({ onSelect, onBack 
           </button>
 
           <button
-            onClick={() => onSelect('host')}
+            onClick={() => onSelect('worker')}
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
@@ -51,7 +51,7 @@ const UserTypeSelection: React.FC<UserTypeSelectionProps> = ({ onSelect, onBack 
                 <UserCheck className="w-8 h-8 text-white" />
               </div>
               <div className="text-left flex-1">
-                <h3 className="text-xl font-bold text-gray-900 mb-1">I'm a Host</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-1">I'm a Worker</h3>
                 <p className="text-gray-600">
                   I want to offer my services
                 </p>

@@ -13,7 +13,7 @@ const BookingDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { userProfile, getEffectiveUserType } = useAuthStore();
   const userType = getEffectiveUserType();
-  const userRole = userType === 'host' ? 'worker' : 'client';
+  const userRole = userType === 'worker' ? 'worker' : 'client';
 
   const { updateStatus, cancelUserBooking } = useBookings(
     userProfile?.id || null,

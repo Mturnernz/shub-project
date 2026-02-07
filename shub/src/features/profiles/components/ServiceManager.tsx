@@ -5,9 +5,9 @@ import { Service } from '../../../types';
 import { categories } from '../../../data/mockData';
 
 interface ServiceManagerProps {
-  hostId: string;
-  hostName: string;
-  hostAvatar?: string;
+  workerId: string;
+  workerName: string;
+  workerAvatar?: string;
 }
 
 interface ServiceForm {
@@ -20,7 +20,7 @@ interface ServiceForm {
   tags: string;
 }
 
-const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostAvatar }) => {
+const ServiceManager: React.FC<ServiceManagerProps> = ({ workerId, workerName, workerAvatar }) => {
   const [services, setServices] = useState<Service[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -43,16 +43,16 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
       const { data, error: fetchError } = await supabase
         .from('services')
         .select('*')
-        .eq('host_id', hostId)
+        .eq('worker_id', workerId)
         .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
       const transformedServices = (data || []).map(service => ({
         id: service.id,
-        hostId: service.host_id,
-        hostName: service.host_name,
-        hostAvatar: service.host_avatar,
+        workerId: service.worker_id,
+        workerName: service.worker_name,
+        workerAvatar: service.worker_avatar,
         title: service.title,
         description: service.description,
         price: service.price,
@@ -78,7 +78,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
 
   useEffect(() => {
     fetchServices();
-  }, [hostId]);
+  }, [workerId]);
 
   const resetForm = () => {
     setForm({
@@ -139,9 +139,9 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ hostId, hostName, hostA
       setError(null);
 
       const serviceData = {
-        host_id: hostId,
-        host_name: hostName,
-        host_avatar: hostAvatar,
+        worker_id: workerId,
+        worker_name: workerName,
+        worker_avatar: workerAvatar,
         title: form.title.trim(),
         description: form.description.trim(),
         price: parseFloat(form.price),

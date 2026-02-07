@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, User, Image, FileText, Settings, MapPin, Globe, CheckCircle, Mail, Eye, Send, Shield, AlertTriangle } from 'lucide-react';
-import { useHostProfile } from '../hooks/useHostProfile';
+import { useWorkerProfile } from '../hooks/useWorkerProfile';
 import { useServices } from '../../listings/hooks/useServices';
 import { moderateProfileContent } from '../../safety/services/content-moderation';
 import PhotoManager from './PhotoManager';
@@ -9,25 +9,25 @@ import ServiceManager from './ServiceManager';
 import AvailabilitySetter from './AvailabilitySetter';
 import LocationServiceArea from './LocationServiceArea';
 import LanguageQualifications from './LanguageQualifications';
-import HostProfilePreview from './HostProfilePreview';
+import WorkerProfilePreview from './WorkerProfilePreview';
 
 type Section = 'overview' | 'photos' | 'bio' | 'services' | 'availability' | 'location' | 'languages';
 
-interface HostProfileManagementProps {
+interface WorkerProfileManagementProps {
   onBack: () => void;
   userId: string;
 }
 
-const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, userId }) => {
+const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBack, userId }) => {
   const [activeSection, setActiveSection] = useState<Section>('overview');
   const [showPreview, setShowPreview] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [condomsMandatory, setCondomsMandatory] = useState(true);
-  const { profile, loading, error, updateProfile, saving } = useHostProfile(userId);
+  const { profile, loading, error, updateProfile, saving } = useWorkerProfile(userId);
   const { services, loading: servicesLoading } = useServices();
 
-  // Filter services for the current host
-  const hostServices = services.filter(service => service.hostId === userId);
+  // Filter services for the current worker
+  const workerServices = services.filter(service => service.workerId === userId);
 
   if (loading) {
     return (
@@ -77,7 +77,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
     if (profile.serviceAreas && profile.serviceAreas.length > 0) completed++;
     if (profile.languages && profile.languages.length > 0) completed++;
     if (profile.status) completed++;
-    if (hostServices.length > 0) completed++;
+    if (workerServices.length > 0) completed++;
 
     return Math.round((completed / total) * 100);
   };
@@ -96,7 +96,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
     }
 
     // Run content moderation on bio and services
-    const serviceNames = hostServices.map(s => s.title);
+    const serviceNames = workerServices.map(s => s.title);
     const moderationResult = moderateProfileContent(
       profile.bio || '',
       serviceNames,
@@ -166,7 +166,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
                       <p className="text-sm text-gray-600">
                         {section.id === 'photos' && `${profile.profilePhotos?.length || 0}/10 photos (minimum 3 required)`}
                         {section.id === 'bio' && (profile.bio ? `${profile.bio.length} characters` : 'No bio added yet')}
-                        {section.id === 'services' && `${hostServices.length} service${hostServices.length !== 1 ? 's' : ''} listed`}
+                        {section.id === 'services' && `${workerServices.length} service${workerServices.length !== 1 ? 's' : ''} listed`}
                         {section.id === 'availability' && `Currently ${profile.status || 'available'}`}
                         {section.id === 'location' && (profile.primaryLocation || 'No location set')}
                         {section.id === 'languages' && `${profile.languages?.length || 0} languages added`}
@@ -273,9 +273,9 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
       case 'services':
         return (
           <ServiceManager
-            hostId={userId}
-            hostName={profile.name}
-            hostAvatar={profile.avatar}
+            workerId={userId}
+            workerName={profile.name}
+            workerAvatar={profile.avatar}
           />
         );
 
@@ -284,7 +284,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
           <AvailabilitySetter
             status={profile.status || 'available'}
             statusMessage={profile.statusMessage}
-            onStatusUpdate={(status, statusMessage) => 
+            onStatusUpdate={(status, statusMessage) =>
               updateProfile({ status, statusMessage })
             }
           />
@@ -307,7 +307,7 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
             languages={profile.languages || []}
             qualificationDocuments={profile.qualificationDocuments || []}
             onLanguagesUpdate={(languages) => updateProfile({ languages })}
-            onDocumentsUpdate={(qualificationDocuments) => 
+            onDocumentsUpdate={(qualificationDocuments) =>
               updateProfile({ qualificationDocuments })
             }
             userId={userId}
@@ -338,16 +338,16 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
                 {showPreview ? 'Profile Preview' : activeSection === 'overview' ? 'Profile Management' : activeTab?.label}
               </h1>
               <p className="text-trust-100 text-sm">
-                {showPreview 
+                {showPreview
                   ? 'How your profile appears to clients'
-                  : activeSection === 'overview' 
+                  : activeSection === 'overview'
                   ? `${profileCompletion}% complete`
                   : 'Manage your professional profile'
                 }
               </p>
             </div>
           </div>
-          
+
           <div className="flex space-x-2">
             {!showPreview && (
               <button
@@ -408,9 +408,9 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
         {showPreview ? (
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg">
             <div className="p-6">
-              <HostProfilePreview
+              <WorkerProfilePreview
                 profile={profile}
-                services={hostServices}
+                services={workerServices}
               />
             </div>
           </div>
@@ -426,4 +426,4 @@ const HostProfileManagement: React.FC<HostProfileManagementProps> = ({ onBack, u
   );
 };
 
-export default HostProfileManagement;
+export default WorkerProfileManagement;
