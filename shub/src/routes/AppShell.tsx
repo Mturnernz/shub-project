@@ -2,7 +2,6 @@ import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Home, Search, MessageSquare, User, Calendar, Shield, LayoutDashboard, Users, Flag, FileText } from 'lucide-react';
 import { useAuthStore } from '../features/auth/stores/auth.store';
-import { useAuthInit } from '../features/auth/hooks/useAuthInit';
 import { useMessagesStore } from '../features/messages/stores/messages.store';
 import Header from '../components/layout/Header';
 
@@ -11,9 +10,6 @@ const AppShell: React.FC = () => {
   const location = useLocation();
   const { userProfile, loading, currentRole, setCurrentRole, getEffectiveUserType, canToggleRoles, isAuthenticated } = useAuthStore();
   const totalUnread = useMessagesStore((s) => s.totalUnread);
-
-  // Initialize auth listener
-  useAuthInit();
 
   const userType = getEffectiveUserType();
 
