@@ -11,6 +11,7 @@ const transformSupabaseUserToProfile = (data: any): AppUserProfile => ({
   avatar: data.avatar_url,
   location: data.location,
   verified: data.is_verified,
+  isPublished: data.is_published ?? false,
   bio: data.bio,
   profilePhotos: data.profile_photos || [],
   status: data.status || 'available',

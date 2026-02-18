@@ -3,6 +3,7 @@ import { ArrowLeft, User, Image, FileText, Settings, MapPin, Globe, CheckCircle,
 import { useWorkerProfile } from '../hooks/useWorkerProfile';
 import { useServices } from '../../listings/hooks/useServices';
 import { moderateProfileContent } from '../../safety/services/content-moderation';
+import { useAuthStore } from '../../auth/stores/auth.store';
 import PhotoManager from './PhotoManager';
 import BioEditor from './BioEditor';
 import ServiceManager from './ServiceManager';
@@ -27,6 +28,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
   const [displayNameSaving, setDisplayNameSaving] = useState(false);
   const { profile, loading, error, updateProfile, saving } = useWorkerProfile(userId);
   const { services, loading: servicesLoading } = useServices();
+  const { userProfile: authProfile, setUserProfile } = useAuthStore();
 
   // Filter services for the current worker
   const workerServices = services.filter(service => service.workerId === userId);
@@ -122,6 +124,10 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
 
     try {
       await updateProfile({ isPublished: true });
+      // Keep the auth store in sync so DashboardPage stops redirecting to profile setup
+      if (authProfile) {
+        setUserProfile({ ...authProfile, isPublished: true });
+      }
     } catch (err) {
       setPublishError('Failed to publish profile. Please try again.');
     }

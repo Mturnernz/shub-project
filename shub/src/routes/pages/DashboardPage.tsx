@@ -14,6 +14,13 @@ const DashboardPage: React.FC = () => {
     return null;
   }
 
+  // Redirect to profile setup when the profile hasn't been published yet.
+  // Once published, the overview dashboard is the default landing.
+  if (!userProfile?.isPublished) {
+    navigate('/dashboard/profile', { replace: true });
+    return null;
+  }
+
   return (
     <WorkerDashboard
       userProfile={userProfile}

@@ -9,9 +9,10 @@ const LoginPage: React.FC = () => {
     <LoginForm
       onBack={() => navigate('/')}
       onLoginSuccess={() => {
-        // Auth state change listener in useAuthInit will handle the profile fetch
-        // Navigate to browse/dashboard after successful login
-        navigate('/browse');
+        // Auth state change listener in useAuthInit will handle the profile fetch.
+        // DashboardPage will route workers to profile setup or overview based on
+        // publish status, and redirect non-workers to /browse.
+        navigate('/dashboard');
       }}
     />
   );
