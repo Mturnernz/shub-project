@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AgeGateGuard } from './guards';
 import { AdminGuard } from './guards/AdminGuard';
 import AppShell from './AppShell';
+import ErrorPage from './pages/ErrorPage';
 
 // Lazy load route components for code splitting
 const LandingPage = lazy(() => import('../components/layout/LandingPage'));
@@ -42,6 +43,7 @@ const LoadingFallback = () => (
 export const router = createBrowserRouter([
   {
     element: <AgeGateGuard />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',

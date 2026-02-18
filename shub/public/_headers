@@ -1,0 +1,5 @@
+# Never cache index.html so browsers always get the latest chunk references after a deploy
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
