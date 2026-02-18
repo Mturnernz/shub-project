@@ -23,6 +23,8 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
   const [showPreview, setShowPreview] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [condomsMandatory, setCondomsMandatory] = useState(true);
+  const [displayNameInput, setDisplayNameInput] = useState<string | null>(null);
+  const [displayNameSaving, setDisplayNameSaving] = useState(false);
   const { profile, loading, error, updateProfile, saving } = useWorkerProfile(userId);
   const { services, loading: servicesLoading } = useServices();
 
@@ -127,11 +129,52 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
 
   const canPublish = profileCompletion === 100 && !profile.isPublished && !saving && condomsMandatory;
 
+  const currentDisplayName = displayNameInput !== null ? displayNameInput : (profile.name || '');
+
+  const handleDisplayNameSave = async () => {
+    if (displayNameInput === null || displayNameInput.trim() === profile.name) return;
+    setDisplayNameSaving(true);
+    try {
+      await updateProfile({ name: displayNameInput.trim() });
+      setDisplayNameInput(null);
+    } finally {
+      setDisplayNameSaving(false);
+    }
+  };
+
   const renderSection = () => {
     switch (activeSection) {
       case 'overview':
         return (
           <div className="space-y-6">
+            {/* Display Name */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+              <h2 className="text-xl font-semibold text-gray-900 mb-1">Display Name</h2>
+              <p className="text-sm text-gray-500 mb-4">
+                This is the name clients will see on your profile. Use a working name if you prefer — your real name is never shown publicly.
+              </p>
+              <div className="flex gap-3">
+                <div className="relative flex-1">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    value={currentDisplayName}
+                    onChange={(e) => setDisplayNameInput(e.target.value)}
+                    placeholder="e.g. Sofia, Alex, Riley…"
+                    maxLength={40}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
+                  />
+                </div>
+                <button
+                  onClick={handleDisplayNameSave}
+                  disabled={displayNameSaving || displayNameInput === null || displayNameInput.trim() === '' || displayNameInput.trim() === profile.name}
+                  className="px-4 py-3 bg-trust-600 text-white rounded-lg hover:bg-trust-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+                >
+                  {displayNameSaving ? 'Saving…' : 'Save'}
+                </button>
+              </div>
+            </div>
+
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Profile Completion</h2>
               <div className="flex items-center space-x-4">
