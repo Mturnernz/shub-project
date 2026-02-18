@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, UserPlus, LogIn, Sparkles } from 'lucide-react';
+import { useAuthStore } from '../../features/auth/stores/auth.store';
 
 interface LandingPageProps {
   onBrowseAsGuest?: () => void;
@@ -14,6 +15,22 @@ const LandingPage: React.FC<LandingPageProps> = ({
   onNavigateToSignUpSelection,
 }) => {
   const navigate = useNavigate();
+  const { isAuthenticated, loading, getEffectiveUserType } = useAuthStore();
+
+  // Redirect authenticated users to their home (handles post-email-verification landing)
+  if (!loading && isAuthenticated) {
+    const userType = getEffectiveUserType();
+    navigate(userType === 'worker' ? '/dashboard' : '/browse', { replace: true });
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+      </div>
+    );
+  }
 
   const handleBrowseAsGuest = onBrowseAsGuest || (() => navigate('/browse'));
   const handleNavigateToLogin = onNavigateToLogin || (() => navigate('/login'));
