@@ -10,7 +10,13 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:push": "supabase db push --db-url $DATABASE_URL",
+    "db:status": "supabase migration list --db-url $DATABASE_URL",
+    "db:reset": "supabase db reset --db-url $DATABASE_URL",
+    "db:diff": "supabase db diff --db-url $DATABASE_URL",
+    "db:migrate": "node scripts/run-migrations.js",
+    "db:psql": "psql $DATABASE_URL"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -40,6 +46,7 @@
     "globals": "^15.9.0",
     "jsdom": "^27.4.0",
     "postcss": "^8.4.35",
+    "supabase": "^2.76.10",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
