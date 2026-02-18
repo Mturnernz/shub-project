@@ -190,17 +190,24 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
               <Calendar className="w-5 h-5 inline mr-2" />
               {bookingLoading ? 'Loading...' : isGuest ? 'Sign Up to Book' : 'Book Now'}
             </button>
-            <button 
-              onClick={isGuest ? onSignUpAsClient : undefined}
-              disabled={!isGuest && !onSignUpAsClient}
-              className={`px-6 py-4 border-2 rounded-xl font-semibold transition-colors ${
-                isGuest 
-                  ? 'border-safe-200 text-safe-600 hover:bg-safe-50 cursor-pointer' 
-                  : 'border-trust-200 text-trust-600 hover:bg-trust-50'
-              }`}
-            >
-              <MessageSquare className="w-5 h-5" />
-            </button>
+            {isGuest && (
+              <button
+                onClick={onSignUpAsClient}
+                className="px-6 py-4 border-2 border-safe-200 text-safe-600 hover:bg-safe-50 rounded-xl font-semibold transition-colors cursor-pointer"
+                title="Sign up to message"
+              >
+                <MessageSquare className="w-5 h-5" />
+              </button>
+            )}
+            {!isGuest && (
+              <button
+                disabled
+                className="px-6 py-4 border-2 border-gray-200 text-gray-400 rounded-xl font-semibold cursor-not-allowed opacity-50"
+                title="Messaging is available after a confirmed booking"
+              >
+                <MessageSquare className="w-5 h-5" />
+              </button>
+            )}
           </div>
           
         </div>

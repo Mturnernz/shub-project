@@ -21,14 +21,16 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
   const [error, setError] = useState<string | null>(null);
 
   const validateForm = (): boolean => {
-    if (!formData.name.trim()) {
-      setError('Name is required');
-      return false;
-    }
-
-    if (formData.name.trim().length < 2) {
-      setError('Name must be at least 2 characters long');
-      return false;
+    // Name is only required for clients — hosts set a display name in their profile
+    if (userType === 'client') {
+      if (!formData.name.trim()) {
+        setError('Name is required');
+        return false;
+      }
+      if (formData.name.trim().length < 2) {
+        setError('Name must be at least 2 characters long');
+        return false;
+      }
     }
 
     if (!formData.email.trim()) {
@@ -82,7 +84,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
         password: formData.password,
         options: {
           data: {
-            name: formData.name.trim(),
+            // Hosts do not provide a name at signup — they set a display name in their profile
+            ...(userType === 'client' && { name: formData.name.trim() }),
             type: userType,
           },
           // Add redirect URL for email verification with success parameter
@@ -164,23 +167,25 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
               </div>
             )}
 
-            {/* Name Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
-                  placeholder="Enter your full name"
-                  disabled={loading}
-                />
+            {/* Name Input — clients only; hosts set a display name inside their profile */}
+            {userType === 'client' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
+                    placeholder="Enter your full name"
+                    disabled={loading}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Email Input */}
             <div>

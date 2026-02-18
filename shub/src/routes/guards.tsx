@@ -6,16 +6,10 @@ import AgeGate from '../features/auth/components/AgeGate';
 export const AgeGateGuard: React.FC = () => {
   const { ageVerified, setAgeVerified } = useUIStore();
 
-  // Also check sessionStorage for session-level verification
-  const sessionVerified = sessionStorage.getItem('shub_session_verified') === 'true';
-
-  if (!ageVerified || !sessionVerified) {
+  if (!ageVerified) {
     return (
       <AgeGate
-        onVerified={() => {
-          setAgeVerified(true);
-          sessionStorage.setItem('shub_session_verified', 'true');
-        }}
+        onVerified={() => setAgeVerified(true)}
       />
     );
   }

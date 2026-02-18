@@ -14,13 +14,7 @@ export const useUIStore = create<UIState>()(
     (set) => ({
       ageVerified: false,
       theme: 'light',
-      setAgeVerified: (verified) => {
-        set({ ageVerified: verified });
-        // Mirror to sessionStorage for session-level verification
-        if (verified) {
-          sessionStorage.setItem('shub_session_verified', 'true');
-        }
-      },
+      setAgeVerified: (verified) => set({ ageVerified: verified }),
       setTheme: (theme) => set({ theme }),
       toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
     }),

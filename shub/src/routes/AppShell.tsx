@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, MessageSquare, User, Calendar, Shield, LayoutDashboard, Users, Flag, FileText } from 'lucide-react';
+import { Home, Search, MessageSquare, User, Calendar, Shield, LayoutDashboard, Users, Flag, FileText } from 'lucide-react';
 import { useAuthStore } from '../features/auth/stores/auth.store';
 import { useAuthInit } from '../features/auth/hooks/useAuthInit';
 import { useMessagesStore } from '../features/messages/stores/messages.store';
@@ -29,7 +29,7 @@ const AppShell: React.FC = () => {
   }
 
   const clientTabs = [
-    { path: '/browse', icon: Home, label: 'Home' },
+    { path: '/browse', icon: Search, label: 'Browse Listings' },
     { path: '/bookings', icon: Calendar, label: 'Bookings' },
     { path: '/messages', icon: MessageSquare, label: 'Messages' },
     { path: '/profile', icon: User, label: 'Profile' },
@@ -44,7 +44,7 @@ const AppShell: React.FC = () => {
   ];
 
   const guestTabs = [
-    { path: '/browse', icon: Home, label: 'Browse' },
+    { path: '/browse', icon: Search, label: 'Browse Listings' },
   ];
 
   const adminTabs = [
@@ -94,7 +94,12 @@ const AppShell: React.FC = () => {
     if (path.startsWith('/listings/')) return () => navigate('/browse');
     if (path.startsWith('/bookings/') && path.endsWith('/chat')) return () => navigate('/messages');
     if (path.match(/^\/bookings\/[^/]+$/) && path !== '/bookings') return () => navigate('/bookings');
-    if (path === '/dashboard/profile') return () => navigate('/dashboard');
+    if (path === '/dashboard/profile') {
+      // No back button while the worker is setting up for the first time —
+      // their profile is not published so /dashboard would redirect straight back here.
+      // Once published, show a back button to the dashboard overview.
+      return userProfile?.isPublished ? () => navigate('/dashboard') : undefined;
+    }
     if (path === '/safety/notes') return () => navigate('/safety');
     if (path === '/verify') return () => navigate('/profile');
     if (path === '/browse' && !userType && !userProfile) return () => navigate('/');

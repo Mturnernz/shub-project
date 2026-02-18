@@ -8,8 +8,8 @@ import AppShell from './AppShell';
 const LandingPage = lazy(() => import('../components/layout/LandingPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const SignUpFlow = lazy(() => import('./SignUpFlow'));
-const EmailVerificationPending = lazy(() => import('../features/auth/components/EmailVerificationPending'));
-const EmailVerificationSuccessPage = lazy(() => import('../features/auth/components/EmailVerificationSuccessPage'));
+const EmailVerificationPendingPage = lazy(() => import('./pages/EmailVerificationPendingPage'));
+const EmailVerificationSuccessPage = lazy(() => import('./pages/EmailVerificationSuccessPage'));
 const BrowsePage = lazy(() => import('./pages/BrowsePage'));
 const ServiceDetailPage = lazy(() => import('./pages/ServiceDetailPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
         path: '/verify-email',
         element: (
           <Suspense fallback={<LoadingFallback />}>
-            <EmailVerificationPending />
+            <EmailVerificationPendingPage />
           </Suspense>
         ),
       },

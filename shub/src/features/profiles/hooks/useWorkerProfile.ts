@@ -64,6 +64,7 @@ export const useWorkerProfile = (userId: string | undefined) => {
 
       // Transform our interface back to database fields
       const dbUpdates: any = {};
+      if (updates.name !== undefined) dbUpdates.display_name = updates.name;
       if (updates.bio !== undefined) dbUpdates.bio = updates.bio;
       if (updates.profilePhotos !== undefined) dbUpdates.profile_photos = updates.profilePhotos;
       if (updates.status !== undefined) dbUpdates.status = updates.status;
