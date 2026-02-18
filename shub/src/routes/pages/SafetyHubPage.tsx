@@ -85,7 +85,7 @@ const SafetyHubPage: React.FC = () => {
         )}
 
         <button
-          onClick={() => navigate('/profile?tab=verification')}
+          onClick={() => navigate('/verify')}
           className="flex flex-col items-center gap-2 p-4 bg-white/70 backdrop-blur-sm rounded-2xl border border-gray-100 hover:bg-trust-50 hover:border-trust-200 transition-all"
         >
           <div className="w-10 h-10 rounded-full bg-trust-100 flex items-center justify-center">

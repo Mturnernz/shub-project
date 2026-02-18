@@ -15,6 +15,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState<string | null>(null);
 
   const validateForm = (): boolean => {
     if (!formData.email.trim()) {
@@ -39,6 +41,36 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (error) setError(null); // Clear error when user starts typing
+    if (resetMessage) setResetMessage(null);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!formData.email.trim()) {
+      setError('Please enter your email address first, then click "Forgot your password?"');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address first');
+      return;
+    }
+
+    setResetLoading(true);
+    setError(null);
+    setResetMessage(null);
+
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        formData.email.trim(),
+        { redirectTo: `${window.location.origin}/` }
+      );
+      if (resetError) throw resetError;
+      setResetMessage('Password reset email sent! Check your inbox.');
+    } catch (err) {
+      setError('Failed to send reset email. Please try again.');
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -174,8 +206,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
 
           {/* Forgot Password Link */}
           <div className="mt-4 text-center">
-            <button className="text-sm text-trust-600 hover:text-trust-700 underline">
-              Forgot your password?
+            {resetMessage && (
+              <div className="mb-3 bg-safe-50 border border-safe-200 text-safe-700 px-4 py-3 rounded-lg text-sm">
+                {resetMessage}
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={resetLoading}
+              className="text-sm text-trust-600 hover:text-trust-700 underline disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {resetLoading ? 'Sending...' : 'Forgot your password?'}
             </button>
           </div>
         </div>
