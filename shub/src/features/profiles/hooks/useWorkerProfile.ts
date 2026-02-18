@@ -37,7 +37,9 @@ export const useWorkerProfile = (userId: string | undefined) => {
         verified: data.is_verified || data.verified,
         isPublished: data.is_published,
         bio: data.bio,
+        hourlyRateText: data.hourly_rate_text,
         profilePhotos: data.profile_photos || [],
+        photoSettings: data.photo_settings || {},
         status: data.status || 'available',
         statusMessage: data.status_message,
         primaryLocation: data.primary_location,
@@ -73,6 +75,8 @@ export const useWorkerProfile = (userId: string | undefined) => {
       if (updates.serviceAreas !== undefined) dbUpdates.service_areas = updates.serviceAreas;
       if (updates.languages !== undefined) dbUpdates.languages = updates.languages;
       if (updates.qualificationDocuments !== undefined) dbUpdates.qualification_documents = updates.qualificationDocuments;
+      if (updates.hourlyRateText !== undefined) dbUpdates.hourly_rate_text = updates.hourlyRateText;
+      if (updates.photoSettings !== undefined) dbUpdates.photo_settings = updates.photoSettings;
       if (updates.isPublished !== undefined) dbUpdates.is_published = updates.isPublished;
 
       console.log('Updating profile with:', dbUpdates);

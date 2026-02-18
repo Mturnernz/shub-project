@@ -12,6 +12,7 @@ export interface AppUserProfile {
   verified?: boolean;
   isPublished?: boolean;
   bio?: string;
+  hourlyRateText?: string;
   profilePhotos?: string[];
   status?: 'available' | 'busy' | 'away';
   statusMessage?: string;

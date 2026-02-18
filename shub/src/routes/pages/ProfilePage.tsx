@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Shield, MapPin } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/stores/auth.store';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const { userProfile, isAuthenticated } = useAuthStore();
+  const { userProfile, isAuthenticated, getEffectiveUserType } = useAuthStore();
+  const userType = getEffectiveUserType();
+
+  // Workers manage their profile at /dashboard/profile — redirect them there.
+  useEffect(() => {
+    if (userType === 'worker') {
+      navigate('/dashboard/profile', { replace: true });
+    }
+  }, [userType, navigate]);
+
+  // Don't render while redirecting workers
+  if (userType === 'worker') return null;
 
   return (
     <div className="px-4 py-6 space-y-4">
@@ -58,10 +69,6 @@ const ProfilePage: React.FC = () => {
                 <p className="text-sm text-gray-700">{userProfile.bio}</p>
               </div>
             )}
-
-            <p className="text-sm text-gray-400 text-center pt-2">
-              More profile settings coming soon
-            </p>
           </div>
         ) : isAuthenticated ? (
           <div className="text-center py-4">
