@@ -9,7 +9,9 @@ export interface User {
   verified?: boolean;
   isPublished?: boolean;
   bio?: string;
+  hourlyRateText?: string;
   profilePhotos?: string[];
+  photoSettings?: Record<string, { blur: boolean; watermark: boolean }>;
   status?: 'available' | 'busy' | 'away';
   statusMessage?: string;
   primaryLocation?: string;

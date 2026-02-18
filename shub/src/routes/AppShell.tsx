@@ -36,7 +36,7 @@ const AppShell: React.FC = () => {
     { path: '/bookings', icon: Calendar, label: 'Bookings' },
     { path: '/messages', icon: MessageSquare, label: 'Messages' },
     { path: '/safety', icon: Shield, label: 'Safety' },
-    { path: '/profile', icon: User, label: 'Profile' },
+    { path: '/dashboard/profile', icon: User, label: 'My Profile' },
   ];
 
   const guestTabs = [
@@ -145,7 +145,11 @@ const AppShell: React.FC = () => {
         <div className="flex justify-around items-center max-w-md mx-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
-            const isActive = location.pathname === tab.path || location.pathname.startsWith(tab.path + '/');
+            // Dashboard tab uses exact match so it doesn't stay active when navigating
+            // to sub-paths like /dashboard/profile (which has its own "My Profile" tab).
+            const isActive = tab.path === '/dashboard'
+              ? location.pathname === '/dashboard'
+              : location.pathname === tab.path || location.pathname.startsWith(tab.path + '/');
             const showBadge = tab.path === '/messages' && totalUnread > 0;
 
             return (

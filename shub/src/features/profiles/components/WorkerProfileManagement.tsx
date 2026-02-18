@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, User, Image, FileText, Settings, MapPin, Globe, CheckCircle, Mail, Eye, Send, Shield, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, User, Image, FileText, Settings, MapPin, Globe, CheckCircle, Mail, Eye, Send, Shield, AlertTriangle, DollarSign } from 'lucide-react';
 import { useWorkerProfile } from '../hooks/useWorkerProfile';
 import { useServices } from '../../listings/hooks/useServices';
 import { moderateProfileContent } from '../../safety/services/content-moderation';
@@ -11,8 +11,9 @@ import AvailabilitySetter from './AvailabilitySetter';
 import LocationServiceArea from './LocationServiceArea';
 import LanguageQualifications from './LanguageQualifications';
 import WorkerProfilePreview from './WorkerProfilePreview';
+import RatesEditor from './RatesEditor';
 
-type Section = 'overview' | 'photos' | 'bio' | 'services' | 'availability' | 'location' | 'languages';
+type Section = 'overview' | 'photos' | 'bio' | 'services' | 'availability' | 'location' | 'languages' | 'rates';
 
 interface WorkerProfileManagementProps {
   onBack: () => void;
@@ -64,6 +65,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
     { id: 'overview' as Section, label: 'Overview', icon: User, color: 'text-trust-600' },
     { id: 'photos' as Section, label: 'Photos', icon: Image, color: 'text-warm-600' },
     { id: 'bio' as Section, label: 'Bio', icon: FileText, color: 'text-indigo-600' },
+    { id: 'rates' as Section, label: 'Rates', icon: DollarSign, color: 'text-green-600' },
     { id: 'services' as Section, label: 'Services', icon: Settings, color: 'text-safe-600' },
     { id: 'availability' as Section, label: 'Status', icon: CheckCircle, color: 'text-orange-600' },
     { id: 'location' as Section, label: 'Location', icon: MapPin, color: 'text-trust-600' },
@@ -73,10 +75,11 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
   // Calculate profile completion (minimum 3 photos required)
   const getProfileCompletion = () => {
     let completed = 0;
-    const total = 7;
+    const total = 8;
 
     if (profile.profilePhotos && profile.profilePhotos.length >= 3) completed++;
     if (profile.bio && profile.bio.length >= 100) completed++;
+    if (profile.hourlyRateText && profile.hourlyRateText.trim().length > 0) completed++;
     if (profile.primaryLocation) completed++;
     if (profile.serviceAreas && profile.serviceAreas.length > 0) completed++;
     if (profile.languages && profile.languages.length > 0) completed++;
@@ -215,6 +218,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
                       <p className="text-sm text-gray-600">
                         {section.id === 'photos' && `${profile.profilePhotos?.length || 0}/10 photos (minimum 3 required)`}
                         {section.id === 'bio' && (profile.bio ? `${profile.bio.length} characters` : 'No bio added yet')}
+                        {section.id === 'rates' && (profile.hourlyRateText ? profile.hourlyRateText : 'No rate information added yet')}
                         {section.id === 'services' && `${workerServices.length} service${workerServices.length !== 1 ? 's' : ''} listed`}
                         {section.id === 'availability' && `Currently ${profile.status || 'available'}`}
                         {section.id === 'location' && (profile.primaryLocation || 'No location set')}
@@ -306,7 +310,9 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
         return (
           <PhotoManager
             photos={profile.profilePhotos || []}
+            photoSettings={profile.photoSettings || {}}
             onPhotosUpdate={(photos) => updateProfile({ profilePhotos: photos })}
+            onPhotoSettingsUpdate={(photoSettings) => updateProfile({ photoSettings })}
             userId={userId}
           />
         );
@@ -316,6 +322,14 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
           <BioEditor
             bio={profile.bio || ''}
             onBioUpdate={(bio) => updateProfile({ bio })}
+          />
+        );
+
+      case 'rates':
+        return (
+          <RatesEditor
+            hourlyRateText={profile.hourlyRateText || ''}
+            onRateUpdate={(hourlyRateText) => updateProfile({ hourlyRateText })}
           />
         );
 
