@@ -3,6 +3,7 @@ import { Plus, Edit2, Trash2, Tag, DollarSign, Clock } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { Service } from '../../../types';
 import { categories } from '../../../data/mockData';
+import { showToast } from '../../../utils/toast';
 
 interface ServiceManagerProps {
   workerId: string;
@@ -173,9 +174,11 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ workerId, workerName, w
 
       await fetchServices();
       resetForm();
+      showToast.success(editingService ? 'Service updated' : 'Service added');
     } catch (err) {
       console.error('Error saving service:', err);
       setError('Failed to save service');
+      showToast.error('Failed to save service');
     } finally {
       setSaving(false);
     }
@@ -191,11 +194,13 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ workerId, workerName, w
         .eq('id', serviceId);
 
       if (deleteError) throw deleteError;
-      
+
       await fetchServices();
+      showToast.success('Service deleted');
     } catch (err) {
       console.error('Error deleting service:', err);
       setError('Failed to delete service');
+      showToast.error('Failed to delete service');
     }
   };
 

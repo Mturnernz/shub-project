@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -30,7 +31,7 @@ export default {
           800: '#065F46',
           900: '#064E3B',
         },
-        // Coral — warmth, approachability (used sparingly)
+        // Coral — warmth, approachability (kept for gradient compatibility)
         warm: {
           50: '#FFF5F2',
           100: '#FFE8E0',
@@ -43,27 +44,64 @@ export default {
           800: '#A03D24',
           900: '#7D301C',
         },
-        // Neutral surfaces for dark mode support
+        // Rose — soft pink/mauve accent (design refresh)
+        rose: {
+          50: '#FFF1F3',
+          100: '#FFE4E9',
+          200: '#FECDD6',
+          300: '#FEA3B4',
+          400: '#FB7090',
+          500: '#F43F6A',
+          600: '#E11D48',
+          700: '#BE123C',
+          800: '#9F1239',
+          900: '#881337',
+        },
+        // Gold — premium, featured, highlighted
+        gold: {
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#F59E0B',
+          600: '#D97706',
+          700: '#B45309',
+          800: '#92400E',
+          900: '#78350F',
+        },
+        // Neutral surfaces — warm whites and deep charcoals
         surface: {
-          light: '#FFFFFF',
-          'light-alt': '#F8FAFC',
-          dark: '#121212',
-          'dark-alt': '#1E1E1E',
-          'dark-elevated': '#2D2D2D',
+          light: '#FAFAF8',
+          'light-alt': '#F5F4F0',
+          dark: '#18181A',
+          'dark-alt': '#222224',
+          'dark-elevated': '#2E2E32',
         },
         // Text colors for dark mode support
         text: {
-          primary: '#1A202C',
-          secondary: '#4A5568',
-          muted: '#A0AEC0',
-          'primary-dark': '#E5E5E5',
-          'secondary-dark': '#A0AEC0',
-          'muted-dark': '#718096',
+          primary: '#1C1917',
+          secondary: '#57534E',
+          muted: '#A8A29E',
+          'primary-dark': '#F0EEF5',
+          'secondary-dark': '#A8A29E',
+          'muted-dark': '#78716C',
         },
+      },
+      fontFamily: {
+        display: ['"Fraunces"', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      fontSize: {
+        'display-xl': ['3.5rem', { lineHeight: '1.1', fontWeight: '700' }],
+        'display-lg': ['2.75rem', { lineHeight: '1.1', fontWeight: '700' }],
+        'display-md': ['2.25rem', { lineHeight: '1.2', fontWeight: '600' }],
+        'display-sm': ['1.75rem', { lineHeight: '1.2', fontWeight: '600' }],
       },
       borderRadius: {
         '2xl': '1rem',
         '3xl': '1.5rem',
+        '4xl': '2rem',
       },
     },
   },

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Bell, ArrowLeft, LogOut } from 'lucide-react';
+import { Bell, ArrowLeft, LogOut, Moon, Sun } from 'lucide-react';
 import RoleToggle from './RoleToggle';
+import { useUIStore } from '../../stores/ui.store';
 
 interface HeaderProps {
   title: string;
@@ -28,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({
   onLogout
 }) => {
   const [showNotifToast, setShowNotifToast] = useState(false);
+  const { theme, toggleTheme } = useUIStore();
 
   const handleNotificationClick = () => {
     setShowNotifToast(true);
@@ -41,6 +43,7 @@ const Header: React.FC<HeaderProps> = ({
           {showBackButton && onBack && (
             <button
               onClick={onBack}
+              aria-label="Go back"
               className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 transition-colors mr-2 flex-shrink-0"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -63,10 +66,18 @@ const Header: React.FC<HeaderProps> = ({
         )}
 
         <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+          <button
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 transition-colors"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
           {showNotifications && (
             <div className="relative">
               <button
                 onClick={handleNotificationClick}
+                aria-label="Notifications"
                 className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 transition-colors"
               >
                 <Bell className="w-5 h-5" />
@@ -81,8 +92,8 @@ const Header: React.FC<HeaderProps> = ({
           {showLogout && onLogout && (
             <button
               onClick={onLogout}
+              aria-label="Log out"
               className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 transition-colors"
-              title="Log out"
             >
               <LogOut className="w-5 h-5" />
             </button>

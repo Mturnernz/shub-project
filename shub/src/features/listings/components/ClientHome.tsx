@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, Star, MapPin, ArrowLeft, Search, Filter, Zap } from 'lucide-react';
+import { TrendingUp, Star, MapPin, ArrowLeft, Search, Filter, Zap, Shield } from 'lucide-react';
 import { Service } from '../../../types';
 import ServiceCard from './ServiceCard';
 import { categories, locations } from '../../../data/mockData';
@@ -166,8 +166,8 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
         </div>
       </div>
 
-      {/* Search Section */}
-      <div className="px-4">
+      {/* Floating Search Pill — sticky below header */}
+      <div className="sticky top-[72px] z-30 px-4">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
@@ -175,12 +175,12 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             placeholder="Search services..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full pl-12 pr-12 py-4 bg-white/70 backdrop-blur-sm border border-trust-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
+            className="w-full pl-12 pr-12 py-3.5 bg-white/90 backdrop-blur-md border border-gray-200 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-lg transition-colors ${
+            className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-colors ${
               showFilters ? 'text-trust-600 bg-trust-100' : 'text-gray-400 hover:text-trust-500'
             }`}
           >
@@ -373,15 +373,59 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             )}
           </div>
         ) : (
-          <div className="space-y-4">
-            {(isSearchActive ? services : featuredServices).map((service) => (
-              <ServiceCard
-                key={service.id}
-                service={service}
-                onClick={() => onServiceClick(service)}
-              />
-            ))}
-          </div>
+          (() => {
+            const displayServices = isSearchActive ? services : featuredServices;
+            const [heroService, ...restServices] = displayServices;
+            return (
+              <div className="space-y-3">
+                {/* Featured hero card */}
+                {heroService && !isSearchActive && (
+                  <div
+                    onClick={() => onServiceClick(heroService)}
+                    className="relative cursor-pointer rounded-2xl overflow-hidden shadow-lg group"
+                  >
+                    {heroService.images?.[0] ? (
+                      <img
+                        src={heroService.images[0]}
+                        alt={heroService.title}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-48 bg-gradient-to-br from-trust-200 to-warm-200" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs bg-gold-400 text-gold-900 font-semibold px-2 py-0.5 rounded-full">Featured</span>
+                        {heroService.verified && (
+                          <span className="text-xs bg-safe-500 text-white font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <Shield className="w-3 h-3" /> Verified
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-white font-semibold text-lg leading-tight">{heroService.title}</h3>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-white/80 text-sm">{heroService.workerName}</span>
+                        <span className="text-white font-bold">${heroService.price}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2-column grid for remaining services */}
+                <div className="grid grid-cols-2 gap-3">
+                  {(isSearchActive ? displayServices : restServices).map((service) => (
+                    <ServiceCard
+                      key={service.id}
+                      service={service}
+                      onClick={() => onServiceClick(service)}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })()
         )}
       </div>
 

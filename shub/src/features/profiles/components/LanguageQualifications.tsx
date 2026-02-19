@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Upload, FileText, Shield, Globe } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
+import { showToast } from '../../../utils/toast';
 
 interface Language {
   language: string;
@@ -58,7 +59,8 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
     const updatedLanguages = [...localLanguages, newLang];
     setLocalLanguages(updatedLanguages);
     onLanguagesUpdate(updatedLanguages);
-    
+    showToast.success('Language added');
+
     setNewLanguage('');
     setNewProficiency('Conversational');
     setError(null);
@@ -68,6 +70,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
     const updatedLanguages = localLanguages.filter((_, i) => i !== index);
     setLocalLanguages(updatedLanguages);
     onLanguagesUpdate(updatedLanguages);
+    showToast.success('Language removed');
   };
 
   const updateProficiency = (index: number, proficiency: string) => {

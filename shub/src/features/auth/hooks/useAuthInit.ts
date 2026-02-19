@@ -100,6 +100,31 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
           return buildFallbackProfile(userId, user.email || '', metadata);
         }
 
+        // Workers also need a worker_profiles row so they can access the profile editor
+        if (resolvedRole === 'worker') {
+          const { error: wpError } = await supabase
+            .from('worker_profiles')
+            .insert([{
+              user_id: userId,
+              bio: '',
+              tagline: '',
+              services: [],
+              region: '',
+              city: '',
+              availability: [],
+              photo_album: [],
+              condoms_mandatory: true,
+              published: false,
+              photo_options: {},
+              photo_settings: {},
+            }]);
+          if (wpError) {
+            console.error('Failed to create worker_profiles row:', wpError.message);
+          } else {
+            console.log('Created worker_profiles row for new worker');
+          }
+        }
+
         console.log('Created new profile:', newProfile);
         return transformSupabaseUserToProfile(newProfile);
       }
@@ -131,6 +156,16 @@ export const useAuthInit = () => {
   useEffect(() => {
     let mounted = true;
 
+    // Safety net: if auth hasn't resolved within 4 seconds, unblock the UI.
+    // This prevents a permanent loading spinner when the network is slow or
+    // the Supabase session refresh hangs (e.g. wrong URL in env vars).
+    const safetyTimer = setTimeout(() => {
+      if (mounted) {
+        console.warn('Auth init timed out — clearing loading state');
+        setLoading(false);
+      }
+    }, 4000);
+
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -147,6 +182,7 @@ export const useAuthInit = () => {
       } catch (err) {
         console.error('Auth init error:', err);
       } finally {
+        clearTimeout(safetyTimer);
         if (mounted) {
           setLoading(false);
         }
@@ -159,22 +195,31 @@ export const useAuthInit = () => {
       async (event, session) => {
         if (!mounted) return;
 
-        if (session?.user) {
-          setUser(session.user);
-          const profile = await fetchUserProfile(session.user.id);
-          if (mounted) {
-            setUserProfile(profile);
+        try {
+          if (session?.user) {
+            setUser(session.user);
+            const profile = await fetchUserProfile(session.user.id);
+            if (mounted) {
+              setUserProfile(profile);
+            }
+          } else {
+            setUser(null);
+            setUserProfile(null);
           }
-        } else {
-          setUser(null);
-          setUserProfile(null);
+        } catch (err) {
+          console.error('Auth state change error:', err);
+        } finally {
+          clearTimeout(safetyTimer);
+          if (mounted) {
+            setLoading(false);
+          }
         }
-        setLoading(false);
       }
     );
 
     return () => {
       mounted = false;
+      clearTimeout(safetyTimer);
       subscription.unsubscribe();
     };
   }, [setUser, setUserProfile, setLoading]);

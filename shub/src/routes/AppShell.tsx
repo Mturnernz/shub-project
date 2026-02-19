@@ -4,6 +4,7 @@ import { Home, Search, MessageSquare, User, Calendar, Shield, LayoutDashboard, U
 import { useAuthStore } from '../features/auth/stores/auth.store';
 import { useMessagesStore } from '../features/messages/stores/messages.store';
 import Header from '../components/layout/Header';
+import PageTransition from '../components/layout/PageTransition';
 
 const AppShell: React.FC = () => {
   const navigate = useNavigate();
@@ -137,7 +138,9 @@ const AppShell: React.FC = () => {
       />
 
       <main className="pb-20">
-        <Outlet />
+        <PageTransition locationKey={location.pathname}>
+          <Outlet />
+        </PageTransition>
       </main>
 
       {/* Bottom Navigation */}
@@ -156,6 +159,8 @@ const AppShell: React.FC = () => {
               <button
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
+                aria-label={tab.label}
+                aria-current={isActive ? 'page' : undefined}
                 className={`relative flex flex-col items-center min-w-[48px] min-h-[48px] justify-center px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 ${
                   isActive
                     ? 'text-trust-500 bg-trust-50'

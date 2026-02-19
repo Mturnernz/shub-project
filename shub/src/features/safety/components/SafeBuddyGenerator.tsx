@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Shield, Plus, X, Copy, Check, MapPin, Clock, User, Phone, Mail } from 'lucide-react';
+import { showToast } from '../../../utils/toast';
 import { generateSafeBuddyLink, type SafetyInfo, type SafetyContact } from '../services/safe-buddy';
 import type { BookingWithProfiles } from '../../bookings/services/bookings';
 
@@ -87,8 +88,10 @@ const SafeBuddyGenerator: React.FC<SafeBuddyGeneratorProps> = ({
       await navigator.clipboard.writeText(generatedLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      showToast.success('Link copied!');
     } catch (error) {
       console.error('Failed to copy link:', error);
+      showToast.error('Failed to copy link');
     }
   };
 

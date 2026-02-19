@@ -129,6 +129,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
         <div className="text-center mb-8">
           <button
             onClick={onBack}
+            aria-label="Go back"
             className="absolute top-4 left-4 p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
@@ -269,11 +270,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-500">
               By creating an account, you agree to our{' '}
-              <button className="text-trust-600 hover:text-trust-700 underline">
+              <button type="button" className="text-trust-600 hover:text-trust-700 underline">
                 Terms of Service
               </button>{' '}
               and{' '}
-              <button className="text-trust-600 hover:text-trust-700 underline">
+              <button type="button" className="text-trust-600 hover:text-trust-700 underline">
                 Privacy Policy
               </button>
             </p>

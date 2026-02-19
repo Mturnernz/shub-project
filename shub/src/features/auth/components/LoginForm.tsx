@@ -126,6 +126,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
         <div className="text-center mb-8">
           <button
             onClick={onBack}
+            aria-label="Go back"
             className="absolute top-4 left-4 p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
@@ -227,10 +228,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
           <p className="text-trust-100 text-sm">
             Don't have an account?{' '}
             <button
+              type="button"
               onClick={onBack}
               className="text-white font-semibold underline hover:text-trust-200 transition-colors"
             >
-              Go back to sign up
+              Create one here
             </button>
           </p>
         </div>

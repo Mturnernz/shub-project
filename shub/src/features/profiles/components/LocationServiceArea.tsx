@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Plus, Trash2 } from 'lucide-react';
 import { locations } from '../../../data/mockData';
+import { showToast } from '../../../utils/toast';
 
 interface ServiceArea {
   city: string;
@@ -30,8 +31,10 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
     setSaving(true);
     try {
       await onLocationUpdate(localPrimaryLocation, localServiceAreas);
+      showToast.success('Location saved');
     } catch (error) {
       console.error('Error updating location:', error);
+      showToast.error('Failed to save location');
     } finally {
       setSaving(false);
     }

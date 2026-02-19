@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DollarSign, Info } from 'lucide-react';
+import { showToast } from '../../../utils/toast';
 
 interface RatesEditorProps {
   hourlyRateText: string;
@@ -18,6 +19,7 @@ const RatesEditor: React.FC<RatesEditorProps> = ({ hourlyRateText, onRateUpdate 
       await onRateUpdate(rateText.trim());
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+      showToast.success('Rates updated');
     } finally {
       setSaving(false);
     }

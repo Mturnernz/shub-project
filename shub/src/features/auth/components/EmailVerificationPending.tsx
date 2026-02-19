@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Mail, RefreshCw, CheckCircle } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
@@ -15,7 +15,15 @@ const EmailVerificationPending: React.FC<EmailVerificationPendingProps> = ({
 }) => {
   const [resending, setResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (cooldownRef.current) clearInterval(cooldownRef.current);
+    };
+  }, []);
 
   const handleResendEmail = async () => {
     setResending(true);
@@ -34,6 +42,16 @@ const EmailVerificationPending: React.FC<EmailVerificationPendingProps> = ({
       if (resendError) throw resendError;
 
       setResendSuccess(true);
+      setCooldown(60);
+      cooldownRef.current = setInterval(() => {
+        setCooldown(prev => {
+          if (prev <= 1) {
+            if (cooldownRef.current) clearInterval(cooldownRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     } catch (err) {
       console.error('Error resending verification email:', err);
       setError('Failed to resend verification email. Please try again.');
@@ -124,13 +142,18 @@ const EmailVerificationPending: React.FC<EmailVerificationPendingProps> = ({
               </p>
               <button
                 onClick={handleResendEmail}
-                disabled={resending}
+                disabled={resending || cooldown > 0}
                 className="flex items-center justify-center w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {resending ? (
                   <>
                     <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
                     Sending...
+                  </>
+                ) : cooldown > 0 ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 mr-2" />
+                    Resend in {cooldown}s
                   </>
                 ) : (
                   <>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText } from 'lucide-react';
 import { debounce } from '../../../utils/debounce';
+import { showToast } from '../../../utils/toast';
 
 interface BioEditorProps {
   bio: string;
@@ -26,8 +27,10 @@ const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
       try {
         await onBioUpdate(bioText);
         setLastSaved(new Date());
+        showToast.success('Bio saved');
       } catch (error) {
         console.error('Error saving bio:', error);
+        showToast.error('Failed to save bio');
       } finally {
         setIsSaving(false);
       }

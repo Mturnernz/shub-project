@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Send, AlertTriangle, Shield } from 'lucide-react';
+import { Send, AlertTriangle, Shield, Check } from 'lucide-react';
 import { moderateContent } from '../../safety/services/content-moderation';
 
 interface MessageInputProps {
@@ -15,6 +15,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
 }) => {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sent, setSent] = useState(false);
   const [previewWarning, setPreviewWarning] = useState<string[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -54,6 +55,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
       if (result.success) {
         setMessage('');
         setPreviewWarning([]);
+        setSent(true);
+        setTimeout(() => setSent(false), 2000);
 
         // Reset textarea height
         if (textareaRef.current) {
@@ -129,10 +132,12 @@ const MessageInput: React.FC<MessageInputProps> = ({
         <button
           type="submit"
           disabled={!message.trim() || disabled || isLoading}
-          className="p-3 bg-trust-600 text-white rounded-2xl hover:bg-trust-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+          className={`p-3 text-white rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 ${sent ? 'bg-safe-600 hover:bg-safe-700' : 'bg-trust-600 hover:bg-trust-700'}`}
         >
           {isLoading ? (
             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : sent ? (
+            <Check className="w-5 h-5" />
           ) : (
             <Send className="w-5 h-5" />
           )}
