@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, User, MessageCircle, Shield, Flag } from 'lucide-react';
+import { Calendar, Clock, User, MessageCircle, Shield, Flag, Star } from 'lucide-react';
 import BookingStatus from './BookingStatus';
 import type { BookingWithProfiles } from '../services/bookings';
 import SafeBuddyGenerator from '../../safety/components/SafeBuddyGenerator';
 import ReportModal from '../../safety/components/ReportModal';
+import ReviewSheet from '../../reviews/components/ReviewSheet';
+import { useBookingReviewStatus } from '../../reviews/hooks/useReviews';
+import { useAuthStore } from '../../auth/stores/auth.store';
 
 interface BookingCardProps {
   booking: BookingWithProfiles;
@@ -24,6 +27,13 @@ const BookingCard: React.FC<BookingCardProps> = ({
 }) => {
   const [showSafeBuddy, setShowSafeBuddy] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showReviewSheet, setShowReviewSheet] = useState(false);
+  const { userProfile } = useAuthStore();
+  const { hasReview } = useBookingReviewStatus(
+    userRole === 'client' && booking.status === 'completed' ? booking.id : null,
+    userProfile?.id || null
+  );
+  const canReview = userRole === 'client' && booking.status === 'completed' && hasReview === false;
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     return {
@@ -166,6 +176,22 @@ const BookingCard: React.FC<BookingCardProps> = ({
             </button>
           )}
 
+          {/* Leave review for completed bookings */}
+          {canReview && (
+            <button
+              onClick={() => setShowReviewSheet(true)}
+              className="flex items-center gap-1.5 bg-gold-100 text-gold-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-gold-200 transition-colors"
+            >
+              <Star className="w-4 h-4 fill-current" />
+              Review
+            </button>
+          )}
+          {userRole === 'client' && booking.status === 'completed' && hasReview === true && (
+            <span className="text-xs text-safe-600 font-medium flex items-center gap-1">
+              <Star className="w-3 h-3 fill-current text-gold-400" /> Review submitted
+            </span>
+          )}
+
           {/* Report button */}
           <button
             onClick={() => setShowReportModal(true)}
@@ -196,6 +222,18 @@ const BookingCard: React.FC<BookingCardProps> = ({
             console.log('Safety link generated:', link);
             setShowSafeBuddy(false);
           }}
+        />
+      )}
+
+      {/* Review Sheet */}
+      {showReviewSheet && userProfile && (
+        <ReviewSheet
+          open={showReviewSheet}
+          onClose={() => setShowReviewSheet(false)}
+          bookingId={booking.id}
+          reviewerId={userProfile.id}
+          revieweeId={booking.worker_id}
+          workerName={booking.worker_profile?.name || 'Provider'}
         />
       )}
 

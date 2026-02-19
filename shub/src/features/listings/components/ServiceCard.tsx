@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { Star, MapPin, Clock, Shield, User } from 'lucide-react';
+import { Star, MapPin, Clock, Shield, User, Heart } from 'lucide-react';
 import { Service } from '../../../types';
 
 interface ServiceCardProps {
   service: Service;
   onClick: () => void;
+  saved?: boolean;
+  onSaveToggle?: (workerId: string) => void;
+  isOnline?: boolean;
 }
 
 const FALLBACK_SERVICE_IMG = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" fill="%23e2e8f0"%3E%3Crect width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%2394a3b8" font-size="16"%3ENo image%3C/text%3E%3C/svg%3E';
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick, saved = false, onSaveToggle, isOnline = false }) => {
   const [imgError, setImgError] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
 
@@ -37,23 +40,37 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onClick }) => {
             <Shield className="w-4 h-4 text-white" />
           </div>
         )}
+        {onSaveToggle && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onSaveToggle(service.workerId); }}
+            aria-label={saved ? 'Remove from saved' : 'Save worker'}
+            className="absolute bottom-3 right-3 p-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow transition-transform active:scale-90"
+          >
+            <Heart className={`w-4 h-4 transition-colors ${saved ? 'text-rose-500 fill-current' : 'text-gray-400'}`} />
+          </button>
+        )}
       </div>
 
       <div className="p-4">
         <div className="flex items-center mb-2">
-          {avatarSrc && !avatarError ? (
-            <img
-              src={avatarSrc}
-              alt={service.workerName}
-              className="w-8 h-8 rounded-full mr-3 object-cover"
-              onError={() => setAvatarError(true)}
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full mr-3 bg-trust-100 flex items-center justify-center flex-shrink-0">
-              <User className="w-4 h-4 text-trust-500" />
-            </div>
-          )}
+          <div className="relative mr-3 flex-shrink-0">
+            {avatarSrc && !avatarError ? (
+              <img
+                src={avatarSrc}
+                alt={service.workerName}
+                className="w-8 h-8 rounded-full object-cover"
+                onError={() => setAvatarError(true)}
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-trust-100 flex items-center justify-center">
+                <User className="w-4 h-4 text-trust-500" />
+              </div>
+            )}
+            {isOnline && (
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-safe-500 border-2 border-white rounded-full" />
+            )}
+          </div>
           <div className="min-w-0">
             <h3 className="font-semibold text-gray-900 text-sm truncate">{service.workerName}</h3>
             <div className="flex items-center">

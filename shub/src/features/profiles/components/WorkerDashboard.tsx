@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, BarChart3, Users, Calendar, CheckCircle, AlertCircle, Camera, FileText, MapPin, Globe, List, Shield, ExternalLink, ArrowRight } from 'lucide-react';
+import { Settings, BarChart3, Users, Calendar, CheckCircle, AlertCircle, Camera, FileText, MapPin, Globe, List, Shield, ExternalLink, ArrowRight, Crown, Zap } from 'lucide-react';
 import { User } from '../../../types';
 import { useProfileCompletion } from '../hooks/useProfileCompletion';
+
+const TIER_CONFIG = {
+  free:    { label: 'Free',    color: 'bg-gray-100 text-gray-700 border-gray-200',       icon: null,  features: ['Listed in Browse', 'Max 3 photos', 'Basic analytics'] },
+  pro:     { label: 'Pro',     color: 'bg-trust-100 text-trust-700 border-trust-200',    icon: Zap,   features: ['Featured placement', 'Max 10 photos', 'Full analytics', 'Verified badge'] },
+  premium: { label: 'Premium', color: 'bg-yellow-100 text-yellow-700 border-yellow-200', icon: Crown, features: ['Priority placement', '"Top Pick" badge', 'Boost events', 'Client insights'] },
+} as const;
 
 const WELCOME_DISMISSED_KEY = 'shub_worker_welcome_dismissed';
 
@@ -248,6 +254,61 @@ const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Analytics quick link */}
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 border border-trust-200 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-trust-100 rounded-xl flex items-center justify-center">
+            <BarChart3 className="w-5 h-5 text-trust-600" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Profile Analytics</p>
+            <p className="text-xs text-gray-500">Views, bookings & traffic sources</p>
+          </div>
+        </div>
+        <a
+          href="/dashboard/analytics"
+          className="flex items-center gap-1 text-sm text-trust-600 font-medium hover:text-trust-700"
+        >
+          View <ArrowRight className="w-4 h-4" />
+        </a>
+      </div>
+
+      {/* Your Plan */}
+      {(() => {
+        const tier = ((userProfile as any)?.subscriptionTier || 'free') as 'free' | 'pro' | 'premium';
+        const cfg = TIER_CONFIG[tier];
+        const TierIcon = cfg.icon;
+        const isUpgradeable = tier === 'free' || tier === 'pro';
+        return (
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold text-gray-900">Your Plan</h3>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border ${cfg.color}`}>
+                {TierIcon && <TierIcon className="w-3.5 h-3.5" />}
+                {cfg.label}
+              </span>
+            </div>
+            <ul className="space-y-1.5 mb-4">
+              {cfg.features.map((f) => (
+                <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
+                  <CheckCircle className="w-4 h-4 text-safe-500 flex-shrink-0" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+            {isUpgradeable && (
+              <a
+                href="mailto:hello@shub.nz?subject=Upgrade%20Plan"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-xl text-sm font-semibold hover:from-trust-700 hover:to-warm-700 transition-all"
+              >
+                <Crown className="w-4 h-4" />
+                Upgrade to {tier === 'free' ? 'Pro ($19/mo)' : 'Premium ($49/mo)'}
+              </a>
+            )}
+          </div>
+        );
+      })()}
 
       {/* NZPC Resources & Safety */}
       <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">

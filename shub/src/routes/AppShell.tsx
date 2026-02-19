@@ -5,6 +5,8 @@ import { useAuthStore } from '../features/auth/stores/auth.store';
 import { useMessagesStore } from '../features/messages/stores/messages.store';
 import Header from '../components/layout/Header';
 import PageTransition from '../components/layout/PageTransition';
+import PWAInstallBanner from '../components/ui/PWAInstallBanner';
+import PushNotificationPrompt from '../components/ui/PushNotificationPrompt';
 
 const AppShell: React.FC = () => {
   const navigate = useNavigate();
@@ -74,6 +76,7 @@ const AppShell: React.FC = () => {
     if (path.startsWith('/bookings/') && path.endsWith('/chat')) return 'Chat';
     if (path.match(/^\/bookings\/[^/]+$/) && path !== '/bookings') return 'Booking Details';
     if (path === '/dashboard/profile') return 'Manage Profile';
+    if (path === '/dashboard/analytics') return 'Analytics';
     if (path === '/safety') return 'Safety Hub';
     if (path === '/safety/notes') return 'Client Notes';
     if (path === '/verify') return 'Identity Verification';
@@ -97,6 +100,7 @@ const AppShell: React.FC = () => {
       // Once published, show a back button to the dashboard overview.
       return userProfile?.isPublished ? () => navigate('/dashboard') : undefined;
     }
+    if (path === '/dashboard/analytics') return () => navigate('/dashboard');
     if (path === '/safety/notes') return () => navigate('/safety');
     if (path === '/verify') return () => navigate('/profile');
     if (path === '/browse' && !userType && !userProfile) return () => navigate('/');
@@ -142,6 +146,14 @@ const AppShell: React.FC = () => {
           <Outlet />
         </PageTransition>
       </main>
+
+      {/* Banners above bottom nav */}
+      <div className="fixed bottom-16 left-0 right-0 z-40 pointer-events-none">
+        <div className="pointer-events-auto">
+          <PWAInstallBanner />
+          {userType === 'worker' && <PushNotificationPrompt userId={userProfile?.id || null} />}
+        </div>
+      </div>
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-trust-100 px-2 sm:px-4 z-50 safe-area-bottom">
