@@ -4,6 +4,7 @@ import { Home, Search, MessageSquare, User, Calendar, Shield, LayoutDashboard, U
 import { useAuthStore } from '../features/auth/stores/auth.store';
 import { useMessagesStore } from '../features/messages/stores/messages.store';
 import Header from '../components/layout/Header';
+import PageTransition from '../components/layout/PageTransition';
 
 const AppShell: React.FC = () => {
   const navigate = useNavigate();
@@ -137,7 +138,9 @@ const AppShell: React.FC = () => {
       />
 
       <main className="pb-20">
-        <Outlet />
+        <PageTransition locationKey={location.pathname}>
+          <Outlet />
+        </PageTransition>
       </main>
 
       {/* Bottom Navigation */}

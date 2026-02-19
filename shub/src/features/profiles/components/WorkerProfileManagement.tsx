@@ -186,20 +186,34 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
 
             <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Profile Completion</h2>
-              <div className="flex items-center space-x-4">
-                <div className="flex-1">
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div
-                      className="bg-gradient-to-r from-trust-600 to-warm-600 h-3 rounded-full transition-all duration-500"
-                      style={{ width: `${profileCompletion}%` }}
-                    ></div>
+              <div className="flex items-center gap-6">
+                {/* Circular completion ring */}
+                <div className="relative flex-shrink-0">
+                  <svg width="72" height="72" viewBox="0 0 72 72" className="-rotate-90">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="#E5E7EB" strokeWidth="6" />
+                    <circle
+                      cx="36" cy="36" r="30"
+                      fill="none"
+                      stroke="#0052A3"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                      strokeDasharray={`${2 * Math.PI * 30}`}
+                      strokeDashoffset={`${2 * Math.PI * 30 * (1 - profileCompletion / 100)}`}
+                      className="transition-all duration-700"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-sm font-bold text-trust-700">{profileCompletion}%</span>
                   </div>
                 </div>
-                <span className="text-lg font-semibold text-trust-600">{profileCompletion}%</span>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600">
+                    {profileCompletion === 100
+                      ? 'Your profile is complete and ready to publish!'
+                      : 'Complete all sections to publish your profile and start receiving bookings.'}
+                  </p>
+                </div>
               </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Complete your profile to attract more clients and increase bookings.
-              </p>
             </div>
 
             <div className="grid gap-4">

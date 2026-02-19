@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Star, MapPin, Clock, Shield, Heart, MessageSquare, Calendar, CheckCircle, User } from 'lucide-react';
 import { Service } from '../../../types';
 import { useWorkerProfile } from '../../profiles/hooks/useWorkerProfile';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { useBookings } from '../../bookings/hooks/useBookings';
-import BookingRequest from '../../bookings/components/BookingRequest';
+import BookingSheet from '../../bookings/components/BookingSheet';
 
 interface ServiceDetailProps {
   service: Service;
@@ -19,6 +19,17 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
   const [isFavorited, setIsFavorited] = useState(false);
   const [showBookingRequest, setShowBookingRequest] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [showFAB, setShowFAB] = useState(false);
+  const bookButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowFAB(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    if (bookButtonRef.current) observer.observe(bookButtonRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const { userProfile } = useAuth();
   const { profile: workerProfile, loading: workerLoading } = useWorkerProfile(service.workerId);
@@ -41,7 +52,6 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
     });
 
     if (result.success) {
-      setShowBookingRequest(false);
       setBookingSuccess(true);
     }
 
@@ -179,6 +189,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
 
           <div className="flex space-x-3">
             <button
+              ref={bookButtonRef}
               onClick={handleBookNow}
               disabled={bookingLoading || bookingSuccess}
               className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-colors disabled:opacity-50 ${
@@ -213,17 +224,30 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
         </div>
       </div>
 
-      {/* Booking Request Modal */}
-      {showBookingRequest && canBook && (
-        <BookingRequest
-          workerId={service.workerId}
-          clientId={userProfile!.id}
-          workerName={service.workerName}
-          onSubmit={handleBookingRequest}
-          onCancel={() => setShowBookingRequest(false)}
-          isLoading={bookingLoading}
-        />
+      {/* Sticky FAB */}
+      {showFAB && canBook && !bookingSuccess && (
+        <div className="fixed bottom-24 right-4 z-40">
+          <button
+            onClick={handleBookNow}
+            disabled={bookingLoading}
+            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-full shadow-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 font-semibold text-sm disabled:opacity-50"
+          >
+            <Calendar className="w-4 h-4" />
+            Book Now
+          </button>
+        </div>
       )}
+
+      {/* Booking Sheet */}
+      <BookingSheet
+        open={showBookingRequest}
+        onClose={() => setShowBookingRequest(false)}
+        workerId={service.workerId}
+        clientId={userProfile?.id || ''}
+        workerName={service.workerName}
+        onSubmit={handleBookingRequest}
+        isLoading={bookingLoading}
+      />
     </div>
   );
 };

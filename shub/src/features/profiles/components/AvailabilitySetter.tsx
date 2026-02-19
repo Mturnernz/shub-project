@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Clock, MessageCircle } from 'lucide-react';
+import { showToast } from '../../../utils/toast';
 
 interface AvailabilitySetterProps {
   status: 'available' | 'busy' | 'away';
@@ -52,8 +53,10 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
     
     try {
       await onStatusUpdate(newStatus, localMessage);
+      showToast.success('Availability updated');
     } catch (error) {
       console.error('Error updating status:', error);
+      showToast.error('Failed to update availability');
     } finally {
       setSaving(false);
     }
@@ -67,8 +70,10 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
     setSaving(true);
     try {
       await onStatusUpdate(localStatus, localMessage);
+      showToast.success('Status message saved');
     } catch (error) {
       console.error('Error updating status message:', error);
+      showToast.error('Failed to save status message');
     } finally {
       setSaving(false);
     }

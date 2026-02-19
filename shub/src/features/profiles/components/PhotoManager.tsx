@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, X, ChevronUp, ChevronDown, Image as ImageIcon, EyeOff, Droplets } from 'lucide-react';
+import { showToast } from '../../../utils/toast';
 import { compressImage, validateImageFile, createImagePreview, revokeImagePreview } from '../../../utils/imageUtils';
 import { supabase } from '../../../lib/supabase';
 
@@ -44,6 +45,7 @@ const PhotoManager: React.FC<PhotoManagerProps> = ({
     const updated = { ...settings, [url]: { ...getSetting(url), ...patch } };
     setSettings(updated);
     onPhotoSettingsUpdate?.(updated);
+    showToast.success('Privacy settings saved');
   };
 
   const handleFileSelect = async (files: FileList | null) => {
