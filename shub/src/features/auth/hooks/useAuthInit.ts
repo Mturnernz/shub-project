@@ -100,6 +100,31 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
           return buildFallbackProfile(userId, user.email || '', metadata);
         }
 
+        // Workers also need a worker_profiles row so they can access the profile editor
+        if (resolvedRole === 'worker') {
+          const { error: wpError } = await supabase
+            .from('worker_profiles')
+            .insert([{
+              user_id: userId,
+              bio: '',
+              tagline: '',
+              services: [],
+              region: '',
+              city: '',
+              availability: [],
+              photo_album: [],
+              condoms_mandatory: true,
+              published: false,
+              photo_options: {},
+              photo_settings: {},
+            }]);
+          if (wpError) {
+            console.error('Failed to create worker_profiles row:', wpError.message);
+          } else {
+            console.log('Created worker_profiles row for new worker');
+          }
+        }
+
         console.log('Created new profile:', newProfile);
         return transformSupabaseUserToProfile(newProfile);
       }
