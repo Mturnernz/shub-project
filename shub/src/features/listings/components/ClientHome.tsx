@@ -1,8 +1,9 @@
 import React from 'react';
-import { TrendingUp, Star, MapPin, ArrowLeft, Search, Filter, Zap, Shield } from 'lucide-react';
+import { TrendingUp, Star, MapPin, ArrowLeft, Search, Filter, Zap, Shield, Bookmark } from 'lucide-react';
 import { Service } from '../../../types';
 import ServiceCard from './ServiceCard';
 import { categories, locations } from '../../../data/mockData';
+import { useSavedWorkers } from '../hooks/useSavedWorkers';
 
 const SAVED_SEARCH_KEY = 'shub_saved_search';
 
@@ -72,6 +73,8 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
   const [availableNow, setAvailableNow] = React.useState(saved?.availableNow || false);
   const [showFilters, setShowFilters] = React.useState(false);
   const [isSearchActive, setIsSearchActive] = React.useState(!!saved);
+  const [showSavedOnly, setShowSavedOnly] = React.useState(false);
+  const { savedIds, toggle: toggleSave, isSaved } = useSavedWorkers();
 
   const isGuest = !isAuthenticated && (userType === null || userType === undefined);
 
@@ -329,6 +332,21 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             Available Now
           </button>
 
+          {/* Saved filter */}
+          {savedIds.length > 0 && (
+            <button
+              onClick={() => setShowSavedOnly(v => !v)}
+              className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full border font-medium text-sm transition-all duration-200 ${
+                showSavedOnly
+                  ? 'bg-rose-100 border-rose-300 text-rose-700'
+                  : 'bg-white/70 border-trust-200 text-gray-600 hover:bg-rose-50 hover:border-rose-200'
+              }`}
+            >
+              <Bookmark className={`w-4 h-4 ${showSavedOnly ? 'text-rose-600' : 'text-gray-400'}`} />
+              Saved ({savedIds.length})
+            </button>
+          )}
+
           {/* Category quick-picks */}
           {popularCategories.map((cat) => (
             <button
@@ -374,12 +392,15 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
           </div>
         ) : (
           (() => {
-            const displayServices = isSearchActive ? services : featuredServices;
+            const baseServices = isSearchActive ? services : featuredServices;
+            const displayServices = showSavedOnly
+              ? baseServices.filter(s => isSaved(s.workerId))
+              : baseServices;
             const [heroService, ...restServices] = displayServices;
             return (
               <div className="space-y-3">
                 {/* Featured hero card */}
-                {heroService && !isSearchActive && (
+                {heroService && !isSearchActive && !showSavedOnly && (
                   <div
                     onClick={() => onServiceClick(heroService)}
                     className="relative cursor-pointer rounded-2xl overflow-hidden shadow-lg group"
@@ -415,11 +436,13 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
 
                 {/* 2-column grid for remaining services */}
                 <div className="grid grid-cols-2 gap-3">
-                  {(isSearchActive ? displayServices : restServices).map((service) => (
+                  {(isSearchActive || showSavedOnly ? displayServices : restServices).map((service) => (
                     <ServiceCard
                       key={service.id}
                       service={service}
                       onClick={() => onServiceClick(service)}
+                      saved={isSaved(service.workerId)}
+                      onSaveToggle={isAuthenticated ? toggleSave : undefined}
                     />
                   ))}
                 </div>

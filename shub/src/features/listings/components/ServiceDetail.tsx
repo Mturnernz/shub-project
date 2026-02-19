@@ -5,6 +5,9 @@ import { useWorkerProfile } from '../../profiles/hooks/useWorkerProfile';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { useBookings } from '../../bookings/hooks/useBookings';
 import BookingSheet from '../../bookings/components/BookingSheet';
+import { useReviews } from '../../reviews/hooks/useReviews';
+import ReviewList from '../../reviews/components/ReviewList';
+import { trackProfileView } from '../../analytics/hooks/useWorkerAnalytics';
 
 interface ServiceDetailProps {
   service: Service;
@@ -37,6 +40,11 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
     userProfile?.id || null,
     userType
   );
+  const { reviews, avgRating, addWorkerResponse } = useReviews(service.workerId);
+
+  useEffect(() => {
+    trackProfileView(service.workerId, userProfile?.id || null, 'browse');
+  }, [service.workerId, userProfile?.id]);
 
   const isGuest = userType === null;
   const canBook = userType === 'client' && userProfile;
@@ -169,6 +177,20 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-gray-500 italic">Loading worker information...</p>
               </div>
+            </div>
+          )}
+
+          {/* Reviews */}
+          {reviews.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Reviews</h3>
+              <ReviewList
+                reviews={reviews}
+                avgRating={avgRating}
+                workerId={service.workerId}
+                currentUserId={userProfile?.id}
+                onAddResponse={addWorkerResponse}
+              />
             </div>
           )}
 

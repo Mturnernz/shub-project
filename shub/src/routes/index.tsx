@@ -23,6 +23,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const SafetyHubPage = lazy(() => import('./pages/SafetyHubPage'));
 const VerificationPage = lazy(() => import('./pages/VerificationPage'));
 const ClientNotesPage = lazy(() => import('./pages/ClientNotesPage'));
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 
 // Admin pages
 const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
@@ -117,6 +118,14 @@ export const router = createBrowserRouter([
             element: (
               <Suspense fallback={<LoadingFallback />}>
                 <ProfileManagementPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: '/dashboard/analytics',
+            element: (
+              <Suspense fallback={<LoadingFallback />}>
+                <AnalyticsPage />
               </Suspense>
             ),
           },

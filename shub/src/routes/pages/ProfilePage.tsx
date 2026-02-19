@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Shield, MapPin } from 'lucide-react';
+import { User, Mail, Shield, MapPin, Heart, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/stores/auth.store';
+import { useSavedWorkers } from '../../features/listings/hooks/useSavedWorkers';
+import ClientVerificationCard from '../../features/auth/components/ClientVerificationCard';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { userProfile, isAuthenticated, getEffectiveUserType } = useAuthStore();
   const userType = getEffectiveUserType();
+  const { savedIds } = useSavedWorkers();
+  const [clientVerified, setClientVerified] = useState(false);
 
   // Workers manage their profile at /dashboard/profile — redirect them there.
   useEffect(() => {
@@ -93,6 +97,43 @@ const ProfilePage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Client Verification */}
+      {isAuthenticated && userType === 'client' && userProfile && (
+        <ClientVerificationCard
+          userId={userProfile.id}
+          isVerified={clientVerified || !!userProfile.verified}
+          onVerified={() => setClientVerified(true)}
+        />
+      )}
+
+      {/* Saved Workers */}
+      {isAuthenticated && savedIds.length > 0 && (
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <Heart className="w-5 h-5 text-rose-500 fill-current" />
+              Saved Workers
+            </h3>
+            <button
+              onClick={() => navigate('/browse')}
+              className="flex items-center gap-1 text-sm text-trust-600 hover:text-trust-700 font-medium"
+            >
+              Browse
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+          <p className="text-sm text-gray-600">
+            You have <strong>{savedIds.length}</strong> saved worker{savedIds.length !== 1 ? 's' : ''}.
+          </p>
+          <button
+            onClick={() => navigate('/browse')}
+            className="mt-3 w-full py-2.5 border border-rose-200 text-rose-600 rounded-xl text-sm font-medium hover:bg-rose-50 transition-colors"
+          >
+            View saved workers in Browse
+          </button>
+        </div>
+      )}
     </div>
   );
 };
