@@ -104,7 +104,7 @@ const BookingSheet: React.FC<BookingSheetProps> = ({
   };
 
   return (
-    <Sheet open={open} onClose={step !== 'success' ? handleClose : undefined} title={step !== 'success' ? stepTitles[step] : undefined}>
+    <Sheet open={open} onClose={step !== 'success' ? handleClose : undefined} title={step !== 'success' ? stepTitles[step] : undefined} variant="dialog">
       {/* Progress indicator */}
       {step !== 'success' && (
         <div className="flex gap-1.5 mb-6">

@@ -5,7 +5,8 @@ import { useAuthStore } from '../../features/auth/stores/auth.store';
 
 const ProfileManagementPage: React.FC = () => {
   const navigate = useNavigate();
-  const { userProfile, loading, isAuthenticated } = useAuthStore();
+  const { userProfile, loading, isAuthenticated, getEffectiveUserType } = useAuthStore();
+  const userType = getEffectiveUserType();
 
   if (loading) {
     return (
@@ -17,6 +18,12 @@ const ProfileManagementPage: React.FC = () => {
 
   if (!userProfile && !isAuthenticated) {
     navigate('/login', { replace: true });
+    return null;
+  }
+
+  // Clients have no host profile to manage — redirect to their client profile
+  if (userType === 'client') {
+    navigate('/profile', { replace: true });
     return null;
   }
 

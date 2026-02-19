@@ -11,7 +11,7 @@ const EmailVerificationPendingPage: React.FC = () => {
     <EmailVerificationPending
       email={email}
       userType={userType as 'worker' | 'client'}
-      onBack={() => navigate('/')}
+      onBack={() => navigate('/login')}
     />
   );
 };

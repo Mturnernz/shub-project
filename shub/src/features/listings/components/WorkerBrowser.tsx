@@ -60,29 +60,27 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
     try {
       setLoading(true);
 
-      // Fetch published worker profiles
+      // Fetch published host profiles — join user data for display info
       const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('role', 'worker')
-        .eq('is_verified', true)
-        .not('bio', 'is', null);
+        .from('worker_profiles')
+        .select('*, user:user_id(id, email, name, display_name, avatar_url, is_verified, status)')
+        .eq('is_published', true);
 
       if (error) {
-        console.error('Error fetching workers:', error);
+        console.error('Error fetching hosts:', error);
         setWorkers(getMockWorkers());
       } else {
         const transformed = (data || []).map((d: any) => ({
-          id: d.id,
-          name: d.display_name || d.name,
-          email: d.email,
-          role: d.role as 'worker' | 'client',
-          avatar: d.avatar_url || d.avatar,
-          location: d.location,
-          verified: d.is_verified || d.verified,
+          id: d.user_id,
+          name: d.display_name || d.user?.display_name || d.user?.name || 'Host',
+          email: d.user?.email || '',
+          role: 'worker' as const,
+          avatar: d.profile_photos?.[0] || d.user?.avatar_url,
+          location: d.primary_location || d.location,
+          verified: d.is_verified || d.user?.is_verified,
           bio: d.bio,
           profilePhotos: d.profile_photos || [],
-          status: d.status || 'available',
+          status: d.status || d.user?.status || 'available',
           primaryLocation: d.primary_location,
         }));
         setWorkers(transformed);
@@ -215,7 +213,7 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
                   ←
                 </button>
               )}
-              <h1 className="text-2xl font-bold text-gray-900">Browse Workers</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Browse Hosts</h1>
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
@@ -231,7 +229,7 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search workers by name, location, or services..."
+              placeholder="Search hosts by name, location, or services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-trust-500 focus:border-transparent"
@@ -279,7 +277,7 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
                   className="rounded border-gray-300 text-trust-600 focus:ring-trust-500"
                 />
                 <label htmlFor="verified" className="ml-2 text-sm text-gray-700">
-                  Verified workers only
+                  Verified hosts only
                 </label>
               </div>
             </div>
@@ -292,13 +290,13 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin w-8 h-8 border-2 border-trust-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading workers...</p>
+            <p className="text-gray-600">Loading hosts...</p>
           </div>
         ) : (
           <>
             <div className="mb-6">
               <p className="text-gray-600">
-                Showing {filteredWorkers.length} of {workers.length} workers
+                Showing {filteredWorkers.length} of {workers.length} hosts
                 {searchQuery && ` for "${searchQuery}"`}
               </p>
             </div>
@@ -360,9 +358,9 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
             {filteredWorkers.length === 0 && !loading && (
               <div className="text-center py-12">
                 <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No workers found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No hosts found</h3>
                 <p className="text-gray-600">
-                  Try adjusting your search or filters to find more workers.
+                  Try adjusting your search or filters to find more hosts.
                 </p>
               </div>
             )}
