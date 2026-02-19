@@ -117,7 +117,7 @@ const EmailVerificationPending: React.FC<EmailVerificationPendingProps> = ({
                 <li className="flex items-start">
                   <span className="font-bold mr-2">3.</span>
                   {userType === 'worker'
-                    ? 'Complete your worker profile setup'
+                    ? 'Complete your host profile setup'
                     : 'Start browsing and booking services'
                   }
                 </li>
@@ -136,8 +136,8 @@ const EmailVerificationPending: React.FC<EmailVerificationPendingProps> = ({
               </div>
             )}
 
-            <div className="text-center pt-4">
-              <p className="text-sm text-gray-600 mb-3">
+            <div className="text-center pt-4 space-y-3">
+              <p className="text-sm text-gray-600">
                 Didn't receive the email?
               </p>
               <button
@@ -161,6 +161,13 @@ const EmailVerificationPending: React.FC<EmailVerificationPendingProps> = ({
                     Resend Verification Email
                   </>
                 )}
+              </button>
+              <button
+                onClick={onBack}
+                className="flex items-center justify-center w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Login
               </button>
             </div>
           </div>

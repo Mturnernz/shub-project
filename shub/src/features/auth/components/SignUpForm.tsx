@@ -21,18 +21,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
   const [error, setError] = useState<string | null>(null);
 
   const validateForm = (): boolean => {
-    // Name is only required for clients — hosts set a display name in their profile
-    if (userType === 'client') {
-      if (!formData.name.trim()) {
-        setError('Name is required');
-        return false;
-      }
-      if (formData.name.trim().length < 2) {
-        setError('Name must be at least 2 characters long');
-        return false;
-      }
-    }
-
     if (!formData.email.trim()) {
       setError('Email is required');
       return false;
@@ -150,7 +138,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
             </div>
             <div>
               <h2 className="text-xl font-semibold text-white">
-                {userType === 'worker' ? 'Worker Account' : 'Client Account'}
+                {userType === 'worker' ? 'Host Account' : 'Client Account'}
               </h2>
               <p className="text-trust-100 text-sm">
                 {userType === 'worker' ? 'Offer your services' : 'Browse and book services'}
@@ -172,7 +160,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
             {userType === 'client' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
+                  Display Name <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -262,7 +250,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
               disabled={loading}
               className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating Account...' : `Create ${userType === 'worker' ? 'Worker' : 'Client'} Account`}
+              {loading ? 'Creating Account...' : `Create ${userType === 'worker' ? 'Host' : 'Client'} Account`}
             </button>
           </form>
 

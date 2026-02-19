@@ -52,7 +52,7 @@ const UserTypeSelection: React.FC<UserTypeSelectionProps> = ({ onSelect, onBack 
                 <UserCheck className="w-8 h-8 text-white" />
               </div>
               <div className="text-left flex-1">
-                <h3 className="text-xl font-bold text-gray-900 mb-1">I'm a Worker</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-1">I'm a Host</h3>
                 <p className="text-gray-600">
                   I want to offer my services
                 </p>
