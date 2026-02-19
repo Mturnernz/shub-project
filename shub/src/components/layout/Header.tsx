@@ -41,6 +41,7 @@ const Header: React.FC<HeaderProps> = ({
           {showBackButton && onBack && (
             <button
               onClick={onBack}
+              aria-label="Go back"
               className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 transition-colors mr-2 flex-shrink-0"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -67,6 +68,7 @@ const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={handleNotificationClick}
+                aria-label="Notifications"
                 className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 transition-colors"
               >
                 <Bell className="w-5 h-5" />
@@ -81,8 +83,8 @@ const Header: React.FC<HeaderProps> = ({
           {showLogout && onLogout && (
             <button
               onClick={onLogout}
+              aria-label="Log out"
               className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 transition-colors"
-              title="Log out"
             >
               <LogOut className="w-5 h-5" />
             </button>

@@ -156,6 +156,8 @@ const AppShell: React.FC = () => {
               <button
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
+                aria-label={tab.label}
+                aria-current={isActive ? 'page' : undefined}
                 className={`relative flex flex-col items-center min-w-[48px] min-h-[48px] justify-center px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 ${
                   isActive
                     ? 'text-trust-500 bg-trust-50'

@@ -169,8 +169,8 @@ const BookingCard: React.FC<BookingCardProps> = ({
           {/* Report button */}
           <button
             onClick={() => setShowReportModal(true)}
+            aria-label="Report user"
             className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            title="Report user"
           >
             <Flag className="w-4 h-4" />
           </button>

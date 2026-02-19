@@ -12,6 +12,7 @@ const UserTypeSelection: React.FC<UserTypeSelectionProps> = ({ onSelect, onBack 
       <div className="w-full max-w-md">
         <button
           onClick={onBack}
+          aria-label="Go back"
           className="absolute top-4 left-4 p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
         >
           <ArrowLeft className="w-6 h-6" />
