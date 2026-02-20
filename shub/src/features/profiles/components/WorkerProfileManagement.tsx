@@ -27,7 +27,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
   const [condomsMandatory, setCondomsMandatory] = useState(true);
   const [displayNameInput, setDisplayNameInput] = useState<string | null>(null);
   const [displayNameSaving, setDisplayNameSaving] = useState(false);
-  const { profile, loading, error, updateProfile, saving } = useWorkerProfile(userId);
+  const { profile, loading, error, updateProfile, saving, refetch } = useWorkerProfile(userId);
   const { services, loading: servicesLoading } = useServices();
   const { userProfile: authProfile, setUserProfile } = useAuthStore();
 
@@ -45,11 +45,11 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
     );
   }
 
-  if (error || !profile) {
+  if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-trust-50 to-rose-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error || 'Profile not found'}</p>
+        <div className="text-center px-6">
+          <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={onBack}
             className="px-4 py-2 bg-trust-600 text-white rounded-lg hover:bg-trust-700 transition-colors"
@@ -57,6 +57,33 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
             Go Back
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-700 via-trust-600 to-rose-600 flex flex-col items-center justify-center px-6 text-center">
+        <div className="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center mb-6">
+          <User className="w-10 h-10 text-white" />
+        </div>
+        <h1 className="text-3xl font-bold text-white mb-3">Welcome to Shub</h1>
+        <p className="text-trust-100 text-lg mb-2">Let's set up your host profile.</p>
+        <p className="text-white/60 text-sm mb-10 max-w-xs">
+          Complete your profile to start receiving bookings. It only takes a few minutes.
+        </p>
+        <button
+          onClick={refetch}
+          className="px-8 py-4 bg-white text-trust-700 rounded-full font-semibold text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 mb-4"
+        >
+          Get Started
+        </button>
+        <button
+          onClick={onBack}
+          className="text-white/60 text-sm hover:text-white/90 transition-colors"
+        >
+          Go back
+        </button>
       </div>
     );
   }

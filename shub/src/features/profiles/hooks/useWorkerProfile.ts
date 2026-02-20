@@ -24,7 +24,14 @@ export const useWorkerProfile = (userId: string | undefined) => {
         .eq('id', userId)
         .single();
 
-      if (supabaseError) throw supabaseError;
+      if (supabaseError) {
+        // PGRST116 = no rows returned — new user with no profile row yet, not an error
+        if ((supabaseError as any).code === 'PGRST116') {
+          setProfile(null);
+          return;
+        }
+        throw supabaseError;
+      }
 
       // Transform database fields to match our interface
       const transformedProfile: User = {
