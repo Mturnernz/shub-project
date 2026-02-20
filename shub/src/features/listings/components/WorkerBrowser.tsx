@@ -64,7 +64,7 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
       const { data, error } = await supabase
         .from('worker_profiles')
         .select('*, user:user_id(id, email, name, display_name, avatar_url, is_verified, status)')
-        .eq('is_published', true);
+        .eq('published', true);
 
       if (error) {
         console.error('Error fetching hosts:', error);
