@@ -73,6 +73,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
   const [availableNow, setAvailableNow] = React.useState(saved?.availableNow || false);
   const [showFilters, setShowFilters] = React.useState(false);
   const [isSearchActive, setIsSearchActive] = React.useState(!!saved);
+  const [isSearchExpanded, setIsSearchExpanded] = React.useState(!!saved?.query);
   const [showSavedOnly, setShowSavedOnly] = React.useState(false);
   const { savedIds, toggle: toggleSave, isSaved } = useSavedWorkers();
 
@@ -107,6 +108,8 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
     const dateFilter = calculateDateFromFilter(dateCreated);
     onSearch(query, category, location, availability, minRating, dateFilter, featuredOnly, availableNow);
     setIsSearchActive(true);
+    setIsSearchExpanded(false);
+    setShowFilters(false);
     // Persist search preferences
     saveSavedSearch({ query, category, location, availability, minRating, dateCreated, featuredOnly, availableNow });
   };
@@ -136,6 +139,8 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
     setFeaturedOnly(false);
     setAvailableNow(false);
     setIsSearchActive(false);
+    setIsSearchExpanded(false);
+    setShowFilters(false);
     clearSavedSearch();
     onSearch('', 'All', 'All Locations', 'All', 0, '', false, false);
   };
@@ -143,7 +148,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="px-4">
-        <div className="bg-gradient-to-r from-trust-500/20 to-warm-500/20 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
+        <div className="bg-gradient-to-r from-trust-500/20 to-rose-500/20 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             {isGuest ? 'Browse Services' : 'Welcome back!'}
           </h2>
@@ -171,25 +176,55 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
 
       {/* Floating Search Pill — sticky below header */}
       <div className="sticky top-[72px] z-30 px-4">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search services..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full pl-12 pr-12 py-3.5 bg-white/90 backdrop-blur-md border border-gray-200 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          />
+        {!isSearchExpanded ? (
+          /* Collapsed pill */
           <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-colors ${
-              showFilters ? 'text-trust-600 bg-trust-100' : 'text-gray-400 hover:text-trust-500'
-            }`}
+            onClick={() => setIsSearchExpanded(true)}
+            className="w-full flex items-center gap-3 pl-5 pr-5 py-3.5 bg-white/90 backdrop-blur-md border border-gray-200 rounded-full shadow-md hover:shadow-lg transition-shadow text-left"
           >
-            <Filter className="w-5 h-5" />
+            <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <span className={`flex-1 text-sm ${query ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>
+              {query || 'Search Shub…'}
+            </span>
+            {(category !== 'All' || location !== 'All Locations') && (
+              <span className="flex-shrink-0 text-xs bg-trust-100 text-trust-700 px-2 py-0.5 rounded-full font-medium">
+                Filtered
+              </span>
+            )}
+            <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" />
           </button>
-        </div>
+        ) : (
+          /* Expanded input */
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search Shub…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoFocus
+              className="w-full pl-12 pr-24 py-3.5 bg-white/90 backdrop-blur-md border border-gray-200 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-trust-500 focus:border-transparent"
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              onBlur={() => { if (!query && !showFilters) setIsSearchExpanded(false); }}
+            />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`p-1.5 rounded-full transition-colors ${
+                  showFilters ? 'text-trust-600 bg-trust-100' : 'text-gray-400 hover:text-trust-500'
+                }`}
+              >
+                <Filter className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => { setIsSearchExpanded(false); setShowFilters(false); }}
+                className="p-1.5 rounded-full text-gray-400 hover:text-gray-600 transition-colors text-xs font-medium"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
 
         {showFilters && (
           <div className="mt-3 space-y-3 bg-white/70 backdrop-blur-sm rounded-2xl p-4 border border-trust-200">
@@ -300,7 +335,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
             <div className="flex space-x-3">
               <button
                 onClick={handleSearch}
-                className="flex-1 bg-gradient-to-r from-trust-600 to-warm-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 text-sm"
+                className="flex-1 bg-gradient-to-r from-trust-600 to-rose-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-trust-700 hover:to-rose-700 transition-all duration-200 text-sm"
               >
                 Apply Filters
               </button>
@@ -413,7 +448,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-48 bg-gradient-to-br from-trust-200 to-warm-200" />
+                      <div className="w-full h-48 bg-gradient-to-br from-trust-200 to-rose-200" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -480,7 +515,7 @@ const ClientHome = ({ services, loading, error, onServiceClick, onCategoryClick,
               <div className="text-sm text-gray-600">Verified Hosts</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-warm-600">4.8</div>
+              <div className="text-2xl font-bold text-rose-600">4.8</div>
               <div className="text-sm text-gray-600 flex items-center justify-center">
                 <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
                 Average Rating

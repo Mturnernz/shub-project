@@ -218,7 +218,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ workerId, workerName, w
         <h3 className="text-lg font-semibold text-gray-900">Service Listings</h3>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center px-4 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200"
+          className="flex items-center px-4 py-2 bg-gradient-to-r from-trust-600 to-rose-600 text-white rounded-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Service
@@ -338,7 +338,7 @@ const ServiceManager: React.FC<ServiceManagerProps> = ({ workerId, workerName, w
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 bg-gradient-to-r from-trust-600 to-warm-600 text-white py-2 px-4 rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50"
+                className="flex-1 bg-gradient-to-r from-trust-600 to-rose-600 text-white py-2 px-4 rounded-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : editingService ? 'Update Service' : 'Create Service'}
               </button>

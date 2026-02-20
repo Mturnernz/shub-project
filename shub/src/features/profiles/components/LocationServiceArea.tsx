@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Plus, Trash2 } from 'lucide-react';
 import { locations } from '../../../data/mockData';
 import { showToast } from '../../../utils/toast';
+import { useSavedIndicator } from '../../../hooks/useSavedIndicator';
 
 interface ServiceArea {
   city: string;
@@ -23,21 +24,13 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
   const [localServiceAreas, setLocalServiceAreas] = useState<ServiceArea[]>(serviceAreas);
   const [newAreaCity, setNewAreaCity] = useState('');
   const [newAreaRadius, setNewAreaRadius] = useState('20');
-  const [isSaving, setSaving] = useState(false);
+  const { saved: showSaved, saving: isSaving, triggerSave } = useSavedIndicator();
 
   const availableLocations = locations.slice(1); // Remove 'All Locations'
 
   const handleSave = async () => {
-    setSaving(true);
-    try {
-      await onLocationUpdate(localPrimaryLocation, localServiceAreas);
-      showToast.success('Location saved');
-    } catch (error) {
-      console.error('Error updating location:', error);
-      showToast.error('Failed to save location');
-    } finally {
-      setSaving(false);
-    }
+    await triggerSave(() => onLocationUpdate(localPrimaryLocation, localServiceAreas));
+    showToast.success('Location saved');
   };
 
   const addServiceArea = () => {
@@ -71,11 +64,10 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
         <h3 className="text-lg font-semibold text-gray-900">Location & Service Areas</h3>
-        {isSaving && (
-          <span className="text-sm text-trust-600">Saving...</span>
-        )}
+        {isSaving && <span className="text-sm text-trust-600">Saving...</span>}
+        {showSaved && !isSaving && <span className="text-sm text-safe-600 font-medium">✓ Saved</span>}
       </div>
 
       {/* Primary Location */}
@@ -140,7 +132,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
               <button
                 onClick={addServiceArea}
                 disabled={!newAreaCity.trim()}
-                className="px-3 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 bg-gradient-to-r from-trust-600 to-rose-600 text-white rounded-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -199,7 +191,7 @@ const LocationServiceArea: React.FC<LocationServiceAreaProps> = ({
       <button
         onClick={handleSave}
         disabled={isSaving}
-        className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-r from-trust-600 to-rose-600 text-white py-3 rounded-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSaving ? 'Saving...' : 'Save Location Settings'}
       </button>

@@ -67,7 +67,7 @@ const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
     <div className="px-4 py-8 space-y-6">
       {/* Welcome Flow for New Workers */}
       {showWelcome && (
-        <div className="bg-gradient-to-br from-trust-600 to-warm-600 rounded-2xl p-6 text-white">
+        <div className="bg-gradient-to-br from-trust-600 to-rose-600 rounded-2xl p-6 text-white">
           <h2 className="text-2xl font-bold mb-2">Welcome to Shub!</h2>
           <p className="text-trust-100 mb-4">
             You're joining a safety-first platform built for NZ sex workers. Here's how to get started:
@@ -105,7 +105,7 @@ const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
 
       {/* Regular Welcome Section (when welcome flow is dismissed) */}
       {!showWelcome && (
-        <div className="bg-gradient-to-r from-trust-500/20 to-warm-500/20 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
+        <div className="bg-gradient-to-r from-trust-500/20 to-rose-500/20 backdrop-blur-sm rounded-2xl p-6 border border-trust-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Welcome back, {userProfile?.name || 'Worker'}!
           </h2>
@@ -175,7 +175,7 @@ const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
         <div className="flex items-center space-x-4">
           <button
             onClick={onManageProfile}
-            className="bg-gradient-to-r from-trust-600 to-warm-600 text-white px-6 py-3 rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 font-semibold flex items-center space-x-2"
+            className="bg-gradient-to-r from-trust-600 to-rose-600 text-white px-6 py-3 rounded-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200 font-semibold flex items-center space-x-2"
           >
             <Settings className="w-5 h-5" />
             <span>Manage Profile</span>
@@ -300,7 +300,7 @@ const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
             {isUpgradeable && (
               <a
                 href="mailto:hello@shub.nz?subject=Upgrade%20Plan"
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-xl text-sm font-semibold hover:from-trust-700 hover:to-warm-700 transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-trust-600 to-rose-600 text-white rounded-xl text-sm font-semibold hover:from-trust-700 hover:to-rose-700 transition-all"
               >
                 <Crown className="w-4 h-4" />
                 Upgrade to {tier === 'free' ? 'Pro ($19/mo)' : 'Premium ($49/mo)'}
@@ -348,7 +348,7 @@ const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
             href="https://www.nzpc.org.nz/resources/safety"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between p-3 bg-warm-50 rounded-xl hover:bg-orange-100 transition-colors group"
+            className="flex items-center justify-between p-3 bg-rose-50 rounded-xl hover:bg-orange-100 transition-colors group"
           >
             <div>
               <p className="text-sm font-medium text-gray-800">Safety Tips</p>

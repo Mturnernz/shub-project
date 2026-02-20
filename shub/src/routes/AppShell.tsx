@@ -182,7 +182,7 @@ const AppShell: React.FC = () => {
                 <div className="relative">
                   <Icon className="w-5 h-5 mb-0.5" />
                   {showBadge && (
-                    <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 bg-warm-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                    <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
                       {totalUnread > 9 ? '9+' : totalUnread}
                     </span>
                   )}

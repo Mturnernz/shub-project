@@ -28,6 +28,7 @@ const MessageThread: React.FC<MessageThreadProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [lastSentId, setLastSentId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const isWorker = booking.worker_id === currentUserId;
@@ -103,6 +104,10 @@ const MessageThread: React.FC<MessageThreadProps> = ({
 
         setMessages(prev => [...prev, newMessage]);
         scrollToBottom();
+
+        // Show ✓ Sent for 2 seconds on the last sent message
+        setLastSentId(data.id);
+        setTimeout(() => setLastSentId(null), 2000);
 
         return { success: true, filtered };
       }
@@ -242,7 +247,7 @@ const MessageThread: React.FC<MessageThreadProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-br from-trust-50/50 to-warm-50/50">
+      <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-br from-trust-50/50 to-rose-50/50">
         {messages.length === 0 ? (
           <div className="text-center py-8">
             <div className="w-16 h-16 rounded-full bg-trust-100 flex items-center justify-center mx-auto mb-4">
@@ -260,6 +265,7 @@ const MessageThread: React.FC<MessageThreadProps> = ({
                 key={message.id}
                 message={message}
                 isOwn={message.sender_id === currentUserId}
+                justSent={message.id === lastSentId}
               />
             ))}
             <div ref={messagesEndRef} />

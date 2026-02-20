@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Upload, FileText, Shield, Globe } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { showToast } from '../../../utils/toast';
+import { useSavedIndicator } from '../../../hooks/useSavedIndicator';
 
 interface Language {
   language: string;
@@ -28,6 +29,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
   const [newProficiency, setNewProficiency] = useState('Conversational');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { saved: showSaved, triggerSave } = useSavedIndicator();
 
   const proficiencyLevels = [
     'Beginner',
@@ -42,7 +44,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
     'Vietnamese', 'Thai', 'Dutch', 'Swedish', 'Norwegian', 'Polish',
   ];
 
-  const addLanguage = () => {
+  const addLanguage = async () => {
     if (!newLanguage.trim()) return;
     
     // Check if language already exists
@@ -58,7 +60,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
     
     const updatedLanguages = [...localLanguages, newLang];
     setLocalLanguages(updatedLanguages);
-    onLanguagesUpdate(updatedLanguages);
+    await triggerSave(() => Promise.resolve(onLanguagesUpdate(updatedLanguages)));
     showToast.success('Language added');
 
     setNewLanguage('');
@@ -154,7 +156,10 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Languages & Qualifications</h3>
+      <div className="flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-gray-900">Languages & Qualifications</h3>
+        {showSaved && <span className="text-sm text-safe-600 font-medium">✓ Saved</span>}
+      </div>
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-lg text-sm">
@@ -202,7 +207,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
             <button
               onClick={addLanguage}
               disabled={!newLanguage}
-              className="px-4 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="px-4 py-2 bg-gradient-to-r from-trust-600 to-rose-600 text-white rounded-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               <Plus className="w-4 h-4 inline mr-1" />
               Add
@@ -267,7 +272,7 @@ const LanguageQualifications: React.FC<LanguageQualificationsProps> = ({
             PDF, JPEG, PNG, WebP • Max 10MB each
           </p>
           
-          <label className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 cursor-pointer">
+          <label className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-trust-600 to-rose-600 text-white rounded-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200 cursor-pointer">
             <Upload className="w-4 h-4 mr-2" />
             {uploading ? 'Uploading...' : 'Select Documents'}
             <input

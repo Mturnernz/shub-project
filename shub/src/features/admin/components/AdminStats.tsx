@@ -89,7 +89,7 @@ const AdminStats: React.FC<AdminStatsProps> = ({ stats, loading }) => {
         icon={<UserX className="w-5 h-5 text-white" />}
         label="Clients"
         value={stats.totalClients}
-        color="bg-warm-500"
+        color="bg-rose-500"
       />
     </div>
   );

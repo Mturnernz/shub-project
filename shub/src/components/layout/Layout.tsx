@@ -37,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'home', onTabChan
   const tabs = userType === 'worker' ? workerTabs : userType === 'client' ? clientTabs : guestTabs;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
+    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-rose-50">
       <main className="pb-20">
         {children}
       </main>
