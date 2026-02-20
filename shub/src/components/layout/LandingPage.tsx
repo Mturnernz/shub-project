@@ -66,7 +66,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
                 Find a Host
               </button>
               <button
-                onClick={handleNavigateToSignUp}
+                onClick={() => navigate('/signup?type=worker')}
                 className="px-8 py-4 bg-white/15 backdrop-blur-sm border-2 border-white/50 text-white rounded-full font-semibold text-base hover:bg-white/25 transition-all duration-200 flex items-center justify-center gap-2"
               >
                 List Your Services
