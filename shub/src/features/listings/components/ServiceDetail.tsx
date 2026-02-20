@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Star, MapPin, Clock, Shield, Heart, MessageSquare, Calendar, CheckCircle, User } from 'lucide-react';
 import { Service } from '../../../types';
 import { useWorkerProfile } from '../../profiles/hooks/useWorkerProfile';
-import { useAuth } from '../../auth/hooks/useAuth';
+import { useAuthStore } from '../../auth/stores/auth.store';
 import { useBookings } from '../../bookings/hooks/useBookings';
 import BookingSheet from '../../bookings/components/BookingSheet';
 import { useReviews } from '../../reviews/hooks/useReviews';
@@ -34,7 +34,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
     return () => observer.disconnect();
   }, []);
 
-  const { userProfile } = useAuth();
+  const { userProfile } = useAuthStore();
   const { profile: workerProfile, loading: workerLoading } = useWorkerProfile(service.workerId);
   const { createNewBooking, loading: bookingLoading } = useBookings(
     userProfile?.id || null,
