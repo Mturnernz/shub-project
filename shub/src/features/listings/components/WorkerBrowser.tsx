@@ -199,7 +199,7 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
+    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-rose-50">
       {/* Header */}
       <div className="bg-white/70 backdrop-blur-sm border-b border-trust-100 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">

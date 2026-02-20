@@ -111,7 +111,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-700 via-trust-600 to-rose-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -127,8 +127,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
           <div className="flex items-center justify-center mb-4">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mr-3 ${
               userType === 'worker' 
-                ? 'bg-gradient-to-br from-warm-500 to-trust-500'
-                : 'bg-gradient-to-br from-trust-500 to-warm-500'
+                ? 'bg-gradient-to-br from-rose-500 to-trust-500'
+                : 'bg-gradient-to-br from-trust-500 to-rose-500'
             }`}>
               {userType === 'worker' ? (
                 <UserCheck className="w-6 h-6 text-white" />
@@ -248,7 +248,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-trust-600 to-rose-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating Account...' : `Create ${userType === 'worker' ? 'Host' : 'Client'} Account`}
             </button>

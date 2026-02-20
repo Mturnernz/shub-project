@@ -146,7 +146,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onBack, showBackButton 
 
           <button
             onClick={handleSearch}
-            className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200"
+            className="w-full bg-gradient-to-r from-trust-600 to-rose-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-rose-700 transition-all duration-200"
           >
             Apply Filters
           </button>

@@ -7,13 +7,15 @@ interface MessageBubbleProps {
   isOwn: boolean;
   showTime?: boolean;
   isFiltered?: boolean;
+  justSent?: boolean;
 }
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   isOwn,
   showTime = true,
-  isFiltered = false
+  isFiltered = false,
+  justSent = false,
 }) => {
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -88,9 +90,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
             `}>
               <span>{formatTime(message.created_at)}</span>
               {isOwn && (
-                <div className="flex items-center">
-                  {/* Placeholder for read status - could be enhanced with actual read receipts */}
+                <div className="flex items-center gap-1">
                   <CheckCheck className="w-3 h-3" />
+                  {justSent && (
+                    <span className="text-safe-300 animate-fade-in">✓ Sent</span>
+                  )}
                 </div>
               )}
             </div>

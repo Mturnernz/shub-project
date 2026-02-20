@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-gradient-to-r from-trust-600 to-warm-600 text-white px-4 py-4 sm:py-6 rounded-b-3xl shadow-lg">
+    <header className="sticky top-0 z-40 bg-gradient-to-r from-indigo-700 via-trust-600 to-rose-600 text-white px-4 py-4 sm:py-6 rounded-b-3xl shadow-lg">
       <div className="relative flex items-center justify-between">
         <div className="flex items-center min-w-0">
           {showBackButton && onBack && (

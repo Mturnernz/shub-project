@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FileText } from 'lucide-react';
 import { debounce } from '../../../utils/debounce';
 import { showToast } from '../../../utils/toast';
+import { useSavedIndicator } from '../../../hooks/useSavedIndicator';
 
 interface BioEditorProps {
   bio: string;
@@ -11,8 +12,7 @@ interface BioEditorProps {
 const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
   const [localBio, setLocalBio] = useState(bio);
   const [charCount, setCharCount] = useState(bio.length);
-  const [isSaving, setIsSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const { saved: showSaved, saving: isSaving, triggerSave } = useSavedIndicator();
 
   const minChars = 100;
   const maxChars = 5000;
@@ -23,16 +23,12 @@ const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
   // Debounced save function
   const debouncedSave = debounce(async (bioText: string) => {
     if (bioText !== bio && isValid) {
-      setIsSaving(true);
       try {
-        await onBioUpdate(bioText);
-        setLastSaved(new Date());
+        await triggerSave(() => onBioUpdate(bioText));
         showToast.success('Bio saved');
       } catch (error) {
         console.error('Error saving bio:', error);
         showToast.error('Failed to save bio');
-      } finally {
-        setIsSaving(false);
       }
     }
   }, 2000);
@@ -74,10 +70,8 @@ const BioEditor: React.FC<BioEditorProps> = ({ bio, onBioUpdate }) => {
           {isSaving && (
             <span className="text-sm text-trust-600">Saving...</span>
           )}
-          {lastSaved && !isSaving && (
-            <span className="text-sm text-gray-500">
-              Saved {lastSaved.toLocaleTimeString()}
-            </span>
+          {showSaved && !isSaving && (
+            <span className="text-sm text-safe-600 font-medium animate-pulse">✓ Saved</span>
           )}
         </div>
       </div>

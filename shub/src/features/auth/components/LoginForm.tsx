@@ -120,7 +120,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-700 via-trust-600 to-rose-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -133,7 +133,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
           </button>
           
           <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-trust-500 to-warm-500 flex items-center justify-center mr-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-trust-500 to-rose-500 flex items-center justify-center mr-3">
               <LogIn className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -199,7 +199,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, onBack }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-trust-600 to-rose-600 text-white py-3 rounded-lg font-semibold hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing In...' : 'Log In'}
             </button>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Clock, MessageCircle } from 'lucide-react';
 import { showToast } from '../../../utils/toast';
+import { useSavedIndicator } from '../../../hooks/useSavedIndicator';
 
 interface AvailabilitySetterProps {
   status: 'available' | 'busy' | 'away';
@@ -15,7 +16,7 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
 }) => {
   const [localStatus, setLocalStatus] = useState(status);
   const [localMessage, setLocalMessage] = useState(statusMessage || '');
-  const [isSaving, setSaving] = useState(false);
+  const { saved: showSaved, saving: isSaving, triggerSave } = useSavedIndicator();
 
   const statusOptions = [
     {
@@ -49,17 +50,8 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
 
   const handleStatusChange = async (newStatus: 'available' | 'busy' | 'away') => {
     setLocalStatus(newStatus);
-    setSaving(true);
-    
-    try {
-      await onStatusUpdate(newStatus, localMessage);
-      showToast.success('Availability updated');
-    } catch (error) {
-      console.error('Error updating status:', error);
-      showToast.error('Failed to update availability');
-    } finally {
-      setSaving(false);
-    }
+    await triggerSave(() => onStatusUpdate(newStatus, localMessage));
+    showToast.success('Availability updated');
   };
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,27 +59,18 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
   };
 
   const handleMessageSave = async () => {
-    setSaving(true);
-    try {
-      await onStatusUpdate(localStatus, localMessage);
-      showToast.success('Status message saved');
-    } catch (error) {
-      console.error('Error updating status message:', error);
-      showToast.error('Failed to save status message');
-    } finally {
-      setSaving(false);
-    }
+    await triggerSave(() => onStatusUpdate(localStatus, localMessage));
+    showToast.success('Status message saved');
   };
 
   const currentStatusOption = statusOptions.find(option => option.value === localStatus)!;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
         <h3 className="text-lg font-semibold text-gray-900">Availability Status</h3>
-        {isSaving && (
-          <span className="text-sm text-trust-600">Saving...</span>
-        )}
+        {isSaving && <span className="text-sm text-trust-600">Saving...</span>}
+        {showSaved && !isSaving && <span className="text-sm text-safe-600 font-medium">✓ Saved</span>}
       </div>
 
       {/* Current Status Display */}
@@ -160,7 +143,7 @@ const AvailabilitySetter: React.FC<AvailabilitySetterProps> = ({
           <button
             onClick={handleMessageSave}
             disabled={isSaving}
-            className="px-4 py-2 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50"
+            className="px-4 py-2 bg-gradient-to-r from-trust-600 to-rose-600 text-white rounded-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50"
           >
             Save
           </button>

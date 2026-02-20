@@ -29,7 +29,7 @@ const WorkerProfilePreview: React.FC<WorkerProfilePreviewProps> = ({ profile, se
   return (
     <div className="space-y-6">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-trust-500 to-warm-500 rounded-2xl p-6 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-br from-trust-500 to-rose-500 rounded-2xl p-6 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10">
           <div className="flex items-start space-x-4 mb-6">
@@ -132,7 +132,7 @@ const WorkerProfilePreview: React.FC<WorkerProfilePreviewProps> = ({ profile, se
                   </div>
 
                   <div className="flex space-x-2">
-                    <button className="px-3 py-1 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-lg text-xs hover:from-trust-700 hover:to-warm-700 transition-all duration-200">
+                    <button className="px-3 py-1 bg-gradient-to-r from-trust-600 to-rose-600 text-white rounded-lg text-xs hover:from-trust-700 hover:to-rose-700 transition-all duration-200">
                       <Calendar className="w-3 h-3 inline mr-1" />
                       Book
                     </button>
@@ -217,7 +217,7 @@ const WorkerProfilePreview: React.FC<WorkerProfilePreviewProps> = ({ profile, se
       )}
 
       {/* Contact Section */}
-      <div className="bg-gradient-to-r from-trust-500 to-warm-500 rounded-2xl p-6 text-white text-center">
+      <div className="bg-gradient-to-r from-trust-500 to-rose-500 rounded-2xl p-6 text-white text-center">
         <h3 className="text-xl font-semibold mb-2">Ready to Connect?</h3>
         <p className="text-trust-100 mb-4">
           Book a service or send a message to get started

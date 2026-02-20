@@ -75,7 +75,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
+    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-rose-50">
       <div className="relative">
         <button
           onClick={() => setIsFavorited(!isFavorited)}
@@ -93,7 +93,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-64 sm:h-80 bg-gradient-to-br from-trust-100 to-warm-100 flex items-center justify-center">
+          <div className="w-full h-64 sm:h-80 bg-gradient-to-br from-trust-100 to-rose-100 flex items-center justify-center">
             <span className="text-gray-400 text-lg">No image available</span>
           </div>
         )}
@@ -217,7 +217,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
               className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-colors disabled:opacity-50 ${
                 isGuest
                   ? 'bg-gradient-to-r from-safe-600 to-emerald-600 text-white hover:from-safe-700 hover:to-emerald-700 cursor-pointer'
-                  : 'bg-gradient-to-r from-trust-600 to-warm-600 text-white hover:from-trust-700 hover:to-warm-700'
+                  : 'bg-gradient-to-r from-trust-600 to-rose-600 text-white hover:from-trust-700 hover:to-rose-700'
               }`}
             >
               <Calendar className="w-5 h-5 inline mr-2" />
@@ -252,7 +252,7 @@ const ServiceDetail: React.FC<ServiceDetailProps> = ({ service, onBack, onBook, 
           <button
             onClick={handleBookNow}
             disabled={bookingLoading}
-            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-trust-600 to-warm-600 text-white rounded-full shadow-lg hover:from-trust-700 hover:to-warm-700 transition-all duration-200 font-semibold text-sm disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-trust-600 to-rose-600 text-white rounded-full shadow-lg hover:from-trust-700 hover:to-rose-700 transition-all duration-200 font-semibold text-sm disabled:opacity-50"
           >
             <Calendar className="w-4 h-4" />
             Book Now

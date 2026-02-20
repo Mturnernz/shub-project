@@ -36,7 +36,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-trust-50 to-rose-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-trust-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
@@ -47,7 +47,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-trust-50 to-rose-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || 'Profile not found'}</p>
           <button
@@ -63,7 +63,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
 
   const sections = [
     { id: 'overview' as Section, label: 'Overview', icon: User, color: 'text-trust-600' },
-    { id: 'photos' as Section, label: 'Photos', icon: Image, color: 'text-warm-600' },
+    { id: 'photos' as Section, label: 'Photos', icon: Image, color: 'text-rose-600' },
     { id: 'bio' as Section, label: 'Bio', icon: FileText, color: 'text-indigo-600' },
     { id: 'rates' as Section, label: 'Rates', icon: DollarSign, color: 'text-green-600' },
     { id: 'services' as Section, label: 'Services', icon: Settings, color: 'text-safe-600' },
@@ -224,7 +224,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
                   className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 text-left group"
                 >
                   <div className="flex items-center">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-trust-100 to-warm-100 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform`}>
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br from-trust-100 to-rose-100 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform`}>
                       <section.icon className={`w-6 h-6 ${section.color}`} />
                     </div>
                     <div className="flex-1">
@@ -298,7 +298,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
                   <button
                     onClick={handlePublishProfile}
                     disabled={!canPublish}
-                    className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-xl hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 font-semibold"
+                    className="w-full bg-gradient-to-r from-trust-600 to-rose-600 text-white py-3 rounded-xl hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50 font-semibold"
                   >
                     {saving ? 'Publishing...' : 'Publish Profile'}
                   </button>
@@ -399,9 +399,9 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
   const activeTab = sections.find(s => s.id === activeSection);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-warm-50">
+    <div className="min-h-screen bg-gradient-to-br from-trust-50 to-rose-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-trust-600 to-warm-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
+      <header className="bg-gradient-to-r from-trust-600 to-rose-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <button

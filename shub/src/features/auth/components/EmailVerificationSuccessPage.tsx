@@ -11,7 +11,7 @@ const EmailVerificationSuccessPage: React.FC<EmailVerificationSuccessPageProps> 
   onProceed,
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-700 via-trust-600 to-rose-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Success Header */}
         <div className="text-center mb-8">
@@ -33,8 +33,8 @@ const EmailVerificationSuccessPage: React.FC<EmailVerificationSuccessPageProps> 
           <div className="text-center mb-6">
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
               userType === 'worker'
-                ? 'bg-gradient-to-br from-warm-500 to-trust-500'
-                : 'bg-gradient-to-br from-trust-500 to-warm-500'
+                ? 'bg-gradient-to-br from-rose-500 to-trust-500'
+                : 'bg-gradient-to-br from-trust-500 to-rose-500'
             }`}>
               {userType === 'worker' ? (
                 <UserCheck className="w-8 h-8 text-white" />
@@ -69,7 +69,7 @@ const EmailVerificationSuccessPage: React.FC<EmailVerificationSuccessPageProps> 
           {/* Proceed Button */}
           <button
             onClick={onProceed}
-            className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-4 rounded-xl font-semibold hover:from-trust-700 hover:to-warm-700 transition-all duration-200 flex items-center justify-center"
+            className="w-full bg-gradient-to-r from-trust-600 to-rose-600 text-white py-4 rounded-xl font-semibold hover:from-trust-700 hover:to-rose-700 transition-all duration-200 flex items-center justify-center"
           >
             {userType === 'worker' ? 'Set Up My Profile' : 'Start Browsing'}
             <ArrowRight className="w-5 h-5 ml-2" />

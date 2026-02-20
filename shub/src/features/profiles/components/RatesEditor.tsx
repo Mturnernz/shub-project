@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DollarSign, Info } from 'lucide-react';
 import { showToast } from '../../../utils/toast';
+import { useSavedIndicator } from '../../../hooks/useSavedIndicator';
 
 interface RatesEditorProps {
   hourlyRateText: string;
@@ -9,20 +10,12 @@ interface RatesEditorProps {
 
 const RatesEditor: React.FC<RatesEditorProps> = ({ hourlyRateText, onRateUpdate }) => {
   const [rateText, setRateText] = useState(hourlyRateText);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const { saved: showSaved, saving, triggerSave } = useSavedIndicator();
 
   const handleSave = async () => {
     if (rateText.trim() === hourlyRateText) return;
-    setSaving(true);
-    try {
-      await onRateUpdate(rateText.trim());
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-      showToast.success('Rates updated');
-    } finally {
-      setSaving(false);
-    }
+    await triggerSave(() => onRateUpdate(rateText.trim()));
+    showToast.success('Rates updated');
   };
 
   const hasChanges = rateText.trim() !== hourlyRateText;
@@ -30,7 +23,10 @@ const RatesEditor: React.FC<RatesEditorProps> = ({ hourlyRateText, onRateUpdate 
   return (
     <div className="space-y-5">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-1">Rate Information</h3>
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="text-lg font-semibold text-gray-900">Rate Information</h3>
+          {showSaved && <span className="text-sm text-safe-600 font-medium">✓ Saved</span>}
+        </div>
         <p className="text-sm text-gray-500">
           Describe your rates in plain text. Shub does not process payments — this is for information only.
         </p>
@@ -72,9 +68,9 @@ const RatesEditor: React.FC<RatesEditorProps> = ({ hourlyRateText, onRateUpdate 
       <button
         onClick={handleSave}
         disabled={saving || !hasChanges}
-        className="w-full bg-gradient-to-r from-trust-600 to-warm-600 text-white py-3 rounded-xl hover:from-trust-700 hover:to-warm-700 transition-all duration-200 disabled:opacity-50 font-semibold"
+        className="w-full bg-gradient-to-r from-trust-600 to-rose-600 text-white py-3 rounded-xl hover:from-trust-700 hover:to-rose-700 transition-all duration-200 disabled:opacity-50 font-semibold"
       >
-        {saving ? 'Saving…' : saved ? 'Saved!' : 'Save Rate Information'}
+        {saving ? 'Saving…' : 'Save Rate Information'}
       </button>
     </div>
   );

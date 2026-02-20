@@ -8,7 +8,7 @@ interface UserTypeSelectionProps {
 
 const UserTypeSelection: React.FC<UserTypeSelectionProps> = ({ onSelect, onBack }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-trust-600 to-warm-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-700 via-trust-600 to-rose-600 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <button
           onClick={onBack}
@@ -31,7 +31,7 @@ const UserTypeSelection: React.FC<UserTypeSelectionProps> = ({ onSelect, onBack 
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-trust-500 to-warm-500 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-gradient-to-br from-trust-500 to-rose-500 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
                 <Users className="w-8 h-8 text-white" />
               </div>
               <div className="text-left flex-1">
@@ -48,7 +48,7 @@ const UserTypeSelection: React.FC<UserTypeSelectionProps> = ({ onSelect, onBack 
             className="w-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group"
           >
             <div className="flex items-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-warm-500 to-trust-500 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-trust-500 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
                 <UserCheck className="w-8 h-8 text-white" />
               </div>
               <div className="text-left flex-1">
