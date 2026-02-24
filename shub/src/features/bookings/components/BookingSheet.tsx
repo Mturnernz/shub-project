@@ -32,6 +32,7 @@ const BookingSheet: React.FC<BookingSheetProps> = ({
   const [endTime, setEndTime] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -80,18 +81,25 @@ const BookingSheet: React.FC<BookingSheetProps> = ({
   };
 
   const handleSubmit = async () => {
-    const request: BookingRequest = {
-      worker_id: workerId,
-      client_id: clientId,
-      start_time: new Date(`${startDate}T${startTime}`).toISOString(),
-      end_time: new Date(`${startDate}T${endTime}`).toISOString(),
-      message: message.trim() || undefined,
-    };
-    const result = await onSubmit(request);
-    if (result.success) {
-      setStep('success');
-    } else {
-      setError(result.error || 'Failed to send request');
+    if (submitting) return;
+    setError(null);
+    setSubmitting(true);
+    try {
+      const request: BookingRequest = {
+        worker_id: workerId,
+        client_id: clientId,
+        start_time: new Date(`${startDate}T${startTime}`).toISOString(),
+        end_time: new Date(`${startDate}T${endTime}`).toISOString(),
+        message: message.trim() || undefined,
+      };
+      const result = await onSubmit(request);
+      if (result.success) {
+        setStep('success');
+      } else {
+        setError(result.error || 'Failed to send request');
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -264,7 +272,7 @@ const BookingSheet: React.FC<BookingSheetProps> = ({
 
           <div className="flex gap-3">
             <Button variant="secondary" className="flex-1" onClick={() => setStep('message')}>Back</Button>
-            <Button className="flex-1" loading={isLoading} onClick={handleSubmit}>
+            <Button className="flex-1" loading={submitting} onClick={handleSubmit}>
               Send Request
             </Button>
           </div>

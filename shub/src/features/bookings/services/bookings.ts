@@ -8,17 +8,15 @@ export type BookingUpdate = Database['public']['Tables']['bookings']['Update'];
 export interface BookingWithProfiles extends Booking {
   worker_profile?: {
     id: string;
-    name: string;
+    display_name: string;
     email: string;
-    bio?: string;
-    avatar?: string;
-    profile_photos?: string[];
+    avatar_url?: string;
   };
   client_profile?: {
     id: string;
-    name: string;
+    display_name: string;
     email: string;
-    avatar?: string;
+    avatar_url?: string;
   };
 }
 
@@ -104,17 +102,15 @@ export const getBookingsByUser = async (
         *,
         worker_profile:users!worker_id(
           id,
-          name,
+          display_name,
           email,
-          bio,
-          avatar,
-          profile_photos
+          avatar_url
         ),
         client_profile:users!client_id(
           id,
-          name,
+          display_name,
           email,
-          avatar
+          avatar_url
         )
       `)
       .eq(column, userId)
@@ -146,17 +142,15 @@ export const getBookingHistory = async (
         *,
         worker_profile:users!worker_id(
           id,
-          name,
+          display_name,
           email,
-          bio,
-          avatar,
-          profile_photos
+          avatar_url
         ),
         client_profile:users!client_id(
           id,
-          name,
+          display_name,
           email,
-          avatar
+          avatar_url
         )
       `)
       .eq(column, userId)
@@ -186,17 +180,15 @@ export const getActiveBookings = async (
         *,
         worker_profile:users!worker_id(
           id,
-          name,
+          display_name,
           email,
-          bio,
-          avatar,
-          profile_photos
+          avatar_url
         ),
         client_profile:users!client_id(
           id,
-          name,
+          display_name,
           email,
-          avatar
+          avatar_url
         )
       `)
       .eq(column, userId)
@@ -260,17 +252,15 @@ export const getBookingById = async (
         *,
         worker_profile:users!worker_id(
           id,
-          name,
+          display_name,
           email,
-          bio,
-          avatar,
-          profile_photos
+          avatar_url
         ),
         client_profile:users!client_id(
           id,
-          name,
+          display_name,
           email,
-          avatar
+          avatar_url
         )
       `)
       .eq('id', bookingId)
