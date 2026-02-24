@@ -97,8 +97,12 @@ export const useBookings = (
       }
 
       if (data) {
-        // Refresh bookings to include the new one
-        await refreshBookings();
+        // Update local state directly rather than calling refreshBookings(),
+        // which shares the loading state and would prematurely reset it to false
+        // before createNewBooking returns, causing a race condition.
+        const newBooking = data as BookingWithProfiles;
+        setBookings(prev => [newBooking, ...prev]);
+        setActiveBookings(prev => [newBooking, ...prev]);
         return { success: true, booking: data };
       }
 

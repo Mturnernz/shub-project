@@ -55,17 +55,15 @@ const BookingCard: React.FC<BookingCardProps> = ({
 
   const getDisplayName = () => {
     if (userRole === 'worker') {
-      return booking.client_profile?.name || 'Client';
+      return booking.client_profile?.display_name || 'Client';
     } else {
-      return booking.worker_profile?.name || 'Worker';
+      return booking.worker_profile?.display_name || 'Worker';
     }
   };
 
   const getProfilePhoto = () => {
-    if (userRole === 'client' && booking.worker_profile?.profile_photos?.length) {
-      return booking.worker_profile.profile_photos[0];
-    } else if (userRole === 'client' && booking.worker_profile?.avatar) {
-      return booking.worker_profile.avatar;
+    if (userRole === 'client' && booking.worker_profile?.avatar_url) {
+      return booking.worker_profile.avatar_url;
     }
     return null;
   };
@@ -114,14 +112,6 @@ const BookingCard: React.FC<BookingCardProps> = ({
         </div>
       </div>
 
-      {/* Worker Bio (for client view) */}
-      {userRole === 'client' && booking.worker_profile?.bio && (
-        <div className="mb-4">
-          <p className="text-sm text-gray-600 line-clamp-2">
-            {booking.worker_profile.bio}
-          </p>
-        </div>
-      )}
 
       {/* Actions */}
       {showActions && (
@@ -233,7 +223,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           bookingId={booking.id}
           reviewerId={userProfile.id}
           revieweeId={booking.worker_id}
-          workerName={booking.worker_profile?.name || 'Provider'}
+          workerName={booking.worker_profile?.display_name || 'Provider'}
         />
       )}
 
@@ -242,7 +232,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
         <ReportModal
           targetType="user"
           targetId={userRole === 'worker' ? booking.client_id : booking.worker_id}
-          targetName={userRole === 'worker' ? booking.client_profile?.name : booking.worker_profile?.name}
+          targetName={userRole === 'worker' ? booking.client_profile?.display_name : booking.worker_profile?.display_name}
           onClose={() => setShowReportModal(false)}
           onReportSubmitted={() => {
             setShowReportModal(false);

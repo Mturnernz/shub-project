@@ -79,8 +79,8 @@ const BookingDetailPage: React.FC = () => {
 
   const isWorker = booking.worker_id === userProfile.id;
   const otherName = isWorker
-    ? booking.client_profile?.name || 'Client'
-    : booking.worker_profile?.name || 'Provider';
+    ? booking.client_profile?.display_name || 'Client'
+    : booking.worker_profile?.display_name || 'Provider';
 
   const startDate = new Date(booking.start_time);
   const endDate = new Date(booking.end_time);
@@ -293,7 +293,7 @@ const BookingDetailPage: React.FC = () => {
       {isWorker && (booking.status === 'confirmed' || booking.status === 'completed') && (
         <ClientNotes
           clientId={booking.client_id}
-          clientName={booking.client_profile?.name || 'Client'}
+          clientName={booking.client_profile?.display_name || 'Client'}
           bookingId={booking.id}
           compact={booking.status === 'confirmed'}
         />
