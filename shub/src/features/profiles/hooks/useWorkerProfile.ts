@@ -87,6 +87,17 @@ export const useWorkerProfile = (userId: string | undefined) => {
 
       if (supabaseError) throw supabaseError;
 
+      // When publishing, also sync worker_profiles.published = true so that the
+      // baseline-schema RLS policy ("role = 'worker' AND worker_profiles.published = true")
+      // lets clients read this worker's user record. Without this, the profile
+      // stays invisible to other users even after the host clicks "Publish".
+      if (updates.isPublished === true) {
+        await supabase
+          .from('worker_profiles')
+          .update({ published: true })
+          .eq('user_id', userId);
+      }
+
       console.log('Profile updated successfully');
       // Update local state
       setProfile({ ...profile, ...updates });

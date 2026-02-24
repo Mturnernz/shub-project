@@ -83,6 +83,11 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
           display_name: metadata.name || user.email?.split('@')[0] || 'User',
           email: user.email || '',
           role: resolvedRole,
+          // 'type' mirrors role for the browse-page RLS policy that checks
+          // type = 'host' (added by the fix_browse_rls migration). Without
+          // this, new workers have type = NULL and are never visible to clients
+          // even after publishing.
+          type: resolvedRole === 'worker' ? 'host' : resolvedRole,
           is_verified: false,
         };
 
