@@ -26,6 +26,22 @@ export const useWorkerProfile = (userId: string | undefined) => {
 
       if (supabaseError) throw supabaseError;
 
+      // bio and published live in worker_profiles (they were removed from users
+      // by the drop_bridging_columns migration — 20260207000001)
+      let bio: string | undefined;
+      let isPublished = false;
+      if (data.role === 'worker') {
+        const { data: wp } = await supabase
+          .from('worker_profiles')
+          .select('bio, published')
+          .eq('user_id', userId)
+          .single();
+        if (wp) {
+          bio = wp.bio || undefined;
+          isPublished = wp.published ?? false;
+        }
+      }
+
       // Transform database fields to match our interface
       const transformedProfile: User = {
         id: data.id,
@@ -35,8 +51,8 @@ export const useWorkerProfile = (userId: string | undefined) => {
         avatar: data.avatar_url || data.avatar,
         location: data.location,
         verified: data.is_verified || data.verified,
-        isPublished: data.is_published,
-        bio: data.bio,
+        isPublished,
+        bio,
         hourlyRateText: data.hourly_rate_text,
         profilePhotos: data.profile_photos || [],
         photoSettings: data.photo_settings || {},
@@ -64,10 +80,9 @@ export const useWorkerProfile = (userId: string | undefined) => {
       setSaving(true);
       setError(null);
 
-      // Transform our interface back to database fields
+      // Fields that live on the users table
       const dbUpdates: any = {};
       if (updates.name !== undefined) dbUpdates.display_name = updates.name;
-      if (updates.bio !== undefined) dbUpdates.bio = updates.bio;
       if (updates.profilePhotos !== undefined) dbUpdates.profile_photos = updates.profilePhotos;
       if (updates.status !== undefined) dbUpdates.status = updates.status;
       if (updates.statusMessage !== undefined) dbUpdates.status_message = updates.statusMessage;
@@ -77,29 +92,32 @@ export const useWorkerProfile = (userId: string | undefined) => {
       if (updates.qualificationDocuments !== undefined) dbUpdates.qualification_documents = updates.qualificationDocuments;
       if (updates.hourlyRateText !== undefined) dbUpdates.hourly_rate_text = updates.hourlyRateText;
       if (updates.photoSettings !== undefined) dbUpdates.photo_settings = updates.photoSettings;
-      if (updates.isPublished !== undefined) dbUpdates.is_published = updates.isPublished;
 
-      console.log('Updating profile with:', dbUpdates);
-      const { error: supabaseError } = await supabase
-        .from('users')
-        .update(dbUpdates)
-        .eq('id', userId);
+      if (Object.keys(dbUpdates).length > 0) {
+        console.log('Updating users table with:', dbUpdates);
+        const { error: supabaseError } = await supabase
+          .from('users')
+          .update(dbUpdates)
+          .eq('id', userId);
+        if (supabaseError) throw supabaseError;
+      }
 
-      if (supabaseError) throw supabaseError;
+      // bio and published live in worker_profiles (removed from users by
+      // the drop_bridging_columns migration — 20260207000001)
+      const wpUpdates: any = {};
+      if (updates.bio !== undefined) wpUpdates.bio = updates.bio;
+      if (updates.isPublished !== undefined) wpUpdates.published = updates.isPublished;
 
-      // When publishing, also sync worker_profiles.published = true so that the
-      // baseline-schema RLS policy ("role = 'worker' AND worker_profiles.published = true")
-      // lets clients read this worker's user record. Without this, the profile
-      // stays invisible to other users even after the host clicks "Publish".
-      if (updates.isPublished === true) {
-        await supabase
+      if (Object.keys(wpUpdates).length > 0) {
+        console.log('Updating worker_profiles with:', wpUpdates);
+        const { error: wpError } = await supabase
           .from('worker_profiles')
-          .update({ published: true })
+          .update(wpUpdates)
           .eq('user_id', userId);
+        if (wpError) throw wpError;
       }
 
       console.log('Profile updated successfully');
-      // Update local state
       setProfile({ ...profile, ...updates });
     } catch (err) {
       console.error('Error updating profile:', err);
