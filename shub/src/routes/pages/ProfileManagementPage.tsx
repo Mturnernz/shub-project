@@ -21,8 +21,10 @@ const ProfileManagementPage: React.FC = () => {
     return null;
   }
 
-  // Clients have no host profile to manage — redirect to their client profile
-  if (userType === 'client') {
+  // Clients have no host profile to manage — redirect to their client profile.
+  // Use the base role (not the effective type) so workers in "client mode"
+  // via the role toggle can still access their host profile management.
+  if (userProfile?.role === 'client') {
     navigate('/profile', { replace: true });
     return null;
   }

@@ -16,7 +16,16 @@ const DashboardPage: React.FC = () => {
     return null;
   }
 
-  // Redirect non-workers to browse
+  // Unauthenticated users should be prompted to log in, not silently sent
+  // to browse. This also handles the brief post-login window before the
+  // Supabase auth state change has been processed by the store.
+  if (!isAuthenticated) {
+    navigate('/login', { replace: true });
+    return null;
+  }
+
+  // Workers in "client mode" via the role toggle are browsing as clients —
+  // redirect them to browse. Non-workers (actual clients) go to browse too.
   if (userType !== 'worker') {
     navigate('/browse', { replace: true });
     return null;
