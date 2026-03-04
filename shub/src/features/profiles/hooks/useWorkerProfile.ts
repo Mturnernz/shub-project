@@ -64,9 +64,12 @@ export const useWorkerProfile = (userId: string | undefined) => {
             is_verified: false,
           };
 
+          // Upsert on email so that if a previous signup left an orphaned row
+          // with the same email but a different ID, we re-claim it under the
+          // current auth user's ID rather than failing with 23505.
           const { data: created, error: insertError } = await supabase
             .from('users')
-            .insert([newUserRow])
+            .upsert([newUserRow], { onConflict: 'email' })
             .select('*')
             .single();
 
