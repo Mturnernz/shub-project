@@ -95,9 +95,12 @@ export const useWorkerProfile = (userId: string | undefined) => {
       }
 
       setProfile(transformRow(data));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching worker profile:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch profile');
+      // Supabase PostgrestError is not an instanceof Error — surface its message
+      // directly so we can see the real DB/RLS error rather than a generic string.
+      const message = err?.message || err?.error_description || JSON.stringify(err) || 'Failed to fetch profile';
+      setError(`Profile load error (${err?.code ?? 'unknown'}): ${message}`);
     } finally {
       setLoading(false);
     }
