@@ -11,6 +11,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const SignUpFlow = lazy(() => import('./SignUpFlow'));
 const EmailVerificationPendingPage = lazy(() => import('./pages/EmailVerificationPendingPage'));
 const EmailVerificationSuccessPage = lazy(() => import('./pages/EmailVerificationSuccessPage'));
+const WelcomePage = lazy(() => import('./pages/WelcomePage'));
 const BrowsePage = lazy(() => import('./pages/BrowsePage'));
 const ServiceDetailPage = lazy(() => import('./pages/ServiceDetailPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
@@ -83,6 +84,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <EmailVerificationSuccessPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/welcome',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <WelcomePage />
           </Suspense>
         ),
       },
