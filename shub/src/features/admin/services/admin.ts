@@ -326,13 +326,22 @@ export const publishProfile = async (
       throw new Error('Profile must have condoms mandatory enabled');
     }
 
-    // Update profile to published
+    // Update worker_profiles to published
     const { error: updateError } = await supabase
       .from('worker_profiles')
       .update({ published: true })
       .eq('user_id', userId);
 
     if (updateError) throw updateError;
+
+    // Keep users.is_published in sync so the worker's dashboard reflects their
+    // published state without relying solely on worker_profiles.
+    const { error: userUpdateError } = await supabase
+      .from('users')
+      .update({ is_published: true })
+      .eq('id', userId);
+
+    if (userUpdateError) throw userUpdateError;
 
     // Log to admin audit
     await supabase.from('admin_audit').insert({
@@ -363,6 +372,14 @@ export const unpublishProfile = async (
       .eq('user_id', userId);
 
     if (updateError) throw updateError;
+
+    // Keep users.is_published in sync
+    const { error: userUpdateError } = await supabase
+      .from('users')
+      .update({ is_published: false })
+      .eq('id', userId);
+
+    if (userUpdateError) throw userUpdateError;
 
     // Log to admin audit
     await supabase.from('admin_audit').insert({
