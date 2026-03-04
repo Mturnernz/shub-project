@@ -35,7 +35,7 @@ const EmailVerificationPending: React.FC<EmailVerificationPendingProps> = ({
         type: 'signup',
         email: email,
         options: {
-          emailRedirectTo: `${window.location.origin}/?verified=true`,
+          emailRedirectTo: `${window.location.origin}/welcome`,
         }
       });
 

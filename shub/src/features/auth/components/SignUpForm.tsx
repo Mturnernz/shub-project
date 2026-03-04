@@ -77,7 +77,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ userType, onBack, onSignUpSucce
             type: userType,
           },
           // Add redirect URL for email verification with success parameter
-          emailRedirectTo: `${window.location.origin}/?verified=true`,
+          emailRedirectTo: `${window.location.origin}/welcome`,
           }
       });
 
