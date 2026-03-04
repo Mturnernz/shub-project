@@ -18,10 +18,13 @@ const WelcomePage: React.FC = () => {
   const handleClientProceed = () => navigate('/browse', { replace: true });
   const handleFallbackLogin = () => navigate('/login', { replace: true });
 
-  // Loading state while Supabase processes the auth token, or while the user
-  // is authenticated but the profile INSERT hasn't returned yet (can happen
-  // after the 4-second safety timer fires before DB writes complete).
-  if ((loading || (isAuthenticated && !userProfile)) && !timedOut) {
+  // Loading state while Supabase processes the auth token from the email
+  // verification link. The token is processed asynchronously AFTER the
+  // initial auth check has already completed (loading=false), so we must
+  // also wait when isAuthenticated is still false — otherwise the page
+  // immediately falls through to the generic fallback before the SIGNED_IN
+  // event fires and the profile is created.
+  if ((loading || !isAuthenticated || (isAuthenticated && !userProfile)) && !timedOut) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-700 via-trust-600 to-rose-600 flex items-center justify-center p-4">
         <div className="text-center">
