@@ -1,29 +1,27 @@
 -- Fix profile creation RLS errors (42501)
 --
--- Root cause (confirmed):
--- 001_initial_schema.sql created the users table with NO INSERT policy.
--- Later migrations added INSERT policies but these may not have been applied
--- to the live database. Additionally, useWorkerProfile.ts used
--- upsert(onConflict:'email'). When a public.users row exists with the same
--- email but a DIFFERENT UUID (orphaned row from a previous account attempt),
--- PostgreSQL's ON CONFLICT DO UPDATE tries to UPDATE that row. The UPDATE
--- policy USING check (auth.uid() = old_id) fails because the old row belongs
--- to a different UUID — raising exactly:
---   ERROR 42501: new row violates row-level security policy (USING expression)
+-- Root cause:
+-- A public.users row exists with the same email but a different UUID than the
+-- current auth session (orphaned from a prior account). useWorkerProfile's
+-- upsert(onConflict:'email') tries to UPDATE that row; the UPDATE policy's
+-- USING check (auth.uid() = old_id) fails → 42501 "(USING expression)".
 --
--- Fixes:
--- A. SECURITY DEFINER function ensure_user_profile() — runs as DB owner,
---    bypasses RLS. Handles orphaned rows (same email, different UUID) by
---    deleting them first so the current auth user can create a fresh row.
--- B. Trigger on auth.users so the row is created at signup time before any
---    frontend query races against session setup.
--- C. Explicit WITH CHECK on the UPDATE policy so the USING expression is not
---    silently reused as the new-row check on any future upsert operations.
--- D. Ensure the INSERT policy exists (idempotent — safe to re-run).
+-- Strategy: delete the orphaned row (and its dangling FK references) so the
+-- current auth user can create a fresh row. Supabase restricts
+-- session_replication_role even for the postgres role, so we manually delete
+-- non-CASCADE FK dependents before deleting the users row.
+--
+-- Cascade map for public.users.id:
+--   CASCADE  : worker_profiles, verification_docs (user_id), favorites,
+--               blocked_users, availability_slots, services
+--   NO CASCADE: bookings (worker_id, client_id), messages (sender_id,
+--               recipient_id), reviews, reports (reporter_id), admin_audit,
+--               safe_buddy_tokens
+--   NULLABLE  : bookings.cancelled_by, verification_docs.reviewer_id,
+--               reports.resolved_by  → SET NULL before deleting
 
 -- =============================================================================
--- D. INSERT policy (may be missing from live DB if 003_fix_rls_policies.sql
---    was never applied)
+-- 1. INSERT policy (may be missing if 003_fix_rls_policies.sql was never run)
 -- =============================================================================
 
 DROP POLICY IF EXISTS "Users can insert own record" ON public.users;
@@ -32,7 +30,7 @@ CREATE POLICY "Users can insert own record"
   WITH CHECK (auth.uid() = id);
 
 -- =============================================================================
--- C. Fix UPDATE policy: add explicit WITH CHECK
+-- 2. Fix UPDATE policy: add explicit WITH CHECK
 -- =============================================================================
 
 DROP POLICY IF EXISTS "Users can update own record" ON public.users;
@@ -42,60 +40,71 @@ CREATE POLICY "Users can update own record"
   WITH CHECK (auth.uid() = id);
 
 -- =============================================================================
--- A. ensure_user_profile RPC  (SECURITY DEFINER — bypasses RLS entirely)
+-- 3. ensure_user_profile RPC  (SECURITY DEFINER — bypasses RLS)
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION public.ensure_user_profile(
-  p_user_id     UUID,
-  p_email       TEXT,
+  p_user_id      UUID,
+  p_email        TEXT,
   p_display_name TEXT,
-  p_role        TEXT DEFAULT 'client'
+  p_role         TEXT DEFAULT 'client'
 )
 RETURNS SETOF public.users
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
+DECLARE
+  v_old_id UUID;
 BEGIN
-  -- Remove any orphaned row that has the same email but a different UUID.
-  -- This happens when a user re-registers after their previous auth account
-  -- was deleted. The old public.users row is inaccessible to the new auth
-  -- user (different UUID → USING check blocks access), so deleting it loses
-  -- nothing the user can actually reach. ON DELETE CASCADE cleans up child
-  -- rows (worker_profiles etc.) automatically.
-  DELETE FROM public.users
-  WHERE email = p_email
-    AND id    != p_user_id;
+  -- Check for an orphaned row: same email, different UUID.
+  SELECT id INTO v_old_id
+  FROM public.users
+  WHERE email = p_email AND id != p_user_id;
 
-  -- Insert the row for the current auth user.
-  -- ON CONFLICT (id) DO NOTHING means a second call is a safe no-op.
+  IF v_old_id IS NOT NULL THEN
+    -- Nullify nullable FK columns that reference this user
+    UPDATE public.bookings          SET cancelled_by = NULL WHERE cancelled_by = v_old_id;
+    UPDATE public.verification_docs SET reviewer_id  = NULL WHERE reviewer_id  = v_old_id;
+    UPDATE public.reports           SET resolved_by  = NULL WHERE resolved_by  = v_old_id;
+
+    -- Delete non-CASCADE referencing rows (order matters: children before parents)
+    DELETE FROM public.admin_audit        WHERE admin_id    = v_old_id;
+    DELETE FROM public.safe_buddy_tokens  WHERE user_id     = v_old_id;
+    DELETE FROM public.reviews            WHERE reviewer_id = v_old_id OR reviewee_id = v_old_id;
+    DELETE FROM public.reports            WHERE reporter_id = v_old_id;
+    DELETE FROM public.messages           WHERE sender_id   = v_old_id OR recipient_id = v_old_id;
+    DELETE FROM public.bookings           WHERE worker_id   = v_old_id OR client_id    = v_old_id;
+
+    -- Delete the orphaned users row; ON DELETE CASCADE handles the rest
+    -- (worker_profiles, favorites, blocked_users, availability_slots,
+    --  services, verification_docs via user_id)
+    DELETE FROM public.users WHERE id = v_old_id;
+  END IF;
+
+  -- Insert the row for the current auth user (no-op if already exists)
   INSERT INTO public.users (id, email, display_name, role, is_verified)
   VALUES (p_user_id, p_email, p_display_name, p_role, false)
   ON CONFLICT (id) DO NOTHING;
 
-  -- For workers, ensure the worker_profiles companion row exists.
+  -- Ensure worker_profiles companion row exists for workers
   IF p_role = 'worker' THEN
     INSERT INTO public.worker_profiles (
       user_id, bio, tagline, services, region, city,
       availability, photo_album, condoms_mandatory, published
     )
-    VALUES (
-      p_user_id, '', '', '{}', '', NULL,
-      '{}', '{}', true, false
-    )
+    VALUES (p_user_id, '', '', '{}', '', NULL, '{}', '{}', true, false)
     ON CONFLICT (user_id) DO NOTHING;
   END IF;
 
-  -- Return the guaranteed row to the caller.
   RETURN QUERY SELECT * FROM public.users WHERE id = p_user_id;
 END;
 $$;
 
--- Only authenticated users may call this.
 GRANT EXECUTE ON FUNCTION public.ensure_user_profile TO authenticated;
 
 -- =============================================================================
--- B. Trigger: auto-create the public.users row at Supabase Auth signup time
+-- 4. Trigger: auto-create the public.users row at Supabase Auth signup
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION public.handle_new_auth_user()
@@ -117,7 +126,6 @@ BEGIN
     NEW.email_confirmed_at IS NOT NULL
   )
   ON CONFLICT (id) DO NOTHING;
-
   RETURN NEW;
 END;
 $$;

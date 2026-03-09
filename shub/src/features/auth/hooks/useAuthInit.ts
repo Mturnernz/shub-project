@@ -2,134 +2,95 @@ import { useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useAuthStore, type AppUserProfile } from '../stores/auth.store';
 
-const transformSupabaseUserToProfile = (data: any): AppUserProfile => ({
-  id: data.id,
-  name: data.display_name,
-  email: data.email,
-  role: data.role,
-  currentRole: data.role,
-  avatar: data.avatar_url,
-  location: data.location,
-  verified: data.is_verified,
-  isPublished: data.is_published ?? false,
-  bio: data.bio,
-  profilePhotos: data.profile_photos || [],
-  status: data.status || 'available',
-  statusMessage: data.status_message,
-  primaryLocation: data.primary_location,
-  serviceAreas: data.service_areas || [],
-  languages: data.languages || [],
-  qualificationDocuments: data.qualification_documents || [],
+// ---------------------------------------------------------------------------
+// Transform a public.users DB row into the app's AppUserProfile shape
+// ---------------------------------------------------------------------------
+
+const toAppProfile = (row: any): AppUserProfile => ({
+  id:                     row.id,
+  name:                   row.display_name ?? '',
+  email:                  row.email ?? '',
+  role:                   row.role,
+  currentRole:            row.role,
+  avatar:                 row.avatar_url,
+  verified:               row.is_verified ?? false,
+  isPublished:            row.is_published ?? false,
+  bio:                    row.bio,
+  profilePhotos:          row.profile_photos ?? [],
+  status:                 row.status ?? 'available',
+  statusMessage:          row.status_message,
+  primaryLocation:        row.primary_location,
+  serviceAreas:           row.service_areas ?? [],
+  languages:              row.languages ?? [],
+  qualificationDocuments: row.qualification_documents ?? [],
 });
 
-/**
- * Build a minimal fallback profile from auth user data when the DB profile
- * cannot be fetched or created. This ensures authenticated users always
- * see at least client-level navigation instead of guest tabs.
- */
-const buildFallbackProfile = (userId: string, email: string, metadata: Record<string, any> = {}): AppUserProfile => {
-  const resolvedRole = (metadata.type === 'host' || metadata.type === 'worker')
-    ? 'worker' as const
-    : 'client' as const;
-
-  return {
-    id: userId,
-    name: metadata.name || email.split('@')[0] || 'User',
-    email,
-    role: resolvedRole,
-    currentRole: resolvedRole,
-    verified: false,
-    profilePhotos: [],
-    status: 'available',
-    serviceAreas: [],
-    languages: [],
-    qualificationDocuments: [],
-  };
-};
+// ---------------------------------------------------------------------------
+// Fetch the user's public.users row.
+// The signup trigger (handle_new_auth_user) creates this row automatically,
+// so for normal logins a simple SELECT is all that's needed.
+// If the row is missing (e.g. the trigger wasn't applied yet, or the user
+// was created before the trigger existed) we fall back to the
+// ensure_user_profile RPC which creates the row safely.
+// ---------------------------------------------------------------------------
 
 const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> => {
-  try {
-    console.log('Fetching user profile for:', userId);
+  // 1. Try reading the existing row
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single();
 
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single();
+  if (!error) return toAppProfile(data);
 
-    if (error) {
-      console.log('Profile fetch error:', error.code, error.message);
+  // Row doesn't exist — attempt to create it via the SECURITY DEFINER RPC
+  if (error.code === 'PGRST116') {
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) return null;
 
-      if (error.code === 'PGRST116') {
-        console.log('No profile found, attempting to create one...');
+    const meta = authUser.user_metadata ?? {};
+    const role = (meta.type === 'host' || meta.type === 'worker') ? 'worker' : 'client';
 
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          console.error('No auth user found');
-          return null;
-        }
+    const { data: rpcRows, error: rpcErr } = await supabase.rpc('ensure_user_profile', {
+      p_user_id:      userId,
+      p_email:        authUser.email ?? '',
+      p_display_name: meta.name ?? authUser.email?.split('@')[0] ?? 'User',
+      p_role:         role,
+    });
 
-        console.log('Auth user metadata:', user.user_metadata);
-
-        const metadata = user.user_metadata || {};
-
-        // Resolve role from metadata, defaulting to 'client'
-        const resolvedRole = (metadata.type === 'host' || metadata.type === 'worker')
-          ? 'worker'
-          : 'client';
-
-        const newUser = {
-          id: userId,
-          display_name: metadata.name || user.email?.split('@')[0] || 'User',
-          email: user.email || '',
-          role: resolvedRole,
-          is_verified: false,
-        };
-
-        console.log('Creating profile via ensure_user_profile RPC...');
-
-        // Use SECURITY DEFINER RPC to bypass RLS timing issues on fresh sessions.
-        // Direct INSERT can fail with 42501 when auth.uid() isn't yet visible to
-        // the DB (race between session setup and the first query after sign-in).
-        const { data: rpcRows, error: insertError } = await supabase
-          .rpc('ensure_user_profile', {
-            p_user_id:      userId,
-            p_email:        user.email || '',
-            p_display_name: newUser.display_name,
-            p_role:         resolvedRole,
-          });
-
-        if (insertError) {
-          console.error('ensure_user_profile error:', insertError.code, insertError.message);
-          // Return a fallback profile so the user isn't stuck as guest
-          return buildFallbackProfile(userId, user.email || '', metadata);
-        }
-
-        const newProfile = Array.isArray(rpcRows) ? rpcRows[0] : rpcRows;
-        console.log('Created new profile via RPC:', newProfile);
-        return transformSupabaseUserToProfile(newProfile);
-      }
-      throw error;
+    if (rpcErr) {
+      // RPC not deployed yet or another error — return a minimal in-memory profile
+      // so the user isn't stuck on a loading screen, but don't persist anything.
+      console.error('ensure_user_profile failed:', rpcErr.message);
+      return {
+        id:                     userId,
+        name:                   meta.name ?? authUser.email?.split('@')[0] ?? 'User',
+        email:                  authUser.email ?? '',
+        role:                   role as 'worker' | 'client',
+        currentRole:            role as 'worker' | 'client',
+        verified:               false,
+        isPublished:            false,
+        profilePhotos:          [],
+        status:                 'available',
+        serviceAreas:           [],
+        languages:              [],
+        qualificationDocuments: [],
+      };
     }
 
-    console.log('Found existing profile:', data);
-    return transformSupabaseUserToProfile(data);
-  } catch (err) {
-    console.error('Error fetching user profile:', err);
-
-    // Last resort: build a fallback from auth user so they aren't stuck as guest
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        return buildFallbackProfile(userId, user.email || '', user.user_metadata || {});
-      }
-    } catch {
-      // ignore secondary failure
-    }
-
-    return null;
+    const created = Array.isArray(rpcRows) ? rpcRows[0] : rpcRows;
+    return toAppProfile(created);
   }
+
+  // Any other DB error
+  console.error('Profile fetch error:', error.message);
+  return null;
 };
+
+// ---------------------------------------------------------------------------
+// Hook — called once from App root to initialise auth state
+// ---------------------------------------------------------------------------
 
 export const useAuthInit = () => {
   const { setUser, setUserProfile, setLoading } = useAuthStore();
@@ -137,52 +98,39 @@ export const useAuthInit = () => {
   useEffect(() => {
     let mounted = true;
 
-    // Safety net: if auth hasn't resolved within 4 seconds, unblock the UI.
-    // This prevents a permanent loading spinner when the network is slow or
-    // the Supabase session refresh hangs (e.g. wrong URL in env vars).
-    const safetyTimer = setTimeout(() => {
-      if (mounted) {
-        console.warn('Auth init timed out — clearing loading state');
-        setLoading(false);
-      }
-    }, 4000);
+    // Safety net: clear loading after 5 s in case Supabase hangs
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 5000);
 
-    const initAuth = async () => {
+    const init = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-
         if (!mounted) return;
 
         if (session?.user) {
           setUser(session.user);
           const profile = await fetchUserProfile(session.user.id);
-          if (mounted) {
-            setUserProfile(profile);
-          }
+          if (mounted) setUserProfile(profile);
         }
       } catch (err) {
         console.error('Auth init error:', err);
       } finally {
-        clearTimeout(safetyTimer);
-        if (mounted) {
-          setLoading(false);
-        }
+        clearTimeout(timeout);
+        if (mounted) setLoading(false);
       }
     };
 
-    initAuth();
+    init();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (_, session) => {
         if (!mounted) return;
-
         try {
           if (session?.user) {
             setUser(session.user);
             const profile = await fetchUserProfile(session.user.id);
-            if (mounted) {
-              setUserProfile(profile);
-            }
+            if (mounted) setUserProfile(profile);
           } else {
             setUser(null);
             setUserProfile(null);
@@ -190,17 +138,15 @@ export const useAuthInit = () => {
         } catch (err) {
           console.error('Auth state change error:', err);
         } finally {
-          clearTimeout(safetyTimer);
-          if (mounted) {
-            setLoading(false);
-          }
+          clearTimeout(timeout);
+          if (mounted) setLoading(false);
         }
       }
     );
 
     return () => {
       mounted = false;
-      clearTimeout(safetyTimer);
+      clearTimeout(timeout);
       subscription.unsubscribe();
     };
   }, [setUser, setUserProfile, setLoading]);
