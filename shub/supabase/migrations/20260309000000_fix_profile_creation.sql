@@ -1,29 +1,22 @@
 -- Fix profile creation RLS errors (42501)
 --
--- Root cause (confirmed):
--- 001_initial_schema.sql created the users table with NO INSERT policy.
--- Later migrations added INSERT policies but these may not have been applied
--- to the live database. Additionally, useWorkerProfile.ts used
--- upsert(onConflict:'email'). When a public.users row exists with the same
--- email but a DIFFERENT UUID (orphaned row from a previous account attempt),
--- PostgreSQL's ON CONFLICT DO UPDATE tries to UPDATE that row. The UPDATE
--- policy USING check (auth.uid() = old_id) fails because the old row belongs
--- to a different UUID — raising exactly:
---   ERROR 42501: new row violates row-level security policy (USING expression)
+-- Root cause:
+-- A public.users row exists with the same email but a different UUID than the
+-- current auth session (orphaned from a prior account). useWorkerProfile's
+-- upsert(onConflict:'email') tries to UPDATE that row; the UPDATE policy's
+-- USING check (auth.uid() = old_id) fails → 42501 "(USING expression)".
 --
--- Fixes:
--- A. SECURITY DEFINER function ensure_user_profile() — runs as DB owner,
---    bypasses RLS. Handles orphaned rows (same email, different UUID) by
---    deleting them first so the current auth user can create a fresh row.
--- B. Trigger on auth.users so the row is created at signup time before any
---    frontend query races against session setup.
--- C. Explicit WITH CHECK on the UPDATE policy so the USING expression is not
---    silently reused as the new-row check on any future upsert operations.
--- D. Ensure the INSERT policy exists (idempotent — safe to re-run).
+-- Strategy: instead of deleting the orphaned row (which fails when FKs
+-- reference it, e.g. bookings), we MIGRATE the UUID — rename the existing
+-- row's primary key to match the current auth UUID, then fix all FK tables.
+-- This preserves all the user's data (bookings, messages, etc.).
+--
+-- session_replication_role = replica temporarily disables FK enforcement
+-- triggers so we can update the PK without violating referential integrity
+-- mid-transaction. FKs are consistent again by the time the function returns.
 
 -- =============================================================================
--- D. INSERT policy (may be missing from live DB if 003_fix_rls_policies.sql
---    was never applied)
+-- 1. INSERT policy (may be missing if 003_fix_rls_policies.sql was never run)
 -- =============================================================================
 
 DROP POLICY IF EXISTS "Users can insert own record" ON public.users;
@@ -32,7 +25,7 @@ CREATE POLICY "Users can insert own record"
   WITH CHECK (auth.uid() = id);
 
 -- =============================================================================
--- C. Fix UPDATE policy: add explicit WITH CHECK
+-- 2. Fix UPDATE policy: add explicit WITH CHECK
 -- =============================================================================
 
 DROP POLICY IF EXISTS "Users can update own record" ON public.users;
@@ -42,60 +35,92 @@ CREATE POLICY "Users can update own record"
   WITH CHECK (auth.uid() = id);
 
 -- =============================================================================
--- A. ensure_user_profile RPC  (SECURITY DEFINER — bypasses RLS entirely)
+-- 3. ensure_user_profile RPC  (SECURITY DEFINER — bypasses RLS)
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION public.ensure_user_profile(
-  p_user_id     UUID,
-  p_email       TEXT,
+  p_user_id      UUID,
+  p_email        TEXT,
   p_display_name TEXT,
-  p_role        TEXT DEFAULT 'client'
+  p_role         TEXT DEFAULT 'client'
 )
 RETURNS SETOF public.users
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
 AS $$
+DECLARE
+  v_old_id UUID;
 BEGIN
-  -- Remove any orphaned row that has the same email but a different UUID.
-  -- This happens when a user re-registers after their previous auth account
-  -- was deleted. The old public.users row is inaccessible to the new auth
-  -- user (different UUID → USING check blocks access), so deleting it loses
-  -- nothing the user can actually reach. ON DELETE CASCADE cleans up child
-  -- rows (worker_profiles etc.) automatically.
-  DELETE FROM public.users
-  WHERE email = p_email
-    AND id    != p_user_id;
+  -- Check for an orphaned row: same email, different UUID.
+  SELECT id INTO v_old_id
+  FROM public.users
+  WHERE email = p_email AND id != p_user_id;
 
-  -- Insert the row for the current auth user.
-  -- ON CONFLICT (id) DO NOTHING means a second call is a safe no-op.
-  INSERT INTO public.users (id, email, display_name, role, is_verified)
-  VALUES (p_user_id, p_email, p_display_name, p_role, false)
-  ON CONFLICT (id) DO NOTHING;
+  IF v_old_id IS NOT NULL THEN
+    -- Migrate the existing row to the new UUID rather than deleting it.
+    -- This preserves all related data (bookings, messages, etc.).
+    --
+    -- Temporarily disable FK enforcement so we can update the PK first,
+    -- then fix every referencing table.  The SECURITY DEFINER function runs
+    -- as the postgres superuser, so SET LOCAL session_replication_role is
+    -- permitted.  Using is_local=true means it reverts automatically when
+    -- this transaction ends.
+    PERFORM set_config('session_replication_role', 'replica', true);
 
-  -- For workers, ensure the worker_profiles companion row exists.
+    -- Rename the primary key
+    UPDATE public.users SET id = p_user_id WHERE id = v_old_id;
+
+    -- Fix every table that holds a FK reference to users.id
+    UPDATE public.worker_profiles    SET user_id      = p_user_id WHERE user_id      = v_old_id;
+    UPDATE public.bookings           SET worker_id    = p_user_id WHERE worker_id    = v_old_id;
+    UPDATE public.bookings           SET client_id    = p_user_id WHERE client_id    = v_old_id;
+    UPDATE public.bookings           SET cancelled_by = p_user_id WHERE cancelled_by = v_old_id;
+    UPDATE public.messages           SET sender_id    = p_user_id WHERE sender_id    = v_old_id;
+    UPDATE public.messages           SET recipient_id = p_user_id WHERE recipient_id = v_old_id;
+    UPDATE public.reviews            SET reviewer_id  = p_user_id WHERE reviewer_id  = v_old_id;
+    UPDATE public.reviews            SET reviewee_id  = p_user_id WHERE reviewee_id  = v_old_id;
+    UPDATE public.reports            SET reporter_id  = p_user_id WHERE reporter_id  = v_old_id;
+    UPDATE public.reports            SET resolved_by  = p_user_id WHERE resolved_by  = v_old_id;
+    UPDATE public.verification_docs  SET user_id      = p_user_id WHERE user_id      = v_old_id;
+    UPDATE public.verification_docs  SET reviewer_id  = p_user_id WHERE reviewer_id  = v_old_id;
+    UPDATE public.services           SET worker_id    = p_user_id WHERE worker_id    = v_old_id;
+    UPDATE public.availability_slots SET worker_id    = p_user_id WHERE worker_id    = v_old_id;
+    UPDATE public.favorites          SET client_id    = p_user_id WHERE client_id    = v_old_id;
+    UPDATE public.favorites          SET worker_id    = p_user_id WHERE worker_id    = v_old_id;
+    UPDATE public.blocked_users      SET blocker_id   = p_user_id WHERE blocker_id   = v_old_id;
+    UPDATE public.blocked_users      SET blocked_id   = p_user_id WHERE blocked_id   = v_old_id;
+    UPDATE public.safe_buddy_tokens  SET user_id      = p_user_id WHERE user_id      = v_old_id;
+    UPDATE public.admin_audit        SET admin_id     = p_user_id WHERE admin_id     = v_old_id;
+
+    -- Restore normal FK enforcement
+    PERFORM set_config('session_replication_role', 'origin', true);
+
+  ELSE
+    -- No orphaned row: simple insert (no-op if row already exists)
+    INSERT INTO public.users (id, email, display_name, role, is_verified)
+    VALUES (p_user_id, p_email, p_display_name, p_role, false)
+    ON CONFLICT (id) DO NOTHING;
+  END IF;
+
+  -- Ensure worker_profiles companion row exists for workers
   IF p_role = 'worker' THEN
     INSERT INTO public.worker_profiles (
       user_id, bio, tagline, services, region, city,
       availability, photo_album, condoms_mandatory, published
     )
-    VALUES (
-      p_user_id, '', '', '{}', '', NULL,
-      '{}', '{}', true, false
-    )
+    VALUES (p_user_id, '', '', '{}', '', NULL, '{}', '{}', true, false)
     ON CONFLICT (user_id) DO NOTHING;
   END IF;
 
-  -- Return the guaranteed row to the caller.
   RETURN QUERY SELECT * FROM public.users WHERE id = p_user_id;
 END;
 $$;
 
--- Only authenticated users may call this.
 GRANT EXECUTE ON FUNCTION public.ensure_user_profile TO authenticated;
 
 -- =============================================================================
--- B. Trigger: auto-create the public.users row at Supabase Auth signup time
+-- 4. Trigger: auto-create the public.users row at Supabase Auth signup
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION public.handle_new_auth_user()
@@ -117,7 +142,6 @@ BEGIN
     NEW.email_confirmed_at IS NOT NULL
   )
   ON CONFLICT (id) DO NOTHING;
-
   RETURN NEW;
 END;
 $$;
