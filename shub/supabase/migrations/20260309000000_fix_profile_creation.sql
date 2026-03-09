@@ -1,25 +1,48 @@
 -- Fix profile creation RLS errors (42501)
 --
--- Root causes:
--- 1. INSERT policy requires auth.uid() = id, but auth.uid() can be NULL during
---    session initialisation (right after email verification), causing the INSERT
---    to be rejected even though the user is legitimately authenticated.
--- 2. UPDATE policy only has USING (no WITH CHECK). PostgreSQL applies USING as
---    the WITH CHECK when none is specified, so a upsert that touches the id column
---    can fail with "new row violates row-level security policy (USING expression)".
--- 3. useWorkerProfile.ts used upsert(onConflict:'email') which tries to UPDATE the
---    primary key id to a new value — inherently unsafe and rejected by the policy.
+-- Root cause (confirmed):
+-- 001_initial_schema.sql created the users table with NO INSERT policy.
+-- Later migrations added INSERT policies but these may not have been applied
+-- to the live database. Additionally, useWorkerProfile.ts used
+-- upsert(onConflict:'email'). When a public.users row exists with the same
+-- email but a DIFFERENT UUID (orphaned row from a previous account attempt),
+-- PostgreSQL's ON CONFLICT DO UPDATE tries to UPDATE that row. The UPDATE
+-- policy USING check (auth.uid() = old_id) fails because the old row belongs
+-- to a different UUID — raising exactly:
+--   ERROR 42501: new row violates row-level security policy (USING expression)
 --
 -- Fixes:
--- A. SECURITY DEFINER function ensure_user_profile() — runs as the DB owner,
---    bypasses RLS for safe profile creation in all timing scenarios.
--- B. Trigger on auth.users so the row is always created at signup time, before
---    any frontend query has a chance to race against session setup.
--- C. Add explicit WITH CHECK to the UPDATE policy so the USING expression is not
---    silently reused as a new-row check.
+-- A. SECURITY DEFINER function ensure_user_profile() — runs as DB owner,
+--    bypasses RLS. Handles orphaned rows (same email, different UUID) by
+--    deleting them first so the current auth user can create a fresh row.
+-- B. Trigger on auth.users so the row is created at signup time before any
+--    frontend query races against session setup.
+-- C. Explicit WITH CHECK on the UPDATE policy so the USING expression is not
+--    silently reused as the new-row check on any future upsert operations.
+-- D. Ensure the INSERT policy exists (idempotent — safe to re-run).
 
 -- =============================================================================
--- A. ensure_user_profile RPC  (SECURITY DEFINER — bypasses RLS)
+-- D. INSERT policy (may be missing from live DB if 003_fix_rls_policies.sql
+--    was never applied)
+-- =============================================================================
+
+DROP POLICY IF EXISTS "Users can insert own record" ON public.users;
+CREATE POLICY "Users can insert own record"
+  ON public.users FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+-- =============================================================================
+-- C. Fix UPDATE policy: add explicit WITH CHECK
+-- =============================================================================
+
+DROP POLICY IF EXISTS "Users can update own record" ON public.users;
+CREATE POLICY "Users can update own record"
+  ON public.users FOR UPDATE
+  USING     (auth.uid() = id)
+  WITH CHECK (auth.uid() = id);
+
+-- =============================================================================
+-- A. ensure_user_profile RPC  (SECURITY DEFINER — bypasses RLS entirely)
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION public.ensure_user_profile(
@@ -34,15 +57,23 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  -- Create the users row if it doesn't already exist.
-  -- ON CONFLICT (id) DO NOTHING is safe: if the row is already there we just
-  -- skip the insert and proceed to the SELECT below.
+  -- Remove any orphaned row that has the same email but a different UUID.
+  -- This happens when a user re-registers after their previous auth account
+  -- was deleted. The old public.users row is inaccessible to the new auth
+  -- user (different UUID → USING check blocks access), so deleting it loses
+  -- nothing the user can actually reach. ON DELETE CASCADE cleans up child
+  -- rows (worker_profiles etc.) automatically.
+  DELETE FROM public.users
+  WHERE email = p_email
+    AND id    != p_user_id;
+
+  -- Insert the row for the current auth user.
+  -- ON CONFLICT (id) DO NOTHING means a second call is a safe no-op.
   INSERT INTO public.users (id, email, display_name, role, is_verified)
   VALUES (p_user_id, p_email, p_display_name, p_role, false)
   ON CONFLICT (id) DO NOTHING;
 
-  -- For workers, also ensure a worker_profiles row exists so the profile
-  -- editor page can load without a second RLS-gated insert.
+  -- For workers, ensure the worker_profiles companion row exists.
   IF p_role = 'worker' THEN
     INSERT INTO public.worker_profiles (
       user_id, bio, tagline, services, region, city,
@@ -55,18 +86,16 @@ BEGIN
     ON CONFLICT (user_id) DO NOTHING;
   END IF;
 
-  -- Return the (now-guaranteed) row so the caller can read it back.
+  -- Return the guaranteed row to the caller.
   RETURN QUERY SELECT * FROM public.users WHERE id = p_user_id;
 END;
 $$;
 
--- Only authenticated users should be able to call this for their own profile.
--- The function itself enforces no extra data-level restriction (SECURITY DEFINER
--- runs as the owner), so callers must pass their own auth.uid() as p_user_id.
+-- Only authenticated users may call this.
 GRANT EXECUTE ON FUNCTION public.ensure_user_profile TO authenticated;
 
 -- =============================================================================
--- B. Trigger: auto-create the public.users row when an auth user is created
+-- B. Trigger: auto-create the public.users row at Supabase Auth signup time
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION public.handle_new_auth_user()
@@ -97,14 +126,3 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_auth_user();
-
--- =============================================================================
--- C. Fix UPDATE policy: add explicit WITH CHECK so USING is not reused for the
---    new-row check, preventing the "new row violates … (USING expression)" error
--- =============================================================================
-
-DROP POLICY IF EXISTS "Users can update own record" ON public.users;
-CREATE POLICY "Users can update own record"
-  ON public.users FOR UPDATE
-  USING     (auth.uid() = id)
-  WITH CHECK (auth.uid() = id);
