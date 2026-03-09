@@ -56,41 +56,24 @@ export const useWorkerProfile = (userId: string | undefined) => {
             ? 'worker'
             : 'worker'; // profile editor is only reached by workers
 
-          const newUserRow = {
-            id: userId,
-            display_name: metadata.name || authUser.email?.split('@')[0] || 'Host',
-            email: authUser.email || '',
-            role: resolvedRole,
-            is_verified: false,
-          };
+          const displayName = metadata.name || authUser.email?.split('@')[0] || 'Host';
 
-          // Upsert on email so that if a previous signup left an orphaned row
-          // with the same email but a different ID, we re-claim it under the
-          // current auth user's ID rather than failing with 23505.
-          const { data: created, error: insertError } = await supabase
-            .from('users')
-            .upsert([newUserRow], { onConflict: 'email' })
-            .select('*')
-            .single();
+          // Use SECURITY DEFINER RPC instead of a raw upsert.
+          // The previous upsert(onConflict:'email') could fail with 42501 because
+          // the UPDATE policy's USING expression is also applied as WITH CHECK
+          // (PostgreSQL behaviour when no WITH CHECK is specified), and upserts
+          // that touch the id column trip that check on the new row.
+          const { data: rpcRows, error: insertError } = await supabase
+            .rpc('ensure_user_profile', {
+              p_user_id:      userId,
+              p_email:        authUser.email || '',
+              p_display_name: displayName,
+              p_role:         resolvedRole,
+            });
 
           if (insertError) throw insertError;
 
-          // Also ensure the worker_profiles row exists
-          await supabase.from('worker_profiles').upsert([{
-            user_id: userId,
-            bio: '',
-            tagline: '',
-            services: [],
-            region: '',
-            city: '',
-            availability: [],
-            photo_album: [],
-            condoms_mandatory: true,
-            published: false,
-            photo_options: {},
-            photo_settings: {},
-          }], { onConflict: 'user_id', ignoreDuplicates: true });
-
+          const created = Array.isArray(rpcRows) ? rpcRows[0] : rpcRows;
           setProfile(transformRow(created));
           return;
         }

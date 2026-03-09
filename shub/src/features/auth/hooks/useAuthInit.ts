@@ -86,46 +86,27 @@ const fetchUserProfile = async (userId: string): Promise<AppUserProfile | null> 
           is_verified: false,
         };
 
-        console.log('Inserting new user:', newUser);
+        console.log('Creating profile via ensure_user_profile RPC...');
 
-        const { data: newProfile, error: insertError } = await supabase
-          .from('users')
-          .insert([newUser])
-          .select('*')
-          .single();
+        // Use SECURITY DEFINER RPC to bypass RLS timing issues on fresh sessions.
+        // Direct INSERT can fail with 42501 when auth.uid() isn't yet visible to
+        // the DB (race between session setup and the first query after sign-in).
+        const { data: rpcRows, error: insertError } = await supabase
+          .rpc('ensure_user_profile', {
+            p_user_id:      userId,
+            p_email:        user.email || '',
+            p_display_name: newUser.display_name,
+            p_role:         resolvedRole,
+          });
 
         if (insertError) {
-          console.error('Insert error:', insertError.code, insertError.message, insertError.details);
+          console.error('ensure_user_profile error:', insertError.code, insertError.message);
           // Return a fallback profile so the user isn't stuck as guest
           return buildFallbackProfile(userId, user.email || '', metadata);
         }
 
-        // Workers also need a worker_profiles row so they can access the profile editor
-        if (resolvedRole === 'worker') {
-          const { error: wpError } = await supabase
-            .from('worker_profiles')
-            .insert([{
-              user_id: userId,
-              bio: '',
-              tagline: '',
-              services: [],
-              region: '',
-              city: '',
-              availability: [],
-              photo_album: [],
-              condoms_mandatory: true,
-              published: false,
-              photo_options: {},
-              photo_settings: {},
-            }]);
-          if (wpError) {
-            console.error('Failed to create worker_profiles row:', wpError.message);
-          } else {
-            console.log('Created worker_profiles row for new worker');
-          }
-        }
-
-        console.log('Created new profile:', newProfile);
+        const newProfile = Array.isArray(rpcRows) ? rpcRows[0] : rpcRows;
+        console.log('Created new profile via RPC:', newProfile);
         return transformSupabaseUserToProfile(newProfile);
       }
       throw error;
