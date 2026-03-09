@@ -6,14 +6,19 @@
 -- upsert(onConflict:'email') tries to UPDATE that row; the UPDATE policy's
 -- USING check (auth.uid() = old_id) fails → 42501 "(USING expression)".
 --
--- Strategy: instead of deleting the orphaned row (which fails when FKs
--- reference it, e.g. bookings), we MIGRATE the UUID — rename the existing
--- row's primary key to match the current auth UUID, then fix all FK tables.
--- This preserves all the user's data (bookings, messages, etc.).
+-- Strategy: delete the orphaned row (and its dangling FK references) so the
+-- current auth user can create a fresh row. Supabase restricts
+-- session_replication_role even for the postgres role, so we manually delete
+-- non-CASCADE FK dependents before deleting the users row.
 --
--- session_replication_role = replica temporarily disables FK enforcement
--- triggers so we can update the PK without violating referential integrity
--- mid-transaction. FKs are consistent again by the time the function returns.
+-- Cascade map for public.users.id:
+--   CASCADE  : worker_profiles, verification_docs (user_id), favorites,
+--               blocked_users, availability_slots, services
+--   NO CASCADE: bookings (worker_id, client_id), messages (sender_id,
+--               recipient_id), reviews, reports (reporter_id), admin_audit,
+--               safe_buddy_tokens
+--   NULLABLE  : bookings.cancelled_by, verification_docs.reviewer_id,
+--               reports.resolved_by  → SET NULL before deleting
 
 -- =============================================================================
 -- 1. INSERT policy (may be missing if 003_fix_rls_policies.sql was never run)
@@ -58,50 +63,29 @@ BEGIN
   WHERE email = p_email AND id != p_user_id;
 
   IF v_old_id IS NOT NULL THEN
-    -- Migrate the existing row to the new UUID rather than deleting it.
-    -- This preserves all related data (bookings, messages, etc.).
-    --
-    -- Temporarily disable FK enforcement so we can update the PK first,
-    -- then fix every referencing table.  The SECURITY DEFINER function runs
-    -- as the postgres superuser, so SET LOCAL session_replication_role is
-    -- permitted.  Using is_local=true means it reverts automatically when
-    -- this transaction ends.
-    PERFORM set_config('session_replication_role', 'replica', true);
+    -- Nullify nullable FK columns that reference this user
+    UPDATE public.bookings          SET cancelled_by = NULL WHERE cancelled_by = v_old_id;
+    UPDATE public.verification_docs SET reviewer_id  = NULL WHERE reviewer_id  = v_old_id;
+    UPDATE public.reports           SET resolved_by  = NULL WHERE resolved_by  = v_old_id;
 
-    -- Rename the primary key
-    UPDATE public.users SET id = p_user_id WHERE id = v_old_id;
+    -- Delete non-CASCADE referencing rows (order matters: children before parents)
+    DELETE FROM public.admin_audit        WHERE admin_id    = v_old_id;
+    DELETE FROM public.safe_buddy_tokens  WHERE user_id     = v_old_id;
+    DELETE FROM public.reviews            WHERE reviewer_id = v_old_id OR reviewee_id = v_old_id;
+    DELETE FROM public.reports            WHERE reporter_id = v_old_id;
+    DELETE FROM public.messages           WHERE sender_id   = v_old_id OR recipient_id = v_old_id;
+    DELETE FROM public.bookings           WHERE worker_id   = v_old_id OR client_id    = v_old_id;
 
-    -- Fix every table that holds a FK reference to users.id
-    UPDATE public.worker_profiles    SET user_id      = p_user_id WHERE user_id      = v_old_id;
-    UPDATE public.bookings           SET worker_id    = p_user_id WHERE worker_id    = v_old_id;
-    UPDATE public.bookings           SET client_id    = p_user_id WHERE client_id    = v_old_id;
-    UPDATE public.bookings           SET cancelled_by = p_user_id WHERE cancelled_by = v_old_id;
-    UPDATE public.messages           SET sender_id    = p_user_id WHERE sender_id    = v_old_id;
-    UPDATE public.messages           SET recipient_id = p_user_id WHERE recipient_id = v_old_id;
-    UPDATE public.reviews            SET reviewer_id  = p_user_id WHERE reviewer_id  = v_old_id;
-    UPDATE public.reviews            SET reviewee_id  = p_user_id WHERE reviewee_id  = v_old_id;
-    UPDATE public.reports            SET reporter_id  = p_user_id WHERE reporter_id  = v_old_id;
-    UPDATE public.reports            SET resolved_by  = p_user_id WHERE resolved_by  = v_old_id;
-    UPDATE public.verification_docs  SET user_id      = p_user_id WHERE user_id      = v_old_id;
-    UPDATE public.verification_docs  SET reviewer_id  = p_user_id WHERE reviewer_id  = v_old_id;
-    UPDATE public.services           SET worker_id    = p_user_id WHERE worker_id    = v_old_id;
-    UPDATE public.availability_slots SET worker_id    = p_user_id WHERE worker_id    = v_old_id;
-    UPDATE public.favorites          SET client_id    = p_user_id WHERE client_id    = v_old_id;
-    UPDATE public.favorites          SET worker_id    = p_user_id WHERE worker_id    = v_old_id;
-    UPDATE public.blocked_users      SET blocker_id   = p_user_id WHERE blocker_id   = v_old_id;
-    UPDATE public.blocked_users      SET blocked_id   = p_user_id WHERE blocked_id   = v_old_id;
-    UPDATE public.safe_buddy_tokens  SET user_id      = p_user_id WHERE user_id      = v_old_id;
-    UPDATE public.admin_audit        SET admin_id     = p_user_id WHERE admin_id     = v_old_id;
-
-    -- Restore normal FK enforcement
-    PERFORM set_config('session_replication_role', 'origin', true);
-
-  ELSE
-    -- No orphaned row: simple insert (no-op if row already exists)
-    INSERT INTO public.users (id, email, display_name, role, is_verified)
-    VALUES (p_user_id, p_email, p_display_name, p_role, false)
-    ON CONFLICT (id) DO NOTHING;
+    -- Delete the orphaned users row; ON DELETE CASCADE handles the rest
+    -- (worker_profiles, favorites, blocked_users, availability_slots,
+    --  services, verification_docs via user_id)
+    DELETE FROM public.users WHERE id = v_old_id;
   END IF;
+
+  -- Insert the row for the current auth user (no-op if already exists)
+  INSERT INTO public.users (id, email, display_name, role, is_verified)
+  VALUES (p_user_id, p_email, p_display_name, p_role, false)
+  ON CONFLICT (id) DO NOTHING;
 
   -- Ensure worker_profiles companion row exists for workers
   IF p_role = 'worker' THEN
