@@ -18,6 +18,7 @@ export interface User {
   serviceAreas?: Array<{ city: string; radius: number }>;
   languages?: Array<{ language: string; proficiency: string }>;
   qualificationDocuments?: string[];
+  condomsMandatory?: boolean;
 }
 
 export interface Service {
