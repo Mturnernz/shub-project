@@ -224,13 +224,12 @@ export const useWorkerProfile = (userId: string | undefined) => {
     setError(null);
 
     try {
-      const [wpResult, userResult] = await Promise.all([
-        supabase.from('worker_profiles').update({ published: true }).eq('user_id', userId),
-        supabase.from('users').update({ is_published: true }).eq('id', userId),
-      ]);
+      const { error: wpError } = await supabase
+        .from('worker_profiles')
+        .update({ published: true })
+        .eq('user_id', userId);
 
-      if (wpResult.error) throw wpResult.error;
-      if (userResult.error) throw userResult.error;
+      if (wpError) throw wpError;
 
       setProfile(prev => prev ? { ...prev, isPublished: true } : prev);
     } catch (err: any) {
