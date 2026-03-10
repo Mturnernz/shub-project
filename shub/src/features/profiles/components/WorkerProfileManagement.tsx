@@ -12,6 +12,7 @@ import LocationServiceArea from './LocationServiceArea';
 import LanguageQualifications from './LanguageQualifications';
 import WorkerProfilePreview from './WorkerProfilePreview';
 import RatesEditor from './RatesEditor';
+import ProfileSetupWizard from './ProfileSetupWizard';
 
 type Section = 'overview' | 'photos' | 'bio' | 'services' | 'availability' | 'location' | 'languages' | 'rates';
 
@@ -27,6 +28,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
   const [condomsMandatory, setCondomsMandatory] = useState(true);
   const [displayNameInput, setDisplayNameInput] = useState<string | null>(null);
   const [displayNameSaving, setDisplayNameSaving] = useState(false);
+  const [wizardDismissed, setWizardDismissed] = useState(false);
   const { profile, loading, error, updateProfile, saving } = useWorkerProfile(userId);
   const { services, loading: servicesLoading } = useServices();
   const { userProfile: authProfile, setUserProfile } = useAuthStore();
@@ -72,24 +74,14 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
     { id: 'languages' as Section, label: 'Languages', icon: Globe, color: 'text-teal-600' },
   ];
 
-  // Calculate profile completion (minimum 3 photos required)
-  const getProfileCompletion = () => {
+  // Profile is complete when the 3 required fields are satisfied
+  const profileCompletion = (() => {
     let completed = 0;
-    const total = 8;
-
-    if (profile.profilePhotos && profile.profilePhotos.length >= 3) completed++;
-    if (profile.bio && profile.bio.length >= 100) completed++;
-    if (profile.hourlyRateText && profile.hourlyRateText.trim().length > 0) completed++;
-    if (profile.primaryLocation) completed++;
-    if (profile.serviceAreas && profile.serviceAreas.length > 0) completed++;
-    if (profile.languages && profile.languages.length > 0) completed++;
-    if (profile.status) completed++;
-    if (workerServices.length > 0) completed++;
-
-    return Math.round((completed / total) * 100);
-  };
-
-  const profileCompletion = getProfileCompletion();
+    if ((profile.profilePhotos?.length ?? 0) >= 3) completed++;
+    if ((profile.bio?.length ?? 0) >= 100) completed++;
+    if (profile.primaryLocation?.trim()) completed++;
+    return Math.round((completed / 3) * 100);
+  })();
 
   const handlePublishProfile = async () => {
     if (profileCompletion !== 100 || profile.isPublished) return;
@@ -398,6 +390,13 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
 
   const activeTab = sections.find(s => s.id === activeSection);
 
+  // Show setup wizard when required fields are incomplete and user hasn't dismissed it
+  const profileSetupComplete =
+    (profile?.bio?.length ?? 0) >= 100 &&
+    (profile?.profilePhotos?.length ?? 0) >= 3 &&
+    !!(profile?.primaryLocation?.trim());
+  const showWizard = !loading && !!profile && !profileSetupComplete && !wizardDismissed;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-trust-50 to-rose-50">
       {/* Header */}
@@ -499,6 +498,15 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
           </div>
         )}
       </div>
+
+      {showWizard && (
+        <ProfileSetupWizard
+          profile={profile}
+          userId={userId}
+          onSave={updateProfile}
+          onDismiss={() => setWizardDismissed(true)}
+        />
+      )}
     </div>
   );
 };

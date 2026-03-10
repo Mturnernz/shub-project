@@ -20,25 +20,16 @@ export const useProfileCompletion = (userProfile: User | null): ProfileCompletio
     }
 
     const requiredFields = [
-      { key: 'name', label: 'Name', value: userProfile.name },
-      { key: 'bio', label: 'Bio', value: userProfile.bio },
-      { key: 'location', label: 'Location', value: userProfile.location },
-      { key: 'profilePhotos', label: 'Profile Photos (min 3)', value: userProfile.profilePhotos?.length >= 3 },
-      { key: 'serviceAreas', label: 'Service Areas', value: userProfile.serviceAreas?.length > 0 },
-      { key: 'languages', label: 'Languages', value: userProfile.languages?.length > 0 },
+      { key: 'bio',             label: 'Bio',                    value: (userProfile.bio?.length ?? 0) >= 100 },
+      { key: 'profilePhotos',   label: 'Profile Photos (min 3)', value: (userProfile.profilePhotos?.length ?? 0) >= 3 },
+      { key: 'primaryLocation', label: 'Location',               value: !!(userProfile.primaryLocation?.trim()) },
     ];
 
     const completedFields: string[] = [];
     const missingFields: string[] = [];
 
     requiredFields.forEach((field) => {
-      const isCompleted = field.value && (
-        typeof field.value === 'string' ? field.value.trim().length > 0 :
-        typeof field.value === 'boolean' ? field.value :
-        Array.isArray(field.value) ? field.value.length > 0 : false
-      );
-
-      if (isCompleted) {
+      if (field.value) {
         completedFields.push(field.label);
       } else {
         missingFields.push(field.label);
