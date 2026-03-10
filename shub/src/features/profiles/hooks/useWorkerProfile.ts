@@ -170,7 +170,6 @@ export const useWorkerProfile = (userId: string | undefined) => {
       // Fields stored in public.users
       const userUpdates: Record<string, unknown> = {};
       if (updates.name             !== undefined) userUpdates.display_name           = updates.name;
-      if (updates.bio              !== undefined) wpUpdates.bio                      = updates.bio;
       if (updates.profilePhotos    !== undefined) userUpdates.profile_photos         = updates.profilePhotos;
       if (updates.photoSettings    !== undefined) userUpdates.photo_settings         = updates.photoSettings;
       if (updates.status           !== undefined) userUpdates.status                 = updates.status;
@@ -183,7 +182,8 @@ export const useWorkerProfile = (userId: string | undefined) => {
 
       // Fields stored in public.worker_profiles
       const wpUpdates: Record<string, unknown> = {};
-      if (updates.condomsMandatory !== undefined) wpUpdates.condoms_mandatory = updates.condomsMandatory;
+      if (updates.bio              !== undefined) wpUpdates.bio                      = updates.bio;
+      if (updates.condomsMandatory !== undefined) wpUpdates.condoms_mandatory        = updates.condomsMandatory;
 
       const writes: Promise<any>[] = [];
 
