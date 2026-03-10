@@ -29,7 +29,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
   const [displayNameInput, setDisplayNameInput] = useState<string | null>(null);
   const [displayNameSaving, setDisplayNameSaving] = useState(false);
   const [wizardDismissed, setWizardDismissed] = useState(false);
-  const { profile, loading, error, updateProfile, saving } = useWorkerProfile(userId);
+  const { profile, loading, error, updateProfile, publishProfile, saving } = useWorkerProfile(userId);
   const { services, loading: servicesLoading } = useServices();
   const { userProfile: authProfile, setUserProfile } = useAuthStore();
 
@@ -118,7 +118,7 @@ const WorkerProfileManagement: React.FC<WorkerProfileManagementProps> = ({ onBac
     }
 
     try {
-      await updateProfile({ isPublished: true });
+      await publishProfile();
       // Keep the auth store in sync so DashboardPage stops redirecting to profile setup
       if (authProfile) {
         setUserProfile({ ...authProfile, isPublished: true });
