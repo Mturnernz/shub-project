@@ -61,14 +61,16 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
       setLoading(true);
 
       // Fetch published host profiles — join user data for display info
+      // Only join stable columns guaranteed to exist on users (display_name,
+      // email, avatar_url, is_verified). Bridging columns like primary_location
+      // and status may not exist on all DB states and cause PostgREST errors.
       const { data, error } = await supabase
         .from('worker_profiles')
-        .select('*, user:user_id(id, email, display_name, avatar_url, is_verified, primary_location, status)')
+        .select('*, user:user_id(id, email, display_name, avatar_url, is_verified)')
         .eq('published', true);
 
       if (error) {
         console.error('Error fetching hosts:', error);
-        // Only fall back to mock data in development when no real data exists
         setWorkers([]);
       } else {
         const transformed = (data || []).map((d: any) => ({
@@ -77,12 +79,12 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
           email: d.user?.email || '',
           role: 'worker' as const,
           avatar: d.photo_album?.[0] || d.user?.avatar_url,
-          location: d.user?.primary_location || d.region || '',
+          location: d.region || '',
           verified: d.user?.is_verified ?? false,
           bio: d.bio || '',
           profilePhotos: d.photo_album || [],
-          status: d.user?.status || 'available',
-          primaryLocation: d.user?.primary_location || d.region || '',
+          status: 'available',
+          primaryLocation: d.region || '',
         }));
         setWorkers(transformed);
       }
