@@ -39,12 +39,9 @@ export interface ProfileCompletion {
   isComplete: boolean;
   /** Per-field status so the UI can highlight what's missing */
   fields: {
-    name: boolean;
     bio: boolean;
-    location: boolean;
     photos: boolean;
-    rates: boolean;
-    condomsMandatory: boolean;
+    location: boolean;
   };
 }
 
@@ -52,17 +49,14 @@ const calcCompletion = (p: User | null): ProfileCompletion => {
   const empty: ProfileCompletion = {
     percent: 0,
     isComplete: false,
-    fields: { name: false, bio: false, location: false, photos: false, rates: false, condomsMandatory: false },
+    fields: { bio: false, photos: false, location: false },
   };
   if (!p) return empty;
 
   const fields = {
-    name:             !!(p.name?.trim()),
-    bio:              (p.bio?.length ?? 0) >= 100,
-    location:         !!(p.primaryLocation?.trim()),
-    photos:           (p.profilePhotos?.length ?? 0) >= 3,
-    rates:            !!(p.hourlyRateText?.trim()),
-    condomsMandatory: p.condomsMandatory === true,
+    bio:      (p.bio?.length ?? 0) >= 100,
+    photos:   (p.profilePhotos?.length ?? 0) >= 3,
+    location: !!(p.primaryLocation?.trim()),
   };
 
   const done = Object.values(fields).filter(Boolean).length;
