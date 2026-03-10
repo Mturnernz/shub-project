@@ -63,25 +63,26 @@ const WorkerBrowser: React.FC<WorkerBrowserProps> = ({ onWorkerSelect, showBackB
       // Fetch published host profiles — join user data for display info
       const { data, error } = await supabase
         .from('worker_profiles')
-        .select('*, user:user_id(id, email, name, display_name, avatar_url, is_verified, status)')
+        .select('*, user:user_id(id, email, display_name, avatar_url, is_verified, primary_location, status)')
         .eq('published', true);
 
       if (error) {
         console.error('Error fetching hosts:', error);
-        setWorkers(getMockWorkers());
+        // Only fall back to mock data in development when no real data exists
+        setWorkers([]);
       } else {
         const transformed = (data || []).map((d: any) => ({
           id: d.user_id,
-          name: d.display_name || d.user?.display_name || d.user?.name || 'Host',
+          name: d.user?.display_name || 'Host',
           email: d.user?.email || '',
           role: 'worker' as const,
-          avatar: d.profile_photos?.[0] || d.user?.avatar_url,
-          location: d.primary_location || d.location,
-          verified: d.is_verified || d.user?.is_verified,
-          bio: d.bio,
-          profilePhotos: d.profile_photos || [],
-          status: d.status || d.user?.status || 'available',
-          primaryLocation: d.primary_location,
+          avatar: d.photo_album?.[0] || d.user?.avatar_url,
+          location: d.user?.primary_location || d.region || '',
+          verified: d.user?.is_verified ?? false,
+          bio: d.bio || '',
+          profilePhotos: d.photo_album || [],
+          status: d.user?.status || 'available',
+          primaryLocation: d.user?.primary_location || d.region || '',
         }));
         setWorkers(transformed);
       }
